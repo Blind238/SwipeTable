@@ -19,8 +19,6 @@ var jsPlugin = (function(){
 
 
     // RESTful provider URI
-//    var dataProvider = "http://js-plugin.herokuapp.com/api";
-//    var dataProvider = "http://localhost:4370/api";
     var dataProvider = "http://nest.duckdns.org:2223/api";
 
     //---------------------------------------------
@@ -129,7 +127,7 @@ var jsPlugin = (function(){
                 continuous:false
             });
         }
-    }
+    };
 
     //=== Logic ===
 
