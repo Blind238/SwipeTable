@@ -15,11 +15,13 @@ var jsPlugin = (function(){
 
     var tableClass = 'table';
 //    tableClass += ' table-bordered';
-//    tableClass += ' table-condensed';
+    tableClass += ' table-condensed';
+
 
     // RESTful provider URI
 //    var dataProvider = "http://js-plugin.herokuapp.com/api";
-    var dataProvider = "http://localhost:4370/api";
+//    var dataProvider = "http://localhost:4370/api";
+    var dataProvider = "http://nest.duckdns.org:2223/api";
 
     //---------------------------------------------
     //== No more configuration beyond this point ==
@@ -27,6 +29,8 @@ var jsPlugin = (function(){
     //=== Variables ===
     //Initialize other variables
     var dataSet;
+    var doneTables = 0;
+    var totalTables = 0;
 
     //=== Functions ===
     var makeRequest = function (table, server, page, sortField, sortAsc){
@@ -81,6 +85,7 @@ var jsPlugin = (function(){
         thead.appendChild(tr);
         table.appendChild(thead);
         console.log("Table created.");
+        totalTables += 1;
         return table;
     };
 
@@ -114,7 +119,17 @@ var jsPlugin = (function(){
         tableContainer.className = 'table-container';
         tableContainer.appendChild(table);
         container.appendChild(tableContainer);
+        tableDone();
     };
+
+    var tableDone = function(){
+        doneTables += 1;
+        if (doneTables === totalTables){
+            window.mySwipe = Swipe(document.getElementById('slider'),{
+                continuous:false
+            });
+        }
+    }
 
     //=== Logic ===
 
