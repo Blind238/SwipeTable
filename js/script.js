@@ -27,7 +27,6 @@ var jsPlugin = (function(){
     //
     //=== Variables ===
     //Initialize other variables
-    var dataSet;
     var doneTables = 0;
     var totalTables = 0;
 
@@ -63,8 +62,7 @@ var jsPlugin = (function(){
 
     var parseResponse = function(table, response){
         console.log("Parsing response.");
-        dataSet = JSON.parse(response);
-        fillTable(table);
+        fillTable(table, JSON.parse(response));
     };
 
     var createTable = function(){
@@ -88,7 +86,7 @@ var jsPlugin = (function(){
         return table;
     };
 
-    var fillTable = function(table){
+    var fillTable = function(table, dataSet){
         console.log("Filling table.");
         var tbody = document.createElement("tbody");
         table.appendChild(tbody);
