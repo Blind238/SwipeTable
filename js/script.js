@@ -19,7 +19,8 @@ var jsPlugin = (function(){
 
 
     // RESTful provider URI
-    var dataProvider = "http://nest.duckdns.org:2223/api";
+    // (relative or absolute)
+    var dataProvider = "api";
 
     //---------------------------------------------
     //== No more configuration beyond this point ==
