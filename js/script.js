@@ -124,9 +124,20 @@ var jsPlugin = (function(){
     var tableDone = function(){
         doneTables += 1;
         if (doneTables === totalTables){
-            window.mySwipe = Swipe(document.getElementById('slider'),{
-                continuous:false
-            });
+            if(window.mySwipe === undefined){
+                window.mySwipe = Swipe(document.getElementById('slider'),{
+                    continuous:false,
+                    callback: function(currentIndex, element){
+                        if (currentIndex === element.parentNode.childNodes.length - 1){
+                            console.log("fetching next item");
+                            jsPlugin.newPage();
+                        }
+                    }
+                });
+            }
+            else {
+                window.mySwipe.setup();
+            }
         }
     };
 
@@ -139,4 +150,14 @@ var jsPlugin = (function(){
     var secondTable = createTable();
     makeRequest(secondTable, dataProvider, null, "location2", true );
 
+    var newPage = function(){
+        var table = createTable();
+        makeRequest(table, dataProvider, null, "time", true);
+    }
+
+    var methods = {
+        newPage : newPage
+    };
+
+    return methods;
 }());
