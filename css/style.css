@@ -1,3 +1,8 @@
+body{
+    padding: 0;
+    margin: 0;
+}
+
 .swipe {
     overflow: hidden;
     visibility: hidden;
@@ -40,7 +45,7 @@ th {
 }
 .table {
     width: 100%;
-    margin-bottom: 20px;
+    /*margin-bottom: 20px;*/
 }
 .table thead > tr > th,
 .table tbody > tr > th,

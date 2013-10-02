@@ -14,8 +14,9 @@ var jsPlugin = (function(){
     ];
 
     var tableClass = 'table';
+    var rowHeight = 39;
 //    tableClass += ' table-bordered';
-    tableClass += ' table-condensed';
+    tableClass += ' table-condensed'; rowHeight = 33;
 
 
     // RESTful provider URI
@@ -29,13 +30,35 @@ var jsPlugin = (function(){
     //Initialize other variables
     var doneTables = 0;
     var totalTables = 0;
+    var pageSize = 1;
+    var sortColumn;
+    var sortAscending = true;
 
     //=== Functions ===
+
+    var init = function(){
+        // responsejs.com/labs/dimensions/
+        var matchMedia = window.matchMedia || window.msMatchMedia;
+        var viewportH = (function(win, docElem, mM) {
+            var client = docElem['clientHeight']
+                , inner = win['innerHeight'];
+            return ( mM && client < inner && true === mM('(min-height:' + inner + 'px)')['matches']
+                ? win['innerHeight']
+                : docElem['clientHeight']
+                );
+        }(window, document.documentElement, matchMedia));
+
+        // Remove one rowHeight for the header;
+        viewportH -= rowHeight;
+        viewportH -= rowHeight;
+        pageSize = Math.floor(viewportH / rowHeight);
+    }
+
     var makeRequest = function (table, server, page, sortField, sortAsc){
         console.log("Making request to "+ server+ ".");
         var r = new XMLHttpRequest();
         if (page === (null || undefined) && sortField === undefined && sortAsc === undefined){
-            r.open("GET", server, true);
+            r.open("GET", server + "?p=1&ps=" + pageSize, true);
 //            r.open("GET", server + "?p=2&ts=" + (+Date.now()), true);
             r.onreadystatechange =  function(){
                 if(r.readyState !== 4 || r.status !== 200){
@@ -48,6 +71,17 @@ var jsPlugin = (function(){
         }
         else if(sortField !== undefined && sortAsc !== undefined){
             r.open("GET", server + "?sort[field]=" + sortField + "&sort[asc]=" + sortAsc, true);
+            r.onreadystatechange =  function(){
+                if(r.readyState !== 4 || r.status !== 200){
+                    console.log("Request went sour");
+                    return;
+                }
+                console.log("Request successful.");
+                parseResponse(table, r.responseText);
+            };
+        }
+        else if(page !== (null || undefined)){
+            r.open("GET", server + "?p=" + page + "&ps=" + pageSize, true);
             r.onreadystatechange =  function(){
                 if(r.readyState !== 4 || r.status !== 200){
                     console.log("Request went sour");
@@ -88,10 +122,14 @@ var jsPlugin = (function(){
 
     var fillTable = function(table, dataSet){
         console.log("Filling table.");
-        var tbody = document.createElement("tbody");
-        table.appendChild(tbody);
 
         var numRows = dataSet.length;
+        if(numRows === 0){
+            return;
+        }
+
+        var tbody = document.createElement("tbody");
+        table.appendChild(tbody);
 
         var i = 0;
         while (i < numRows){
@@ -128,10 +166,13 @@ var jsPlugin = (function(){
                     callback: function(currentIndex, element){
                         if (currentIndex === element.parentNode.childNodes.length - 1){
                             console.log("fetching next item");
-                            jsPlugin.newPage();
+                            jsPlugin.nextPage();
                         }
                     }
                 });
+                if(doneTables === 1){
+                    nextPage();
+                }
             }
             else {
                 window.mySwipe.setup();
@@ -139,22 +180,30 @@ var jsPlugin = (function(){
         }
     };
 
+    var nextPage = function(plusOne){
+        var pos = window.mySwipe.getPos() + 1;
+        if(plusOne===true){
+            pos+=1;
+        }
+
+        var table = createTable();
+        if(sortColumn === undefined){
+            makeRequest(table, dataProvider, pos + 1);
+        }
+        else{
+            makeRequest(table, dataProvider, pos + 1, sortColumn, sortAscending);
+        }
+    };
+
     //=== Logic ===
+    init();
 
     var dataTable = createTable();
     console.log("dataProvider === " + dataProvider);
     makeRequest(dataTable, dataProvider);
 
-    var secondTable = createTable();
-    makeRequest(secondTable, dataProvider, null, "location2", true );
-
-    var newPage = function(){
-        var table = createTable();
-        makeRequest(table, dataProvider, null, "time", true);
-    }
-
     var methods = {
-        newPage : newPage
+        nextPage : nextPage
     };
 
     return methods;
