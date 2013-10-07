@@ -13,7 +13,7 @@ var jsPlugin = (function(){
         "location2"
     ];
 
-    var tableClass = 'responsive table';
+    var tableClass = 'table';
     var rowHeight = 39;
 //    tableClass += ' table-bordered';
     tableClass += ' table-condensed'; rowHeight = 33;
@@ -151,8 +151,17 @@ var jsPlugin = (function(){
         }
         var container = document.getElementsByClassName('container')[0];
         var tableContainer = document.createElement('div');
-        tableContainer.className = 'table-container';
-        tableContainer.appendChild(table);
+        var scrollableContainer = tableContainer.cloneNode(true);
+        var pinnedContainer = tableContainer.cloneNode(true);
+        tableContainer.className = 'table-container table-wrapper';
+        scrollableContainer.className = 'scrollable';
+        pinnedContainer.className = 'pinned';
+        var cloned = table.cloneNode(true);
+        table.className +=' responsive';
+        scrollableContainer.appendChild(table);
+        pinnedContainer.appendChild(cloned);
+        tableContainer.appendChild(scrollableContainer);
+        tableContainer.appendChild(pinnedContainer);
         container.appendChild(tableContainer);
         tableDone();
     };
