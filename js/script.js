@@ -13,7 +13,7 @@ var jsPlugin = (function(){
         "location2"
     ];
 
-    var tableClass = 'table';
+    var tableClass = 'responsive table';
     var rowHeight = 39;
 //    tableClass += ' table-bordered';
     tableClass += ' table-condensed'; rowHeight = 33;
