@@ -177,10 +177,14 @@ var jsPlugin = (function(){
                             console.log("fetching next item");
                             jsPlugin.nextPage();
                         }
+                    },
+                    transitionEnd: function(currentIndex, element){
+                        jsPlugin.updateHeader(element);
                     }
                 });
                 if(doneTables === 1){
                     nextPage();
+                    updateHeader(document.getElementsByClassName('table-container')[0]);
                 }
             }
             else {
@@ -204,15 +208,26 @@ var jsPlugin = (function(){
         }
     };
 
+    var updateHeader = function(element){
+        var copy = element.cloneNode(true);
+        var header = document.getElementsByClassName('table-header')[0];
+        header.innerHTML = '';
+        copy.removeAttribute('style');
+        copy.removeAttribute('data-index');
+        header.appendChild(copy);
+    };
+
     //=== Logic ===
     init();
 
     var dataTable = createTable();
     console.log("dataProvider === " + dataProvider);
     makeRequest(dataTable, dataProvider);
+    updateHeader(dataTable);
 
     var methods = {
-        nextPage : nextPage
+        nextPage : nextPage,
+        updateHeader : updateHeader
     };
 
     return methods;

@@ -6,7 +6,6 @@ table.responsive {
     position: absolute;
     left: 0;
     top: 0;
-    background: #fff;
     width: 35%;
     overflow: hidden;
     overflow-x: auto;
@@ -30,12 +29,6 @@ table.responsive {
     display: none;
 }
 
-div.table-wrapper {
-    /*position: relative;*/
-    /*margin-bottom: 20px;*/
-    /*overflow: hidden;*/
-    /*border-right: 1px solid #ccc;*/
-}
 div.table-wrapper div.scrollable {
     margin-left: 35%;
 }
