@@ -191,36 +191,10 @@ var jsPlugin = (function(){
         tableContainer.appendChild(scrollableContainer);
         tableContainer.appendChild(pinnedContainer);
         if(window.mySwipe !== undefined){
-            //TODO: let swipe.js figure this out
-            styleTable(container, tableContainer);
+            window.mySwipe.prepareForAddition(tableContainer);
         }
         container.appendChild(tableContainer);
         tableDone();
-    };
-
-    var styleTable = function(container, tableContainer){
-        var slides = window.mySwipe.getNumSlides();
-
-        container.style.width = (function(){
-            var cWidth = parseInt(container.style.width) / slides;
-            cWidth *= slides + 1;
-            return (cWidth.toString() + 'px');
-        }());
-
-        var tWidth = document.getElementById('slider').getBoundingClientRect().width
-        var style = tableContainer.style;
-        var speed = 0;
-        style.webkitTransitionDuration =
-            style.MozTransitionDuration =
-                style.msTransitionDuration =
-                    style.OTransitionDuration =
-                        style.transitionDuration = speed + 'ms';
-        style.webkitTransform = 'translate(' + tWidth + 'px,0)' + 'translateZ(0)';
-        style.msTransform =
-            style.MozTransform =
-                style.OTransform = 'translateX(' + tWidth + 'px)';
-        style.width = tWidth + 'px';
-        style.left = (slides * -tWidth) + 'px';
     };
 
     var tableDone = function(){

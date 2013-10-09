@@ -157,9 +157,15 @@ function Swipe(container, options) {
 
   }
 
-  function translate(index, dist, speed) {
+  function translate(index, dist, speed, direct) {
+    var slide;
+    if (direct){
+      slide = direct;
+    }
+    else{
+      slide = slides[index];
+    }
 
-    var slide = slides[index];
     var style = slide && slide.style;
 
     if (!style) return;
@@ -506,6 +512,19 @@ function Swipe(container, options) {
       
       // return total number of slides
       return length;
+    },
+    prepareForAddition: function(newElement) {
+
+      // style an addition to the slides
+      translate(null, width , 0, newElement);
+      newElement.style.width = width + 'px';
+      newElement.style.left = (length * -width) + 'px';
+
+      element.style.width = (function(){
+        var w = parseInt(element.style.width) / length;
+        w *= (length + 1);
+        return (w + 'px');
+      }());
     },
     kill: function() {
 
