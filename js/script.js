@@ -50,7 +50,6 @@ var jsPlugin = (function(){
 
         // Remove one rowHeight for the header;
         viewportH -= rowHeight;
-        viewportH -= rowHeight;
         pageSize = Math.floor(viewportH / rowHeight);
     }
 
@@ -222,11 +221,8 @@ var jsPlugin = (function(){
         }
     };
 
-    var nextPage = function(plusOne){
+    var nextPage = function(){
         var pos = window.mySwipe.getPos() + 1;
-        if(plusOne===true){
-            pos+=1;
-        }
 
         var table = createTable();
         if(sortColumn === undefined){
