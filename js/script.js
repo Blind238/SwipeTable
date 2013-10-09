@@ -53,41 +53,70 @@ var jsPlugin = (function(){
         pageSize = Math.floor(viewportH / rowHeight);
     }
 
-    var makeRequest = function (table, server, page, sortField, sortAsc){
-        console.log("Making request to "+ server+ ".");
+    var makeRequest = function (queries){
+        if(!queries.server){
+            console.log("No server provided to makeRequest, not making request");
+            return
+        }
+        console.log("Making request to "+ queries.server+ ".");
         var r = new XMLHttpRequest();
-        if (page === (null || undefined) && sortField === undefined && sortAsc === undefined){
-            r.open("GET", server + "?p=1&ps=" + pageSize, true);
-//            r.open("GET", server + "?p=2&ts=" + (+Date.now()), true);
-            r.onreadystatechange =  function(){
-                if(r.readyState !== 4 || r.status !== 200){
-                    console.log("Request went sour");
+        if(queries.timestamp){
+            if(queries.sortField || queries.sortAsc){
+                if(!queries.sortField || !queries.sortAsc){
+                    console.log("Missing sort parameter");
+                    return
+                }
+
+                if(queries.page){
+                    r.open("GET", queries.server + "?p=" + queries.page + "&ps=" + pageSize + "&ts=" + queries.timestamp + "sort[field]=" + queries.sortField + "&sort[asc]=" + queries.sortAsc, true);
+                    r.onreadystatechange =  function(){
+                        if(r.readyState !== 4 || r.status !== 200){
+                            console.log("Request went sour");
+                            return;
+                        }
+                        console.log("Request successful.");
+                        parseResponse(queries.table, r.responseText);
+                    };
+                }
+                else{
+                    r.open("GET", queries.server + "?ps=" + pageSize + "&ts=" + queries.timeStamp + "sort[field]=" + queries.sortField + "&sort[asc]=" + queries.sortAsc, true);
+                    r.onreadystatechange =  function(){
+                        if(r.readyState !== 4 || r.status !== 200){
+                            console.log("Request went sour");
+                            return;
+                        }
+                        console.log("Request successful.");
+                        parseResponse(queries.table, r.responseText);
+                    };
+                }
+            }
+            else{
+                if(!queries.page){
+                    console.log("Missing page, not according to spec.");
                     return;
                 }
-                console.log("Request successful.");
-                parseResponse(table, r.responseText);
-            };
+                // No sorting, must be page request
+                r.open("GET", queries.server + "?p=" + queries.page + "&ps=" + pageSize + "&ts=" + queries.timeStamp, true);
+                r.onreadystatechange =  function(){
+                    if(r.readyState !== 4 || r.status !== 200){
+                        console.log("Request went sour");
+                        return;
+                    }
+                    console.log("Request successful.");
+                    parseResponse(queries.table, r.responseText);
+                };
+            }
         }
-        else if(sortField !== undefined && sortAsc !== undefined){
-            r.open("GET", server + "?sort[field]=" + sortField + "&sort[asc]=" + sortAsc, true);
+        else{
+            // No timestamp, fresh request
+            r.open("GET", queries.server + "?&ps=" + pageSize, true);
             r.onreadystatechange =  function(){
                 if(r.readyState !== 4 || r.status !== 200){
                     console.log("Request went sour");
                     return;
                 }
                 console.log("Request successful.");
-                parseResponse(table, r.responseText);
-            };
-        }
-        else if(page !== (null || undefined)){
-            r.open("GET", server + "?p=" + page + "&ps=" + pageSize, true);
-            r.onreadystatechange =  function(){
-                if(r.readyState !== 4 || r.status !== 200){
-                    console.log("Request went sour");
-                    return;
-                }
-                console.log("Request successful.");
-                parseResponse(table, r.responseText);
+                parseResponse(queries.table, r.responseText);
             };
         }
         r.send(null);
@@ -226,10 +255,21 @@ var jsPlugin = (function(){
 
         var table = createTable();
         if(sortColumn === undefined){
-            makeRequest(table, dataProvider, pos + 1);
+            makeRequest({
+                table: table ,
+                server: dataProvider,
+                page: pos + 1,
+                timestamp: 10
+            });
         }
         else{
-            makeRequest(table, dataProvider, pos + 1, sortColumn, sortAscending);
+            makeRequest({
+                table: table,
+                server: dataProvider,
+                page: pos + 1,
+                sortField: sortColumn,
+                sortAsc: sortAscending
+            });
         }
     };
 
@@ -247,7 +287,10 @@ var jsPlugin = (function(){
 
     var dataTable = createTable();
     console.log("dataProvider === " + dataProvider);
-    makeRequest(dataTable, dataProvider);
+    makeRequest({
+        table: dataTable,
+        server: dataProvider
+    });
     updateHeader(dataTable);
 
     var methods = {
