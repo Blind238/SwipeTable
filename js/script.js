@@ -181,7 +181,7 @@ var SwipeTable = (function(){
         var tableContainer = document.createElement('div');
         var scrollableContainer = tableContainer.cloneNode(true);
         var pinnedContainer = tableContainer.cloneNode(true);
-        tableContainer.className = 'swipe-table-container table-wrapper';
+        tableContainer.className = 'swipe-table-table-container table-wrapper';
         scrollableContainer.className = 'scrollable';
         pinnedContainer.className = 'pinned';
         var cloned = table.cloneNode(true);
@@ -215,7 +215,7 @@ var SwipeTable = (function(){
                 });
                 if(doneTables === 1){
                     nextPage();
-                    updateHeader(document.getElementsByClassName('swipe-table-container')[0]);
+                    updateHeader(document.getElementsByClassName('swipe-table-table-container')[0]);
                 }
             }
             else {
