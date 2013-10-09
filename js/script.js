@@ -1,4 +1,4 @@
-var jsPlugin = (function(){
+var SwipeTable = (function(){
     "use strict";
 
     // Define keys that your table will use,
@@ -79,7 +79,7 @@ var jsPlugin = (function(){
                     };
                 }
                 else{
-                    r.open("GET", queries.server + "?ps=" + pageSize + "&ts=" + queries.timeStamp + "sort[field]=" + queries.sortField + "&sort[asc]=" + queries.sortAsc, true);
+                    r.open("GET", queries.server + "?ps=" + pageSize + "&ts=" + queries.timestamp + "sort[field]=" + queries.sortField + "&sort[asc]=" + queries.sortAsc, true);
                     r.onreadystatechange =  function(){
                         if(r.readyState !== 4 || r.status !== 200){
                             console.log("Request went sour");
@@ -96,7 +96,7 @@ var jsPlugin = (function(){
                     return;
                 }
                 // No sorting, must be page request
-                r.open("GET", queries.server + "?p=" + queries.page + "&ps=" + pageSize + "&ts=" + queries.timeStamp, true);
+                r.open("GET", queries.server + "?p=" + queries.page + "&ps=" + pageSize + "&ts=" + queries.timestamp, true);
                 r.onreadystatechange =  function(){
                     if(r.readyState !== 4 || r.status !== 200){
                         console.log("Request went sour");
@@ -177,11 +177,11 @@ var jsPlugin = (function(){
             tbody.appendChild(tr);
             i+=1;
         }
-        var container = document.getElementsByClassName('container')[0];
+        var container = document.getElementsByClassName('swipe-table-container')[0];
         var tableContainer = document.createElement('div');
         var scrollableContainer = tableContainer.cloneNode(true);
         var pinnedContainer = tableContainer.cloneNode(true);
-        tableContainer.className = 'table-container table-wrapper';
+        tableContainer.className = 'swipe-table-container table-wrapper';
         scrollableContainer.className = 'scrollable';
         pinnedContainer.className = 'pinned';
         var cloned = table.cloneNode(true);
@@ -206,16 +206,16 @@ var jsPlugin = (function(){
                     callback: function(currentIndex, element){
                         if (currentIndex === element.parentNode.childNodes.length - 1){
                             console.log("fetching next item");
-                            jsPlugin.nextPage();
+                            SwipeTable.nextPage();
                         }
                     },
                     transitionEnd: function(currentIndex, element){
-                        jsPlugin.updateHeader(element);
+                        SwipeTable.updateHeader(element);
                     }
                 });
                 if(doneTables === 1){
                     nextPage();
-                    updateHeader(document.getElementsByClassName('table-container')[0]);
+                    updateHeader(document.getElementsByClassName('swipe-table-container')[0]);
                 }
             }
             else {
@@ -249,7 +249,7 @@ var jsPlugin = (function(){
 
     var updateHeader = function(element){
         var copy = element.cloneNode(true);
-        var header = document.getElementsByClassName('table-header')[0];
+        var header = document.getElementsByClassName('swipe-table-header')[0];
         header.innerHTML = '';
         copy.removeAttribute('style');
         copy.removeAttribute('data-index');

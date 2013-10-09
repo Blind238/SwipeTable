@@ -30,7 +30,7 @@ body{
     /*display: inline-block;*/
 }
 
-.table-header{
+.swipe-table-header{
     position: absolute;
     top: 0;
     left: 0;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>js-plugin</title>
+    <title>SwipeTable</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/responsive-tables.css"/>
     <link rel="stylesheet" href="css/bootstrap-table.css"/>
@@ -10,13 +10,13 @@
 <body>
     <div class="controls" style='text-align:center;height: 33;'>
         <button onclick='mySwipe.prev()'>prev</button>
-        <button onclick="jsPlugin.nextPage()">new page</button>
+        <button onclick="SwipeTable.nextPage()">new page</button>
         <button onclick='mySwipe.next()'>next</button>
     </div>
     <div id="slider" class="swipe">
-        <div class="container swipe-wrap"></div>
+        <div class="swipe-table-container swipe-wrap"></div>
     </div>
-    <div class="table-header"></div>
+    <div class="swipe-table-header"></div>
     <script src="js/swipe.js"></script>
     <script src="js/script.js"></script>
 </body>
