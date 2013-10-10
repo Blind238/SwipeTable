@@ -254,10 +254,59 @@ var SwipeTable = (function(){
         copy.removeAttribute('style');
         copy.removeAttribute('data-index');
         header.appendChild(copy);
+
+        var scrollable = header.getElementsByClassName('scrollable')[0];
+        if (scrollable){
+            scrollable.onscroll = function(){
+                console.log("Scrolling is happening!");
+                SwipeTable.updateScroll.setPosition(this.scrollLeft);
+                SwipeTable.updateScroll.updateScrollables();
+            };
+
+            var pos = SwipeTable.updateScroll.getPosition();
+            if (pos !== undefined){
+                scrollable.scrollLeft = pos;
+                SwipeTable.updateScroll.updateScrollables();
+            }
+            else{
+                SwipeTable.updateScroll.setPosition(0);
+            }
+        }
+    };
+
+    var updateScrollFunc = function(){
+        var position;
+        console.log("Entered updateScroll");
+
+        var getPosition = function(){
+            console.log("Getting position " + position);
+            return position;
+        };
+
+        var setPosition = function(newPos){
+            console.log("Setting position " + newPos);
+            position = newPos;
+        };
+
+        var updateScrollables = function(){
+            console.log("Updating scrollables");
+            var targets = document.getElementsByClassName('swipe-table-container')[0].getElementsByClassName('scrollable');
+            var i = 0;
+            for(i;i<targets.length;i+=1){
+                targets[i].scrollLeft = position;
+            }
+        };
+
+        return {
+            getPosition : getPosition,
+            setPosition : setPosition,
+            updateScrollables : updateScrollables
+        }
     };
 
     //=== Logic ===
     init();
+    var updateScroll = updateScrollFunc();
 
     var dataTable = createTable();
     console.log("dataProvider === " + dataProvider);
@@ -269,7 +318,8 @@ var SwipeTable = (function(){
 
     var methods = {
         nextPage : nextPage,
-        updateHeader : updateHeader
+        updateHeader : updateHeader,
+        updateScroll : updateScroll
     };
 
     return methods;
