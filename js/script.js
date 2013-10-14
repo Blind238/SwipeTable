@@ -127,26 +127,39 @@ var SwipeTable = (function(){
         fillTable(table, JSON.parse(response));
     };
 
-    var createTable = function(){
+    var createTable = (function(){
         console.log("Creating Table.");
-        var i = 0;
-        var table = document.createElement("table");
-        table.className = tableClass;
-        var thead = document.createElement("thead");
-        var tr = document.createElement("tr");
+        var tableInstance;
+        return function(){
+            if(tableInstance){
+                console.log("Giving table instance");
+                totalTables += 1;
+                var copy = tableInstance.cloneNode(true);
+                return copy;
+            }
+            else{
+                console.log("Creating new Table");
+                var i = 0;
+                var table = document.createElement("table");
+                table.className = tableClass;
+                var thead = document.createElement("thead");
+                var tr = document.createElement("tr");
 
-        for (i; i < keys.length; i+=1){
-            var th = document.createElement("th");
-            th.appendChild(document.createTextNode(keys[i]));
-            tr.appendChild(th);
-        }
+                for (i; i < keys.length; i+=1){
+                    var th = document.createElement("th");
+                    th.appendChild(document.createTextNode(keys[i]));
+                    tr.appendChild(th);
+                }
 
-        thead.appendChild(tr);
-        table.appendChild(thead);
-        console.log("Table created.");
-        totalTables += 1;
-        return table;
-    };
+                thead.appendChild(tr);
+                table.appendChild(thead);
+                console.log("Table created.");
+                tableInstance = table.cloneNode(true);
+                totalTables += 1;
+                return table;
+            }
+        };
+    }());
 
     var fillTable = function(table, dataSet){
         console.log("Filling table.");
