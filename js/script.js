@@ -287,39 +287,32 @@ var SwipeTable = (function(){
         }
     };
 
-    var updateScrollFunc = function(){
+    var updateScroll = (function(){
         var position;
         console.log("Entered updateScroll");
 
-        var getPosition = function(){
-            console.log("Getting position " + position);
-            return position;
-        };
-
-        var setPosition = function(newPos){
-            console.log("Setting position " + newPos);
-            position = newPos;
-        };
-
-        var updateScrollables = function(){
-            console.log("Updating scrollables");
-            var targets = document.getElementsByClassName('swipe-table-container')[0].getElementsByClassName('scrollable');
-            var i = 0;
-            for(i;i<targets.length;i+=1){
-                targets[i].scrollLeft = position;
-            }
-        };
-
         return {
-            getPosition : getPosition,
-            setPosition : setPosition,
-            updateScrollables : updateScrollables
+            getPosition : function(){
+                console.log("Getting position " + position);
+                return position;
+            },
+            setPosition : function(newPos){
+                console.log("Setting position " + newPos);
+                position = newPos;
+            },
+            updateScrollables : function(){
+                console.log("Updating scrollables");
+                var targets = document.getElementsByClassName('swipe-table-container')[0].getElementsByClassName('scrollable');
+                var i = 0;
+                for(i;i<targets.length;i+=1){
+                    targets[i].scrollLeft = position;
+                }
+            }
         }
-    };
+    }());
 
     //=== Logic ===
     init();
-    var updateScroll = updateScrollFunc();
 
     var dataTable = createTable();
     console.log("dataProvider === " + dataProvider);
