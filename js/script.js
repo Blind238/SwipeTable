@@ -272,17 +272,17 @@ var SwipeTable = (function(){
         if (scrollable){
             scrollable.onscroll = function(){
                 console.log("Scrolling is happening!");
-                SwipeTable.setPosition(this.scrollLeft);
+                SwipeTable.setScrollPosition(this.scrollLeft);
                 SwipeTable.updateScrollables();
             };
 
-            var pos = SwipeTable.getPosition();
+            var pos = SwipeTable.getScrollPosition();
             if (pos !== undefined){
                 scrollable.scrollLeft = pos;
                 SwipeTable.updateScrollables();
             }
             else{
-                SwipeTable.setPosition(0);
+                SwipeTable.setScrollPosition(0);
             }
         }
     };
@@ -325,8 +325,8 @@ var SwipeTable = (function(){
     var methods = {
         nextPage : nextPage,
         updateHeader : updateHeader,
-        getPosition : updateScroll.getPosition,
-        setPosition : updateScroll.setPosition,
+        getScrollPosition : updateScroll.getPosition,
+        setScrollPosition : updateScroll.setPosition,
         updateScrollables : updateScroll.updateScrollables
     };
 
