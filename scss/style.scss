@@ -6,31 +6,19 @@ body{
     margin: 0;
 }
 
-.swipe {
+.swipe-table {
     overflow: hidden;
     visibility: hidden;
     position: relative;
 }
-.swipe-wrap {
+.st-wrap {
     overflow: hidden;
     position: relative;
 }
-.swipe-wrap > div {
+.st-wrap > div {
     float:left;
     width:100%;
     position: relative;
-}
-
-.container{
-    /*overflow-x: hidden;*/
-    /*overflow-y: hidden;*/
-    /*white-space: nowrap;*/
-}
-
-.table-container{
-    /*width: 100%;*/
-    /*height: 300px;*/
-    /*display: inline-block;*/
 }
 
 .swipe-table-header{
