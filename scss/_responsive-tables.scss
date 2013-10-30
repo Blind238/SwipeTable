@@ -1,8 +1,8 @@
-table.responsive {
+.st-scrollable {
     margin-bottom: 0;
 }
 
-.pinned {
+.st-pinned {
     position: absolute;
     left: 0;
     top: 0;
@@ -12,40 +12,37 @@ table.responsive {
     border-right: 1px solid #ccc;
     border-left: 1px solid #ccc;
 }
-.pinned table {
+.st-pinned table {
     border-right: none;
     border-left: none;
     width: 100%;
 }
-.pinned table th,
-.pinned table td {
+.st-pinned table th,
+.st-pinned table td {
     white-space: nowrap;
 }
-.pinned td:last-child {
+.st-pinned td:last-child {
     border-bottom: 0;
 }
-.pinned td:not(:first-child),
-.pinned th:not(:first-child){
+.st-pinned td:not(:first-child),
+.st-pinned th:not(:first-child){
     display: none;
 }
 
-div.table-wrapper div.scrollable {
+.st-scrollable {
     margin-left: 35%;
-}
-div.table-wrapper div.scrollable {
     overflow: auto;
     overflow-y: hidden;
 }
 
-table.responsive td,
-table.responsive th {
+.st-scrollable td,
+.st-scrollable th {
     position: relative;
     white-space: nowrap;
     overflow: hidden;
 }
-table.responsive th:first-child,
-table.responsive td:first-child,
-table.responsive td:first-child,
-table.responsive.pinned td {
+.st-scrollable th:first-child,
+.st-scrollable td:first-child,
+.st-scrollable td:first-child {
     display: none;
 }

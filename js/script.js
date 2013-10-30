@@ -230,15 +230,14 @@ var SwipeTable = (function(){
             tbody.appendChild(tr);
             i+=1;
         }
-        var container = document.getElementsByClassName('swipe-table-container')[0];
+        var container = document.getElementsByClassName('st-wrap')[0];
         var tableContainer = document.createElement('div');
         var scrollableContainer = tableContainer.cloneNode(true);
         var pinnedContainer = tableContainer.cloneNode(true);
-        tableContainer.className = 'swipe-table-table-container table-wrapper';
-        scrollableContainer.className = 'scrollable';
-        pinnedContainer.className = 'pinned';
+        tableContainer.className = 'st-table-wrap';
+        scrollableContainer.className = 'st-scrollable';
+        pinnedContainer.className = 'st-pinned';
         var cloned = table.cloneNode(true);
-        table.className +=' responsive';
         scrollableContainer.appendChild(table);
         pinnedContainer.appendChild(cloned);
         tableContainer.appendChild(scrollableContainer);
@@ -264,7 +263,7 @@ var SwipeTable = (function(){
         doneTables += 1;
         if (doneTables === totalTables){
             if(window.mySwipe === undefined){
-                window.mySwipe = Swipe(document.getElementById('slider'),{
+                window.mySwipe = Swipe(document.getElementsByClassName('swipe-table')[0],{
                     continuous:false,
                     callback: function(currentIndex, element){
                         if (currentIndex === element.parentNode.childNodes.length - 1){
@@ -278,7 +277,7 @@ var SwipeTable = (function(){
                 });
                 if(doneTables === 1){
                     nextPage();
-                    updateHeader(document.getElementsByClassName('swipe-table-table-container')[0]);
+                    updateHeader(document.getElementsByClassName('st-table-wrap')[0]);
                 }
             }
             else {
@@ -329,7 +328,7 @@ var SwipeTable = (function(){
         copy.removeAttribute('data-index');
         header.appendChild(copy);
 
-        var scrollable = header.getElementsByClassName('scrollable')[0];
+        var scrollable = header.getElementsByClassName('st-scrollable')[0];
         if (scrollable){
             scrollable.onscroll = function(){
                 console.log("Scrolling is happening!");
@@ -367,7 +366,7 @@ var SwipeTable = (function(){
             },
             updateScrollables : function(){
                 console.log("Updating scrollables");
-                var targets = document.getElementsByClassName('swipe-table-container')[0].getElementsByClassName('scrollable');
+                var targets = document.getElementsByClassName('st-wrap')[0].getElementsByClassName('st-scrollable');
                 var i = 0;
                 for(i;i<targets.length;i+=1){
                     targets[i].scrollLeft = position;
