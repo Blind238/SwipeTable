@@ -238,7 +238,6 @@ var SwipeTable = (function(){
         scrollableContainer.className = 'st-scrollable';
         pinnedContainer.className = 'st-pinned';
         var cloned = table.cloneNode(true);
-        table.className +=' responsive';
         scrollableContainer.appendChild(table);
         pinnedContainer.appendChild(cloned);
         tableContainer.appendChild(scrollableContainer);

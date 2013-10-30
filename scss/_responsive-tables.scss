@@ -1,4 +1,4 @@
-table.responsive {
+.st-scrollable {
     margin-bottom: 0;
 }
 
@@ -35,14 +35,14 @@ table.responsive {
     overflow-y: hidden;
 }
 
-table.responsive td,
-table.responsive th {
+.st-scrollable td,
+.st-scrollable th {
     position: relative;
     white-space: nowrap;
     overflow: hidden;
 }
-table.responsive th:first-child,
-table.responsive td:first-child,
-table.responsive td:first-child {
+.st-scrollable th:first-child,
+.st-scrollable td:first-child,
+.st-scrollable td:first-child {
     display: none;
 }
