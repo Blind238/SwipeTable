@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SwipeTable demo</title>
+    <link rel="stylesheet" href="./assets/normalize.css" />
+    <link rel="stylesheet" href="./assets/main.css" />
+    <link rel="stylesheet" href="./../dist/swipetable.css"/>
+    <style>
+      /* begin demo embedded styles */
+
+      /* end demo embedded styles */
+    </style>
+  </head>
+  <body>
+    <h1>SwipeTable demo</h1>
+
+    <!-- begin demo markup -->
+
+    <div class="controls" style='text-align:center;height: 33;'>
+      <button onclick='mySwipe.prev()'>prev</button>
+      <button onclick="SwipeTable.nextPage()">new page</button>
+      <button onclick='mySwipe.next()'>next</button>
+    </div>
+
+    <div class="swipe-table">
+        <div class="st-wrap"></div>
+    </div>
+
+    <div class="swipe-table-header"></div>
+
+    <!-- end demo markup -->
+
+    <p>Check out the fullscreen demo</p>
+
+    <p>See the <a href="http://blind238.github.io/SwipeTable">project homepage</a>.
+    <p>Check out the <a href="https://github.com/blind238/SwipeTable">project repo</a>.
+    <p>Copyright © 2013, Jeremy Granadillo. All rights reserved.</p>
+
+    <script src="./../dist/SwipeTable.js"></script>
+
+    <script>
+      /* begin demo script */
+
+      var n = new SwipeTable();
+      console.log(n);
+
+      /* end demo script */
+    </script>
+  </body>
+</html>

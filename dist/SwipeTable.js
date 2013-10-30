@@ -1,4 +1,12 @@
-var SwipeTable = (function(){
+(function(root, undefined) {
+
+  "use strict";
+
+
+/* SwipeTable main */
+
+// Base object.
+var SwipeTable = function(){
     "use strict";
 
     // Define keys that your table will use,
@@ -23,7 +31,7 @@ var SwipeTable = (function(){
 
     // RESTful provider URI
     // (relative or absolute)
-    var dataProvider = "api";
+    var dataProvider = "/api";
 
     //---------------------------------------------
     //== No more configuration beyond this point ==
@@ -395,4 +403,15 @@ var SwipeTable = (function(){
     };
 
     return methods;
-}());
+};
+
+
+// Version.
+SwipeTable.VERSION = '0.0.0';
+
+
+// Export to the root, which is probably `window`.
+root.SwipeTable = SwipeTable;
+
+
+}(this));
