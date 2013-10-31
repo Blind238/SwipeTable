@@ -60,14 +60,22 @@ module.exports = function(grunt) {
     watch: {
       css: {
         files: 'src/scss/*.scss',
-        tasks: ['sass']
+        tasks: ['sass'],
+        options: {
+          livereload: true
+        }
       },
       scripts: {
         files: 'src/javascript/*.js',
         tasks: ['concat']
       },
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'qunit']
+      jshint: {
+        files: ['<%= jshint.files %>'],
+        tasks: ['jshint', 'qunit'],
+        options: {
+          livereload: true
+        }
+      }
     }
 
   });
