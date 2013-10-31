@@ -2,7 +2,9 @@
 
 // Base object.
 var SwipeTable = function(){
+	/* jshint -W034 */
 	"use strict";
+	/* jshint +W034 */
 
 	// Define keys that your table will use,
 	// in the order you want them to be displayed.
@@ -49,18 +51,20 @@ var SwipeTable = function(){
 		// responsejs.com/labs/dimensions/
 		var matchMedia = window.matchMedia || window.msMatchMedia;
 		var viewportH = (function(win, docElem, mM) {
-			var client = docElem['clientHeight']
-				, inner = win['innerHeight'];
-			return ( mM && client < inner && true === mM('(min-height:' + inner + 'px)')['matches']
-				? win['innerHeight']
-				: docElem['clientHeight']
-				);
+			var client = docElem.clientHeight,
+			    inner = win.innerHeight;
+			if (mM && client < inner && true === mM('(min-height:' + inner + 'px)').matches){
+				return win.innerHeight;
+			}
+			else{
+				return docElem.clientHeight;
+			}
 		}(window, document.documentElement, matchMedia));
 
 		// Remove one rowHeight for the header;
 		viewportH -= rowHeight;
 		pageSize = Math.floor(viewportH / rowHeight);
-	}
+	};
 
 	/**
 	 * Takes an object that contains:
@@ -80,7 +84,7 @@ var SwipeTable = function(){
 	var makeRequest = function (queries){
 		if(!queries.server){
 			console.log("No server provided to makeRequest, not making request");
-			return
+			return;
 		}
 		console.log("Making request to "+ queries.server+ ".");
 		var r = new XMLHttpRequest();
@@ -88,7 +92,7 @@ var SwipeTable = function(){
 			if(queries.sortField || queries.sortAsc){
 				if(!queries.sortField || !queries.sortAsc){
 					console.log("Missing sort parameter");
-					return
+					return;
 				}
 
 				if(queries.page){
@@ -266,7 +270,8 @@ var SwipeTable = function(){
 		doneTables += 1;
 		if (doneTables === totalTables){
 			if(window.mySwipe === undefined){
-				window.mySwipe = Swipe(document.getElementsByClassName('swipe-table')[0],{
+				/* global Swipe */
+				window.mySwipe = new Swipe(document.getElementsByClassName('swipe-table')[0],{
 					continuous:false,
 					callback: function(currentIndex, element){
 						if (currentIndex === element.parentNode.childNodes.length - 1){
@@ -282,6 +287,7 @@ var SwipeTable = function(){
 					nextPage();
 					updateHeader(document.getElementsByClassName('st-table-wrap')[0]);
 				}
+				/* global -Swipe */
 			}
 			else {
 				window.mySwipe.setup();
@@ -375,7 +381,7 @@ var SwipeTable = function(){
 					targets[i].scrollLeft = position;
 				}
 			}
-		}
+		};
 	}());
 
 	//=== Logic ===
