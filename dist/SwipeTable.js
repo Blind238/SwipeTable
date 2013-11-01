@@ -1,15 +1,5 @@
-(function(root, undefined) {
-
-  "use strict";
-
-
-/* SwipeTable main */
-
-// Base object.
 var SwipeTable = function(){
-	/* jshint -W034 */
 	"use strict";
-	/* jshint +W034 */
 
 	// Define keys that your table will use,
 	// in the order you want them to be displayed.
@@ -410,14 +400,3 @@ var SwipeTable = function(){
 
 	return methods;
 };
-
-
-// Version.
-SwipeTable.VERSION = '0.0.0';
-
-
-// Export to the root, which is probably `window`.
-root.SwipeTable = SwipeTable;
-
-
-}(this));
