@@ -56,20 +56,16 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      css: {
+      scss: {
         files: 'src/scss/*.scss',
         tasks: ['sass'],
         options: {
           livereload: true
         }
       },
-      scripts: {
+      javascript: {
         files: 'src/javascript/*.js',
-        tasks: ['concat']
-      },
-      jshint: {
-        files: ['<%= jshint.files %>'],
-        tasks: ['jshint', 'qunit'],
+        tasks: ['concat', 'jshint'],
         options: {
           livereload: true
         }
@@ -86,6 +82,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   grunt.registerTask('test', ['jshint', 'qunit']);
+  grunt.registerTask('build', ['sass','concat', 'jshint', 'qunit', 'uglify']);
   grunt.registerTask('default', ['concat', 'jshint', 'qunit', 'uglify']);
 
 };
