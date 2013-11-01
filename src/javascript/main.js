@@ -326,7 +326,7 @@ var SwipeTable = function(){
 	 */
 	var updateHeader = function(element){
 		var copy = element.cloneNode(true);
-		var header = document.getElementsByClassName('swipe-table-header')[0];
+		var header = document.getElementsByClassName('st-header')[0];
 		header.innerHTML = '';
 		copy.removeAttribute('style');
 		copy.removeAttribute('data-index');

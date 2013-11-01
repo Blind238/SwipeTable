@@ -13,6 +13,7 @@ results/
 *.out
 *.pid
 *.gz
+*.map
 
 .idea
 *.sublime-*

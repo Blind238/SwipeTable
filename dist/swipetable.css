@@ -128,7 +128,7 @@ body {
   width: 100%;
   position: relative; }
 
-.swipe-table-header {
+.st-header {
   position: absolute;
   top: 0;
   left: 0;
