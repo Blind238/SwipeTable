@@ -1,17 +1,15 @@
-var SwipeTable = function(){
+var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	"use strict";
+
+	var dataProvider;
+	var keys;
+	var elementReference;
 
 	// Define keys that your table will use,
 	// in the order you want them to be displayed.
 	// First item is leftmost, last item is rightmost
 	//TODO: Fix above sentence
-	var keys = [
-		"id",
-		"time",
-		"time2",
-		"location",
-		"location2"
-	];
+	keys = tableKeys;
 
 	// Uncomment/comment last 2 lines for style
 	// and height preference
@@ -23,7 +21,9 @@ var SwipeTable = function(){
 
 	// RESTful provider URI
 	// (relative or absolute)
-	var dataProvider = "/api";
+	dataProvider = dataProviderUrl;
+
+	elementReference = elem;
 
 	//---------------------------------------------
 	//== No more configuration beyond this point ==
@@ -232,7 +232,7 @@ var SwipeTable = function(){
 			tbody.appendChild(tr);
 			i+=1;
 		}
-		var container = document.getElementsByClassName('st-wrap')[0];
+		var container = elementReference.getElementsByClassName('st-wrap')[0];
 		var tableContainer = document.createElement('div');
 		var scrollableContainer = tableContainer.cloneNode(true);
 		var pinnedContainer = tableContainer.cloneNode(true);
@@ -266,7 +266,7 @@ var SwipeTable = function(){
 		if (doneTables === totalTables){
 			if(window.mySwipe === undefined){
 				/* global Swipe */
-				window.mySwipe = new Swipe(document.getElementsByClassName('swipe-table')[0],{
+				window.mySwipe = new Swipe(elementReference,{
 					continuous:false,
 					callback: function(currentIndex, element){
 						if (currentIndex === element.parentNode.childNodes.length - 1){
@@ -326,7 +326,7 @@ var SwipeTable = function(){
 	 */
 	var updateHeader = function(element){
 		var copy = element.cloneNode(true);
-		var header = document.getElementsByClassName('st-header')[0];
+		var header = elementReference.getElementsByClassName('st-header')[0];
 		header.innerHTML = '';
 		copy.removeAttribute('style');
 		copy.removeAttribute('data-index');

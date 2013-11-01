@@ -42,7 +42,21 @@
     <script>
       /* begin demo script */
 
-      this.SwipeTable = new SwipeTable();
+      (function(root){
+
+        var restApiUrl = '/api';
+        var keys = [
+          "id", // this is the 'pinned' column
+          "time",
+          "time2",
+          "location",
+          "location2"
+        ];
+        var stElem = document.getElementsByClassName('swipe-table')[0];
+
+        root.SwipeTable = new SwipeTable(restApiUrl, keys, stElem);
+
+      }(this));
 
       /* end demo script */
     </script>
