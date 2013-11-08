@@ -85,7 +85,6 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 			return;
 		}
 		console.log("Making request to "+ queries.server+ ".");
-		var r = new XMLHttpRequest();
 		if(queries.timestamp){
 			if(queries.sortField || queries.sortAsc){
 				if(!queries.sortField || !queries.sortAsc){
@@ -94,26 +93,23 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 				}
 
 				if(queries.page){
-					r.open("GET", queries.server + "?p=" + queries.page + "&ps=" + pageSize + "&ts=" + queries.timestamp + "sort[field]=" + queries.sortField + "&sort[asc]=" + queries.sortAsc, true);
-					r.onreadystatechange =  function(){
-						if(r.readyState !== 4 || r.status !== 200){
-							console.log("Request went sour");
-							return;
-						}
-						console.log("Request successful.");
-						parseResponse(queries.table, r.responseText);
-					};
+					executeRequest("GET",
+					                queries.server +
+					                  "?p=" + queries.page +
+					                  "&ps=" + pageSize +
+					                  "&ts=" + queries.timestamp +
+					                  "&sort[field]=" + queries.sortField +
+					                  "&sort[asc]=" + queries.sortAsc,
+					                queries.table);
 				}
 				else{
-					r.open("GET", queries.server + "?ps=" + pageSize + "&ts=" + queries.timestamp + "sort[field]=" + queries.sortField + "&sort[asc]=" + queries.sortAsc, true);
-					r.onreadystatechange =  function(){
-						if(r.readyState !== 4 || r.status !== 200){
-							console.log("Request went sour");
-							return;
-						}
-						console.log("Request successful.");
-						parseResponse(queries.table, r.responseText);
-					};
+					executeRequest("GET",
+					                queries.server +
+					                  "?ps=" + pageSize +
+					                  "&ts=" + queries.timestamp +
+					                  "&sort[field]=" + queries.sortField +
+					                  "&sort[asc]=" + queries.sortAsc,
+					                queries.table);
 				}
 			}
 			else{
@@ -122,29 +118,40 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 					return;
 				}
 				// No sorting, must be page request
-				r.open("GET", queries.server + "?p=" + queries.page + "&ps=" + pageSize + "&ts=" + queries.timestamp, true);
-				r.onreadystatechange =  function(){
-					if(r.readyState !== 4 || r.status !== 200){
-						console.log("Request went sour");
-						return;
-					}
-					console.log("Request successful.");
-					parseResponse(queries.table, r.responseText);
-				};
+				executeRequest("GET",
+				                queries.server +
+				                  "?p=" + queries.page +
+				                  "&ps=" + pageSize +
+				                  "&ts=" + queries.timestamp,
+				                queries.table);
 			}
 		}
 		else{
 			// No timestamp, fresh request
-			r.open("GET", queries.server + "?&ps=" + pageSize, true);
-			r.onreadystatechange =  function(){
-				if(r.readyState !== 4 || r.status !== 200){
-					console.log("Request went sour");
-					return;
-				}
-				console.log("Request successful.");
-				parseResponse(queries.table, r.responseText);
-			};
+			executeRequest("GET",
+			                queries.server +
+			                  "?ps=" + pageSize,
+			                queries.table);
 		}
+	};
+
+	/**
+	 * Executes a request with method, parameters and the table give to next function
+	 * @param  {String} method Valid HTTP method eg. GET, POST
+	 * @param  {String} url Complete url string (server + parameters)
+	 * @param  {Object} table Partial table object
+	 */
+	var executeRequest = function(method, url, table){
+		var r = new XMLHttpRequest();
+		r.open(method, url, true);
+		r.onreadystatechange = function(){
+			if(r.readyState !== 4 || r.status !== 200){
+				console.log("Request went sour");
+				return;
+			}
+			console.log("Request successful.");
+			parseResponse(table, r.responseText);
+		};
 		r.send(null);
 	};
 
