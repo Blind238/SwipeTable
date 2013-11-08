@@ -1,40 +1,43 @@
 var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	"use strict";
+	/**
+	 * Config
+	 *
+	 * Use the following format to call SwipeTable
+	 *----------------------------------------
+	 *	(function(root){
+	 *
+   *		var restApiUrl = '/api';
+   *		var keys = [
+   *		    "id", // this is the 'pinned' column
+   *		    "time",
+   *		    "time2",
+   *		    "location",
+   *		    "location2"
+   *		];
+   *		var stElem = document.getElementsByClassName('swipe-table')[0];
+	 *
+   *		root.SwipeTable = new SwipeTable(restApiUrl, keys, stElem);
+	 *
+   *	}(this));
+	 *----------------------------------------
+	 */
+	
+	//=== Variables ===
+	var dataProvider     = dataProviderUrl;
+	var keys             = tableKeys;
+	var elementReference = elem;
 
-	var dataProvider;
-	var keys;
-	var elementReference;
-
-	// Define keys that your table will use,
-	// in the order you want them to be displayed.
-	// First item is leftmost, last item is rightmost
-	//TODO: Fix above sentence
-	keys = tableKeys;
-
-	// Uncomment/comment last 2 lines for style
-	// and height preference
+	//TODO: configure table class height via call or test
 	var tableClass = 'table';
 	var rowHeight = 39;
-//    tableClass += ' table-bordered';
 	tableClass += ' table-condensed'; rowHeight = 33;
 
-
-	// RESTful provider URI
-	// (relative or absolute)
-	dataProvider = dataProviderUrl;
-
-	elementReference = elem;
-
-	//---------------------------------------------
-	//== No more configuration beyond this point ==
-	//
-	//=== Variables ===
-	//Initialize other variables
-	var doneTables = 0;
-	var totalTables = 0;
-	var pageSize = 1;
-	var sortColumn;
+	var doneTables    = 0;
+	var totalTables   = 0;
+	var pageSize      = 1;
 	var sortAscending = true;
+	var sortColumn;
 
 	//=== Functions ===
 
