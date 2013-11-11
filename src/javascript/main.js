@@ -347,19 +347,21 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 
 		var scrollable = header.getElementsByClassName('st-scrollable')[0];
 		if (scrollable){
+			var doSetScrollPosition = updateScroll.setPosition.bind(this);
+			var doUpdateScrollables = updateScroll.updateScrollables.bind(this);
 			scrollable.onscroll = function(){
 				console.log("Scrolling is happening!");
-				SwipeTable.setScrollPosition(this.scrollLeft);
-				SwipeTable.updateScrollables();
+				doSetScrollPosition(this.scrollLeft);
+				doUpdateScrollables();
 			};
 
-			var pos = SwipeTable.getScrollPosition();
+			var pos = updateScroll.getPosition();
 			if (pos !== undefined){
 				scrollable.scrollLeft = pos;
-				SwipeTable.updateScrollables();
+				updateScroll.updateScrollables();
 			}
 			else{
-				SwipeTable.setScrollPosition(0);
+				updateScroll.setPosition(0);
 			}
 		}
 	};
@@ -383,7 +385,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 			},
 			updateScrollables : function(){
 				console.log("Updating scrollables");
-				var targets = document.getElementsByClassName('st-wrap')[0].getElementsByClassName('st-scrollable');
+				var targets = elementReference.getElementsByClassName('st-wrap')[0].getElementsByClassName('st-scrollable');
 				var i = 0;
 				for(i;i<targets.length;i+=1){
 					targets[i].scrollLeft = position;
