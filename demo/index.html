@@ -10,16 +10,32 @@
 
       /* end demo embedded styles */
     </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
     <h1>SwipeTable demo</h1>
 
     <!-- begin demo markup -->
 
-    <div class="controls" style='text-align:center;height: 33;'>
-      <button onclick='mySwipe.prev()'>prev</button>
-      <button onclick="SwipeTable.nextPage()">new page</button>
-      <button onclick='mySwipe.next()'>next</button>
+    <div class="controls">
+      <div>
+        <button onclick='mySwipeTable.prev()'>prev</button>
+        <button onclick="mySwipeTable.nextPage()">new page</button>
+        <button onclick='mySwipeTable.next()'>next</button>
+      </div>
+    </div>
+
+    <div class="swipe-table">
+      <div class="st-wrap"></div>
+      <div class="st-header"></div>
+    </div>
+
+    <div class="controls">
+      <div>
+        <button onclick='mySwipeTable2.prev()'>prev</button>
+        <button onclick="mySwipeTable2.nextPage()">new page</button>
+        <button onclick='mySwipeTable2.next()'>next</button>
+      </div>
     </div>
 
     <div class="swipe-table">
@@ -52,9 +68,11 @@
           "location",
           "location2"
         ];
-        var stElem = document.getElementsByClassName('swipe-table')[0];
+        var stElems = document.getElementsByClassName('swipe-table');
 
-        root.mySwipeTable = new SwipeTable(restApiUrl, keys, stElem);
+        root.mySwipeTable = new SwipeTable(restApiUrl, keys, stElems[0]);
+
+        root.mySwipeTable2 = new SwipeTable(restApiUrl, keys, stElems[1]);
 
       }(this));
 
