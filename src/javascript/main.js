@@ -392,6 +392,21 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 		};
 	}());
 
+	var swipeFunc = {
+		next : function(){
+			if (swipeReference !== undefined)
+			{
+				swipeReference.next();
+			}
+		},
+		prev : function(){
+			if (swipeReference !== undefined)
+			{
+				swipeReference.prev();
+			}
+		}
+	};
+
 	//=== Logic ===
 	init();
 
@@ -408,7 +423,9 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 		updateHeader : updateHeader,
 		getScrollPosition : updateScroll.getPosition,
 		setScrollPosition : updateScroll.setPosition,
-		updateScrollables : updateScroll.updateScrollables
+		updateScrollables : updateScroll.updateScrollables,
+		next : swipeFunc.next,
+		prev : swipeFunc.prev
 	};
 
 	return methods;
