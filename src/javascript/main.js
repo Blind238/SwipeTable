@@ -27,6 +27,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	var dataProvider     = dataProviderUrl;
 	var keys             = tableKeys;
 	var elementReference = elem;
+	var swipeReference;
 
 	//TODO: configure table class height via call or test
 	var tableClass = 'table';
@@ -254,8 +255,8 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 		pinnedContainer.appendChild(cloned);
 		tableContainer.appendChild(scrollableContainer);
 		tableContainer.appendChild(pinnedContainer);
-		if(window.mySwipe !== undefined){
-			window.mySwipe.prepareForAddition(tableContainer);
+		if(swipeReference !== undefined){
+			swipeReference.prepareForAddition(tableContainer);
 		}
 		container.appendChild(tableContainer);
 		tableDone();
@@ -274,11 +275,11 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	var tableDone = function(){
 		doneTables += 1;
 		if (doneTables === totalTables){
-			if(window.mySwipe === undefined){
+			if(swipeReference === undefined){
 				/* global Swipe */
 				var doNextPage = nextPage.bind(this);
 				var doUpdateHeader = updateHeader.bind(this);
-				window.mySwipe = new Swipe(elementReference,{
+				swipeReference = new Swipe(elementReference,{
 					continuous:false,
 					callback: function(currentIndex, element){
 						if (currentIndex === element.parentNode.childNodes.length - 1){
@@ -297,7 +298,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 				/* global -Swipe */
 			}
 			else {
-				window.mySwipe.setup();
+				swipeReference.setup();
 			}
 		}
 	};
@@ -308,7 +309,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 * Calls createTable(), passes it to makeRequest.
 	 */
 	var nextPage = function(){
-		var pos = window.mySwipe.getPos() + 1;
+		var pos = swipeReference.getPos() + 1;
 
 		var table = createTable();
 		if(sortColumn === undefined){
