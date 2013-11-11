@@ -432,3 +432,4 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 
 	return methods;
 };
+/* exported SwipeTable */
