@@ -421,6 +421,18 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	updateHeader(dataTable);
 
 	var methods = {
+		// Expose test object to test inner functions
+		test : {
+			init : init,
+			makeRequest : makeRequest,
+			executeRequest :executeRequest,
+			parseResponse : parseResponse,
+			createTable : createTable,
+			fillTable : fillTable,
+			tableDone : tableDone,
+			updateHeader : updateHeader,
+			updateScroll: updateScroll
+		},
 		nextPage : nextPage,
 		updateHeader : updateHeader,
 		getScrollPosition : updateScroll.getPosition,
