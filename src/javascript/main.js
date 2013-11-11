@@ -276,16 +276,18 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 		if (doneTables === totalTables){
 			if(window.mySwipe === undefined){
 				/* global Swipe */
+				var doNextPage = nextPage.bind(this);
+				var doUpdateHeader = updateHeader.bind(this);
 				window.mySwipe = new Swipe(elementReference,{
 					continuous:false,
 					callback: function(currentIndex, element){
 						if (currentIndex === element.parentNode.childNodes.length - 1){
 							console.log("fetching next item");
-							SwipeTable.nextPage();
+							doNextPage();
 						}
 					},
 					transitionEnd: function(currentIndex, element){
-						SwipeTable.updateHeader(element);
+						doUpdateHeader(element);
 					}
 				});
 				if(doneTables === 1){
