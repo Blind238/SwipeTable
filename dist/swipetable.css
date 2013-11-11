@@ -141,8 +141,13 @@ body {
   visibility: visible; }
 
 .controls {
-  position: fixed;
-  z-index: 1;
-  top: 33px; }
+  position: relative;
+  z-index: 1; }
+  .controls div {
+    position: absolute;
+    top: 37px;
+    left: 30px; }
+  .controls button {
+    float: left; }
 
 /*# sourceMappingURL=swipetable.css.map */

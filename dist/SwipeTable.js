@@ -27,6 +27,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	var dataProvider     = dataProviderUrl;
 	var keys             = tableKeys;
 	var elementReference = elem;
+	var swipeReference;
 
 	//TODO: configure table class height via call or test
 	var tableClass = 'table';
@@ -254,8 +255,8 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 		pinnedContainer.appendChild(cloned);
 		tableContainer.appendChild(scrollableContainer);
 		tableContainer.appendChild(pinnedContainer);
-		if(window.mySwipe !== undefined){
-			window.mySwipe.prepareForAddition(tableContainer);
+		if(swipeReference !== undefined){
+			swipeReference.prepareForAddition(tableContainer);
 		}
 		container.appendChild(tableContainer);
 		tableDone();
@@ -274,18 +275,20 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	var tableDone = function(){
 		doneTables += 1;
 		if (doneTables === totalTables){
-			if(window.mySwipe === undefined){
+			if(swipeReference === undefined){
 				/* global Swipe */
-				window.mySwipe = new Swipe(elementReference,{
+				var doNextPage = nextPage.bind(this);
+				var doUpdateHeader = updateHeader.bind(this);
+				swipeReference = new Swipe(elementReference,{
 					continuous:false,
 					callback: function(currentIndex, element){
 						if (currentIndex === element.parentNode.childNodes.length - 1){
 							console.log("fetching next item");
-							SwipeTable.nextPage();
+							doNextPage();
 						}
 					},
 					transitionEnd: function(currentIndex, element){
-						SwipeTable.updateHeader(element);
+						doUpdateHeader(element);
 					}
 				});
 				if(doneTables === 1){
@@ -295,7 +298,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 				/* global -Swipe */
 			}
 			else {
-				window.mySwipe.setup();
+				swipeReference.setup();
 			}
 		}
 	};
@@ -306,7 +309,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 * Calls createTable(), passes it to makeRequest.
 	 */
 	var nextPage = function(){
-		var pos = window.mySwipe.getPos() + 1;
+		var pos = swipeReference.getPos() + 1;
 
 		var table = createTable();
 		if(sortColumn === undefined){
@@ -344,19 +347,21 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 
 		var scrollable = header.getElementsByClassName('st-scrollable')[0];
 		if (scrollable){
+			var doSetScrollPosition = updateScroll.setPosition.bind(this);
+			var doUpdateScrollables = updateScroll.updateScrollables.bind(this);
 			scrollable.onscroll = function(){
 				console.log("Scrolling is happening!");
-				SwipeTable.setScrollPosition(this.scrollLeft);
-				SwipeTable.updateScrollables();
+				doSetScrollPosition(this.scrollLeft);
+				doUpdateScrollables();
 			};
 
-			var pos = SwipeTable.getScrollPosition();
+			var pos = updateScroll.getPosition();
 			if (pos !== undefined){
 				scrollable.scrollLeft = pos;
-				SwipeTable.updateScrollables();
+				updateScroll.updateScrollables();
 			}
 			else{
-				SwipeTable.setScrollPosition(0);
+				updateScroll.setPosition(0);
 			}
 		}
 	};
@@ -380,7 +385,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 			},
 			updateScrollables : function(){
 				console.log("Updating scrollables");
-				var targets = document.getElementsByClassName('st-wrap')[0].getElementsByClassName('st-scrollable');
+				var targets = elementReference.getElementsByClassName('st-wrap')[0].getElementsByClassName('st-scrollable');
 				var i = 0;
 				for(i;i<targets.length;i+=1){
 					targets[i].scrollLeft = position;
@@ -388,6 +393,21 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 			}
 		};
 	}());
+
+	var swipeFunc = {
+		next : function(){
+			if (swipeReference !== undefined)
+			{
+				swipeReference.next();
+			}
+		},
+		prev : function(){
+			if (swipeReference !== undefined)
+			{
+				swipeReference.prev();
+			}
+		}
+	};
 
 	//=== Logic ===
 	init();
@@ -405,8 +425,11 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 		updateHeader : updateHeader,
 		getScrollPosition : updateScroll.getPosition,
 		setScrollPosition : updateScroll.setPosition,
-		updateScrollables : updateScroll.updateScrollables
+		updateScrollables : updateScroll.updateScrollables,
+		next : swipeFunc.next,
+		prev : swipeFunc.prev
 	};
 
 	return methods;
 };
+/* exported SwipeTable */
