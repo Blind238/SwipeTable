@@ -82,17 +82,18 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 */
 	var makeRequest = function (queries){
 		if(!queries.server){
-			console.log("No server provided to makeRequest, not making request");
+			// No server provided, nothing to do here.
 			return;
 		}
-		console.log("Making request to "+ queries.server+ ".");
 		if(queries.timestamp){
+
+			// If there's a sort parameter, both must be given
 			if(queries.sortField || queries.sortAsc){
 				if(!queries.sortField || !queries.sortAsc){
-					console.log("Missing sort parameter");
 					return;
 				}
 
+				// If there's a page given, it's a sorted page request
 				if(queries.page){
 					executeRequest("GET",
 					                queries.server +
@@ -103,6 +104,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 					                  "&sort[asc]=" + queries.sortAsc,
 					                queries.table);
 				}
+				// Else, it's a sorted and timestamped first page equest
 				else{
 					executeRequest("GET",
 					                queries.server +
@@ -113,12 +115,14 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 					                queries.table);
 				}
 			}
+			// So we have timestamp, but no sorting
 			else{
+				// We need a page parameter to continue
 				if(!queries.page){
-					console.log("Missing page, not according to spec.");
+					// Spec requires a page, nothing more to do here
 					return;
 				}
-				// No sorting, must be page request
+				// Make a page request
 				executeRequest("GET",
 				                queries.server +
 				                  "?p=" + queries.page +
@@ -128,7 +132,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 			}
 		}
 		else{
-			// No timestamp, fresh request
+			// No timestamp given, it's a fresh page request
 			executeRequest("GET",
 			                queries.server +
 			                  "?ps=" + pageSize,
@@ -147,10 +151,8 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 		r.open(method, url, true);
 		r.onreadystatechange = function(){
 			if(r.readyState !== 4 || r.status !== 200){
-				console.log("Request went sour");
 				return;
 			}
-			console.log("Request successful.");
 			parseResponse(table, r.responseText);
 		};
 		r.send(null);
@@ -160,7 +162,6 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	//  Calls fillTable with table and JSON.parse
 	//TODO: Work parseResponse into appropriate function
 	var parseResponse = function(table, response){
-		console.log("Parsing response.");
 		fillTable(table, JSON.parse(response));
 	};
 
@@ -172,24 +173,25 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 * Returns a partial table.
 	 */
 	var createTable = (function(){
-		console.log("Creating Table.");
 		var tableInstance;
+
 		return function(){
+
 			if(tableInstance){
-				console.log("Giving table instance");
 				totalTables += 1;
 				var copy = tableInstance.cloneNode(true);
 				return copy;
 			}
 			else{
-				console.log("Creating new Table");
-				var i = 0;
+				var i;
+				var l;
+				
 				var table = document.createElement("table");
 				table.className = tableClass;
 				var thead = document.createElement("thead");
 				var tr = document.createElement("tr");
 
-				for (i; i < keys.length; i+=1){
+				for (i = 0, l = keys.length; i < l; i+=1){
 					var th = document.createElement("th");
 					th.appendChild(document.createTextNode(keys[i]));
 					tr.appendChild(th);
@@ -197,7 +199,6 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 
 				thead.appendChild(tr);
 				table.appendChild(thead);
-				console.log("Table created.");
 				tableInstance = table.cloneNode(true);
 				totalTables += 1;
 				return table;
@@ -215,9 +216,8 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 * @param dataSet Parsed data to fill with
 	 */
 	var fillTable = function(table, dataSet){
-		console.log("Filling table.");
-
 		var numRows = dataSet.length;
+
 		if(numRows === 0){
 			return;
 		}
@@ -232,8 +232,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 			var colCells = Object.keys(col).length;
 
 			var j = 0;
-			while (j < colCells)
-			{
+			while (j < colCells){
 				var td = document.createElement("td");
 				td.appendChild(document.createTextNode(col[keys[j]]));
 				tr.appendChild(td);
@@ -243,21 +242,33 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 			tbody.appendChild(tr);
 			i+=1;
 		}
-		var container = elementReference.getElementsByClassName('st-wrap')[0];
+		// Grab the parent container
+		var container = elementReference.querySelector('.st-wrap');
+		// Make a table container to hold the split elements
 		var tableContainer = document.createElement('div');
+		// Cloning an element is faster than creating more
 		var scrollableContainer = tableContainer.cloneNode(true);
 		var pinnedContainer = tableContainer.cloneNode(true);
+
+		// Add classes to the containers
 		tableContainer.className = 'st-table-wrap';
 		scrollableContainer.className = 'st-scrollable';
 		pinnedContainer.className = 'st-pinned';
+
+		// Clone data and attach both to st-pinned and st-scrollable
 		var cloned = table.cloneNode(true);
 		scrollableContainer.appendChild(table);
 		pinnedContainer.appendChild(cloned);
+
+		// Attach to parent
 		tableContainer.appendChild(scrollableContainer);
 		tableContainer.appendChild(pinnedContainer);
+
+		// Prestyle the table so everything fits nicely when insterted
 		if(swipeReference !== undefined){
 			swipeReference.prepareForAddition(tableContainer);
 		}
+
 		container.appendChild(tableContainer);
 		tableDone();
 	};
@@ -274,16 +285,17 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 */
 	var tableDone = function(){
 		doneTables += 1;
+
 		if (doneTables === totalTables){
 			if(swipeReference === undefined){
-				/* global Swipe */
 				var doNextPage = nextPage.bind(this);
 				var doUpdateHeader = updateHeader.bind(this);
+
+				/* global Swipe */
 				swipeReference = new Swipe(elementReference,{
 					continuous:false,
 					callback: function(currentIndex, element){
 						if (currentIndex === element.parentNode.childNodes.length - 1){
-							console.log("fetching next item");
 							doNextPage();
 						}
 					},
@@ -291,11 +303,12 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 						doUpdateHeader(element);
 					}
 				});
+				/* global -Swipe */
+
 				if(doneTables === 1){
 					nextPage();
 					updateHeader(document.getElementsByClassName('st-table-wrap')[0]);
 				}
-				/* global -Swipe */
 			}
 			else {
 				swipeReference.setup();
@@ -304,7 +317,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	};
 
 	/**
-	 * Gets position from mySwipe.
+	 * Gets position from Swipe.
 	 *
 	 * Calls createTable(), passes it to makeRequest.
 	 */
@@ -335,24 +348,24 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 * Copy the given element,
 	 * paste it in the header container and attach onscroll listener,
 	 * execute updateScroll calls when appropriate to update positions.
+	 * TODO: Make this 1 dynamic element
 	 * @param element
 	 */
 	var updateHeader = function(element){
 		var copy = element.cloneNode(true);
-		var header = elementReference.getElementsByClassName('st-header')[0];
+		var header = elementReference.querySelector('.st-header');
 		header.innerHTML = '';
 		copy.removeAttribute('style');
 		copy.removeAttribute('data-index');
 		header.appendChild(copy);
 
-		var scrollable = header.getElementsByClassName('st-scrollable')[0];
+		var scrollable = header.querySelector('.st-scrollable');
 		if (scrollable){
 			var doSetScrollPosition = updateScroll.setPosition.bind(this);
-			var doUpdateScrollables = updateScroll.updateScrollables.bind(this);
+			var doUpdate = updateScroll.update.bind(this);
 			scrollable.onscroll = function(){
-				console.log("Scrolling is happening!");
 				doSetScrollPosition(this.scrollLeft);
-				doUpdateScrollables();
+				doUpdate();
 			};
 
 			var pos = updateScroll.getPosition();
@@ -372,24 +385,40 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 */
 	var updateScroll = (function(){
 		var position;
-		console.log("Entered updateScroll");
+		var frameRequested = false;
 
 		return {
 			getPosition : function(){
-				console.log("Getting position " + position);
 				return position;
 			},
 			setPosition : function(newPos){
-				console.log("Setting position " + newPos);
 				position = newPos;
 			},
+			update : function(){
+				if(!frameRequested){
+					var doUpdateScrollables = updateScroll.updateScrollables.bind(this);
+					var doFrameRequested = updateScroll.frameRequested.bind(this);
+					frameRequested = true;
+
+					window.requestAnimationFrame(function(){
+						doUpdateScrollables();
+						doFrameRequested(false);
+					});
+				}
+			},
 			updateScrollables : function(){
-				console.log("Updating scrollables");
-				var targets = elementReference.getElementsByClassName('st-wrap')[0].getElementsByClassName('st-scrollable');
+				var targets = elementReference.querySelector('.st-wrap').getElementsByClassName('st-scrollable');
+				
 				var i = 0;
 				for(i;i<targets.length;i+=1){
 					targets[i].scrollLeft = position;
 				}
+			},
+			frameRequested : function(isRequested){
+				if (typeof isRequested !== 'undefined' && typeof isRequested === 'boolean'){
+					frameRequested = isRequested;
+				}
+				return frameRequested;
 			}
 		};
 	}());
@@ -413,7 +442,6 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	init();
 
 	var dataTable = createTable();
-	console.log("dataProvider === " + dataProvider);
 	makeRequest({
 		table: dataTable,
 		server: dataProvider
@@ -421,6 +449,18 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	updateHeader(dataTable);
 
 	var methods = {
+		// Expose test object to test inner functions
+		test : {
+			init : init,
+			makeRequest : makeRequest,
+			executeRequest :executeRequest,
+			parseResponse : parseResponse,
+			createTable : createTable,
+			fillTable : fillTable,
+			tableDone : tableDone,
+			updateHeader : updateHeader,
+			updateScroll: updateScroll
+		},
 		nextPage : nextPage,
 		updateHeader : updateHeader,
 		getScrollPosition : updateScroll.getPosition,
