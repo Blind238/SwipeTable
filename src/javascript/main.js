@@ -348,11 +348,11 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 		var scrollable = header.getElementsByClassName('st-scrollable')[0];
 		if (scrollable){
 			var doSetScrollPosition = updateScroll.setPosition.bind(this);
-			var doUpdateScrollables = updateScroll.updateScrollables.bind(this);
+			var doUpdate = updateScroll.update.bind(this);
 			scrollable.onscroll = function(){
 				console.log("Scrolling is happening!");
 				doSetScrollPosition(this.scrollLeft);
-				doUpdateScrollables();
+				doUpdate();
 			};
 
 			var pos = updateScroll.getPosition();
@@ -372,6 +372,7 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 */
 	var updateScroll = (function(){
 		var position;
+		var frameRequested = false;
 		console.log("Entered updateScroll");
 
 		return {
@@ -383,6 +384,17 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 				console.log("Setting position " + newPos);
 				position = newPos;
 			},
+			update : function(){
+				if(!frameRequested){
+					var doUpdateScrollables = updateScroll.updateScrollables.bind(this);
+					var doFrameRequested = updateScroll.frameRequested.bind(this);
+					frameRequested = true;
+					window.requestAnimationFrame(function(){
+						doUpdateScrollables();
+						doFrameRequested(false);
+					});
+				}
+			},
 			updateScrollables : function(){
 				console.log("Updating scrollables");
 				var targets = elementReference.getElementsByClassName('st-wrap')[0].getElementsByClassName('st-scrollable');
@@ -390,6 +402,12 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 				for(i;i<targets.length;i+=1){
 					targets[i].scrollLeft = position;
 				}
+			},
+			frameRequested : function(isRequested){
+				if (typeof isRequested !== 'undefined' && typeof isRequested === 'boolean'){
+					frameRequested = isRequested;
+				}
+				return frameRequested;
 			}
 		};
 	}());
