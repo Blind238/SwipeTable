@@ -70,6 +70,10 @@ module.exports = function(grunt) {
           livereload: true
         }
       }
+    },
+
+    nodestatic: {
+      usesDefaults: {}
     }
 
   });
@@ -80,7 +84,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-nodestatic');
 
+  grunt.registerTask('server', ['nodestatic','watch']);
   grunt.registerTask('test', ['jshint', 'qunit']);
   grunt.registerTask('build', ['sass','concat', 'jshint', 'qunit', 'uglify']);
   grunt.registerTask('default', ['concat', 'jshint', 'qunit', 'uglify']);
