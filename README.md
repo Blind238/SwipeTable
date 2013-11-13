@@ -10,11 +10,12 @@ See the [project homepage](http://swipetable.blind238.com).
 
 ## Installation
 
-Using Bower:
+<!-- Using Bower:
 
     bower install SwipeTable
 
-Or grab the [source](https://github.com/blind238/SwipeTable/dist/SwipeTable.js) ([minified](https://github.com/blind238/SwipeTable/dist/SwipeTable.min.js)).
+Or -->
+Grab the [source](https://github.com/blind238/SwipeTable/dist/SwipeTable.js) ([minified](https://github.com/blind238/SwipeTable/dist/SwipeTable.min.js)).
 
 ## Usage
 
@@ -49,7 +50,7 @@ Load the script just before the `</body>` closing tag, then use the following to
 
         }(this));
     </script>
-For advanced usage, see the documentation.
+<!-- For advanced usage, see the documentation. -->
 
 ## Documentation
 
