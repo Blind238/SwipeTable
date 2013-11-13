@@ -86,9 +86,18 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-nodestatic');
 
-  grunt.registerTask('server', ['nodestatic','watch']);
-  grunt.registerTask('test', ['jshint', 'qunit']);
-  grunt.registerTask('build', ['sass','concat', 'jshint', 'qunit', 'uglify']);
-  grunt.registerTask('default', ['concat', 'jshint', 'qunit', 'uglify']);
+  grunt.registerTask('server',  'Hosts project on port 8080,\n' +
+                                'watches /src files and concats, lints\n' +
+                                'and triggers LiveReload if enabled in your browser.',
+                                    ['nodestatic','watch']);
+
+  grunt.registerTask('test',    'Run jshint and qunit tests.',
+                                    ['jshint', 'qunit']);
+
+  grunt.registerTask('build',   'Compiles, concatinates and minifies scss and javascript.',
+                                    ['sass','concat', 'jshint', 'qunit', 'uglify']);
+  
+  grunt.registerTask('default', 'Compiles, concatinates and minifies javascript',
+                                    ['concat', 'jshint', 'qunit', 'uglify']);
 
 };
