@@ -1,11 +1,12 @@
 {
   "name": "SwipeTable",
-  "version": "0.0.0",
-  "main": "dist/SwipeTable.min.js",
+  "version": "0.0.1",
+  "main": ["dist/SwipeTable.min.js", "dist/swipe.js"],
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
+    "src",
     "test"
   ],
   "dependencies": {}

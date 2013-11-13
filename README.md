@@ -54,7 +54,7 @@ Load the script just before the `</body>` closing tag, then use the following to
 
 ## Documentation
 
-Start with `docs/MAIN.md`.
+SOON.
 
 ## Contributing
 
@@ -112,7 +112,11 @@ Given a version number MAJOR.MINOR.PATCH, increment the:
 
 Additional labels for pre-release and build metadata are available as extensions to the MAJOR.MINOR.PATCH format.
 
+## Version History
+
+* 0.0.1: First versioned release.
+
 ## License
 
-Copyright © 2013, Jeremy Granadillo. All rights reserved.  
+Copyright © 2013, Jeremy Granadillo. Undecided open source license(MIT, GPL), for now: All rights reserved.  
 Swipe Copyright © 2013, Brad Birdsall. MIT License.
