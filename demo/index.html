@@ -69,10 +69,13 @@
           "location2"
         ];
         var stElems = document.getElementsByClassName('swipe-table');
+        var options = {
+          fullscreen: false
+        };
 
-        root.mySwipeTable = new SwipeTable(restApiUrl, keys, stElems[0]);
+        root.mySwipeTable = new SwipeTable(restApiUrl, keys, stElems[0], options);
 
-        root.mySwipeTable2 = new SwipeTable(restApiUrl, keys, stElems[1]);
+        root.mySwipeTable2 = new SwipeTable(restApiUrl, keys, stElems[1], options);
 
       }(this));
 

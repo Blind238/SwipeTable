@@ -1,4 +1,4 @@
-var SwipeTable = function(dataProviderUrl, tableKeys, elem){
+var SwipeTable = function(dataProviderUrl, tableKeys, elem, options){
 	"use strict";
 	/**
 	 * Config
@@ -24,21 +24,47 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 */
 	
 	//=== Variables ===
-	var dataProvider     = dataProviderUrl;
-	var keys             = tableKeys;
-	var elementReference = elem;
+	// Check and store parameters
+	var dataProvider;
+	var keys;
+	var elementReference;
+
+	if(typeof dataProviderUrl === 'string'){
+		dataProvider = dataProviderUrl;
+	}
+	else{
+		throw new TypeError('First parameter is not a string');
+	}
+
+	if(tableKeys instanceof Array){
+		keys = tableKeys;
+	}
+	else{
+		throw new TypeError('Second parameter is not an array');
+	}
+
+	//TODO: Check element type in different browsers
+	//Chrome: 'object'
+	//Firefox:
+	//IE:
+	elementReference = elem;
+
 	var swipeReference;
 
-	//TODO: configure table class height via call or test
-	var tableClass = 'table';
-	var rowHeight = 39;
-	tableClass += ' table-condensed'; rowHeight = 33;
-
+	var tableClass    = 'table';
+	tableClass += ' table-condensed';
 	var doneTables    = 0;
 	var totalTables   = 0;
 	var pageSize      = 1;
 	var sortAscending = true;
 	var sortColumn;
+
+	options = options || {};
+
+	if(typeof options.fullscreen !== 'boolean'){
+		// Use default
+		options.fullscreen = true;
+	}
 
 	//=== Functions ===
 
@@ -47,6 +73,21 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 	 * pageSize(num of rows) based on rowHeight
 	 */
 	var init = function(){
+		var tableHeight;
+		var rowHeight;
+
+		if(options.fullscreen){
+			tableHeight = viewportHeight();
+		}
+
+		rowHeight = testRowHeight();
+
+		// Remove one rowHeight for the header;
+		tableHeight -= rowHeight;
+		pageSize = Math.floor(tableHeight / rowHeight);
+	};
+
+	var viewportHeight = function(){
 		// responsejs.com/labs/dimensions/
 		var matchMedia = window.matchMedia || window.msMatchMedia;
 		var viewportH = (function(win, docElem, mM) {
@@ -60,9 +101,32 @@ var SwipeTable = function(dataProviderUrl, tableKeys, elem){
 			}
 		}(window, document.documentElement, matchMedia));
 
-		// Remove one rowHeight for the header;
-		viewportH -= rowHeight;
-		pageSize = Math.floor(viewportH / rowHeight);
+		return viewportH;
+	};
+
+	var testRowHeight = function(){
+		var height;
+		var table = document.createElement('table');
+		var tBody = document.createElement('tbody');
+		var row = document.createElement('tr');
+		var data = document.createElement('td');
+		var text = document.createTextNode('text');
+
+		var stWrap = elementReference.querySelector('.st-wrap');
+		
+		table.className = tableClass;
+		table.style.visibility = 'hidden';
+
+		data.appendChild(text);
+		row.appendChild(data);
+		tBody.appendChild(row);
+		table.appendChild(tBody);
+		stWrap.appendChild(table);
+
+		height = row.getBoundingClientRect().height;
+
+		stWrap.innerHTML = '';
+		return height;
 	};
 
 	/**

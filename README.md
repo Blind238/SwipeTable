@@ -41,8 +41,11 @@ Load the script just before the `</body>` closing tag, then use the following to
                 "location2"
             ];
             var stElem = document.getElementsByClassName('swipe-table')[0];
+            var options = {
+                fullscreen: true //default
+            };
 
-            root.SwipeTable = new SwipeTable(restApiUrl, keys, stElem);
+            root.SwipeTable = new SwipeTable(restApiUrl, keys, stElem, options);
 
         }(this));
     </script>
