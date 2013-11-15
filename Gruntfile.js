@@ -32,7 +32,7 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      files: ['dist/SwipeTable.js'],
+      files: ['src/javascript/main.js'],
       options: {
         globals: {
           console: true,
@@ -74,6 +74,23 @@ module.exports = function(grunt) {
 
     nodestatic: {
       usesDefaults: {}
+    },
+
+    browserify: {
+      all: {
+        src: 'src/javascript/main.js',
+        dest: 'dist/<%= pkg.name.replace(".js", "") %>.js',
+        options: {
+          transform: ['debowerify','deamdify'],
+          shim: {
+            Swipe: {
+              path: 'dist/swipe.js',
+              exports: 'Swipe'
+            }
+          },
+          standalone: 'SwipeTable'
+        }
+      }
     }
 
   });
@@ -85,6 +102,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-nodestatic');
+  grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('server',  'Hosts project on port 8080,\n' +
                                 'watches /src files and concats, lints\n' +
@@ -98,6 +116,6 @@ module.exports = function(grunt) {
                                     ['sass','concat', 'jshint', 'qunit', 'uglify']);
   
   grunt.registerTask('default', 'Compiles, concatinates and minifies javascript',
-                                    ['concat', 'jshint', 'qunit', 'uglify']);
+                                    ['browserify', 'jshint', 'qunit', 'uglify']);
 
 };

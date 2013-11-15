@@ -1,4 +1,7 @@
-var SwipeTable = function(dataProviderUrl, tableKeys, elem, options){
+var when = require('when');
+var Swipe = require('Swipe');
+
+module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	"use strict";
 	/**
 	 * Config

@@ -1,7 +1,10 @@
 {
   "name": "SwipeTable",
   "version": "0.0.1",
-  "main": ["dist/SwipeTable.min.js", "dist/swipe.js"],
+  "main": [
+    "dist/SwipeTable.min.js",
+    "dist/swipe.js"
+  ],
   "ignore": [
     "**/.*",
     "node_modules",
@@ -9,5 +12,8 @@
     "src",
     "test"
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "when": "~2.6.0"
+  }
 }

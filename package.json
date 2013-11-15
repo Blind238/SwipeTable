@@ -20,6 +20,10 @@
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-qunit": "~0.3.0",
     "grunt-contrib-sass": "~0.5.0",
-    "grunt-nodestatic": "~0.1.2"
+    "grunt-nodestatic": "~0.1.2",
+    "deamdify": "~0.1.1",
+    "debowerify": "~0.3.0",
+    "browserify": "~2.35.2",
+    "grunt-browserify": "~1.2.11"
   }
 }
