@@ -84,7 +84,7 @@ module.exports = function(grunt) {
           transform: ['debowerify','deamdify'],
           shim: {
             Swipe: {
-              path: 'dist/swipe.js',
+              path: 'lib/swipe.js',
               exports: 'Swipe'
             }
           },
