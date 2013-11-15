@@ -82,6 +82,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 		if(options.fullscreen){
 			tableHeight = viewportHeight();
 		}
+		else{
+			tableHeight = parseInt(elementReference.getBoundingClientRect().height, 10);
+		}
 
 		rowHeight = testRowHeight();
 
