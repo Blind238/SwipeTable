@@ -116,6 +116,6 @@ module.exports = function(grunt) {
                                     ['sass','concat', 'jshint', 'qunit', 'uglify']);
   
   grunt.registerTask('default', 'Compiles, concatinates and minifies javascript',
-                                    ['browserify', 'jshint', 'qunit', 'uglify']);
+                                    ['jshint', 'browserify', 'qunit', 'uglify']);
 
 };
