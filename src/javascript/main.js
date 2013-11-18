@@ -63,6 +63,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	var pageSize      = 1;
 	var sortAscending = true;
 	var sortColumn;
+	var timestamp;
 
 	options = options || {};
 
@@ -315,7 +316,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	 * @param dataSet Parsed data to fill with
 	 */
 	var fillTable = function(table, dataSet){
-		var numRows = dataSet.length;
+		timestamp = dataSet.timestamp;
+		var numRows = dataSet.data.length;
 
 		if(numRows === 0){
 			return;
@@ -326,7 +328,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
 		var i = 0;
 		while (i < numRows){
-			var col = dataSet[i];
+			var col = dataSet.data[i];
 			var tr = document.createElement("tr");
 			var colCells = Object.keys(col).length;
 
