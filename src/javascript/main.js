@@ -53,6 +53,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	elementReference = elem;
 
 	var swipeReference;
+	var deferredContainer = {};
+	deferredContainer.deferred = when.defer();
 
 	var tableClass    = 'table';
 	tableClass += ' table-condensed';
@@ -78,6 +80,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	var init = function(){
 		var tableHeight;
 		var rowHeight;
+		var dataDeferred = when.defer();
+		var dataTable = createTable();
+		var container;
 
 		if(options.fullscreen){
 			tableHeight = viewportHeight();
@@ -91,6 +96,29 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 		// Remove one rowHeight for the header;
 		tableHeight -= rowHeight;
 		pageSize = Math.floor(tableHeight / rowHeight);
+
+		makeRequest(
+			dataProvider,
+			{},
+			dataDeferred.resolver);
+
+		container = elementReference.querySelector('.st-wrap');
+
+		var tablePromise = dataDeferred.promise.then(
+			function(value){
+				return fillTable(dataTable, value);
+			}
+		);
+
+		tablePromise.then(
+			function(value){
+				container.appendChild(value);
+				tableDone();
+			}
+		);
+
+		updateHeader(dataTable);
+
 	};
 
 	var viewportHeight = function(){
@@ -132,6 +160,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 		height = row.getBoundingClientRect().height;
 
 		stWrap.innerHTML = '';
+		
 		return height;
 	};
 
@@ -150,8 +179,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	 * and gives results + table to parseResponse.
 	 * @param {Object}queries Object containing quieries
 	 */
-	var makeRequest = function (queries){
-		if(!queries.server){
+	var makeRequest = function (server, queries, resolver){
+		if(typeof server !== 'string'){
 			// No server provided, nothing to do here.
 			return;
 		}
@@ -166,23 +195,23 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 				// If there's a page given, it's a sorted page request
 				if(queries.page){
 					executeRequest("GET",
-					                queries.server +
+					                server +
 					                  "?p=" + queries.page +
 					                  "&ps=" + pageSize +
 					                  "&ts=" + queries.timestamp +
 					                  "&sort[field]=" + queries.sortField +
 					                  "&sort[asc]=" + queries.sortAsc,
-					                queries.table);
+					                resolver);
 				}
 				// Else, it's a sorted and timestamped first page equest
 				else{
 					executeRequest("GET",
-					                queries.server +
+					                server +
 					                  "?ps=" + pageSize +
 					                  "&ts=" + queries.timestamp +
 					                  "&sort[field]=" + queries.sortField +
 					                  "&sort[asc]=" + queries.sortAsc,
-					                queries.table);
+					                resolver);
 				}
 			}
 			// So we have timestamp, but no sorting
@@ -194,19 +223,19 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 				}
 				// Make a page request
 				executeRequest("GET",
-				                queries.server +
+				                server +
 				                  "?p=" + queries.page +
 				                  "&ps=" + pageSize +
 				                  "&ts=" + queries.timestamp,
-				                queries.table);
+				                resolver);
 			}
 		}
 		else{
 			// No timestamp given, it's a fresh page request
 			executeRequest("GET",
-			                queries.server +
+			                server +
 			                  "?ps=" + pageSize,
-			                queries.table);
+			                resolver);
 		}
 	};
 
@@ -216,14 +245,14 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	 * @param  {String} url Complete url string (server + parameters)
 	 * @param  {Object} table Partial table object
 	 */
-	var executeRequest = function(method, url, table){
+	var executeRequest = function(method, url, resolver){
 		var r = new XMLHttpRequest();
 		r.open(method, url, true);
 		r.onreadystatechange = function(){
 			if(r.readyState !== 4 || r.status !== 200){
 				return;
 			}
-			parseResponse(table, r.responseText);
+			parseResponse(r.responseText, resolver);
 		};
 		r.send(null);
 	};
@@ -231,8 +260,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	// parseResponse(table, response)
 	//  Calls fillTable with table and JSON.parse
 	//TODO: Work parseResponse into appropriate function
-	var parseResponse = function(table, response){
-		fillTable(table, JSON.parse(response));
+	var parseResponse = function(response, resolver){
+		resolver.resolve(JSON.parse(response));
 	};
 
 	/**
@@ -312,8 +341,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 			tbody.appendChild(tr);
 			i+=1;
 		}
-		// Grab the parent container
-		var container = elementReference.querySelector('.st-wrap');
+		
 		// Make a table container to hold the split elements
 		var tableContainer = document.createElement('div');
 		// Cloning an element is faster than creating more
@@ -339,8 +367,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 			swipeReference.prepareForAddition(tableContainer);
 		}
 
-		container.appendChild(tableContainer);
-		tableDone();
+		return when.resolve(tableContainer);
 	};
 
 	/**
@@ -360,6 +387,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 			if(swipeReference === undefined){
 				var doNextPage = nextPage.bind(this);
 				var doUpdateHeader = updateHeader.bind(this);
+				var doResolveTheResolver = resolveTheResolver.bind(this);
 
 				/* global Swipe */
 				swipeReference = new Swipe(elementReference,{
@@ -370,6 +398,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 						}
 					},
 					transitionEnd: function(currentIndex, element){
+						doResolveTheResolver();
 						doUpdateHeader(element);
 					}
 				});
@@ -377,6 +406,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
 				if(doneTables === 1){
 					nextPage();
+					deferredContainer.deferred.resolver.resolve();
 					updateHeader(document.getElementsByClassName('st-table-wrap')[0]);
 				}
 			}
@@ -386,6 +416,10 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 		}
 	};
 
+	var resolveTheResolver = function(){
+		deferredContainer.deferred.resolver.resolve();
+	};
+
 	/**
 	 * Gets position from Swipe.
 	 *
@@ -393,25 +427,50 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	 */
 	var nextPage = function(){
 		var pos = swipeReference.getPos() + 1;
+		var dataDeferred = when.defer();
+		var table;
+		var container;
+		deferredContainer.deferred = when.defer();
 
-		var table = createTable();
 		if(sortColumn === undefined){
-			makeRequest({
-				table: table ,
-				server: dataProvider,
-				page: pos + 1,
-				timestamp: 10
-			});
+			makeRequest(
+				dataProvider,
+				{
+					page: pos + 1,
+					timestamp: timestamp,
+				},
+				dataDeferred.resolver
+			);
 		}
 		else{
-			makeRequest({
-				table: table,
-				server: dataProvider,
-				page: pos + 1,
-				sortField: sortColumn,
-				sortAsc: sortAscending
-			});
+			makeRequest(
+				dataProvider,
+				{
+					page: pos + 1,
+					sortField: sortColumn,
+					sortAsc: sortAscending
+				},
+				dataDeferred.resolver
+			);
 		}
+
+		table = createTable();
+		container = elementReference.querySelector('.st-wrap');
+
+		var tablePromise = dataDeferred.promise.then(
+			function(value){
+				return fillTable(table, value);
+			}
+		);
+
+		when.all([tablePromise, deferredContainer.deferred.promise])
+		.then(
+			function(values){
+				container.appendChild(values[0]);
+				tableDone();
+			}
+		);
+		
 	};
 
 	/**
@@ -424,9 +483,10 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	var updateHeader = function(element){
 		var copy = element.cloneNode(true);
 		var header = elementReference.querySelector('.st-header');
-		header.innerHTML = '';
+		
 		copy.removeAttribute('style');
 		copy.removeAttribute('data-index');
+		header.innerHTML = '';
 		header.appendChild(copy);
 
 		var scrollable = header.querySelector('.st-scrollable');
@@ -510,13 +570,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
 	//=== Logic ===
 	init();
-
-	var dataTable = createTable();
-	makeRequest({
-		table: dataTable,
-		server: dataProvider
-	});
-	updateHeader(dataTable);
 
 	var methods = {
 		// Expose test object to test inner functions
