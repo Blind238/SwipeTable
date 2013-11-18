@@ -61,6 +61,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	var doneTables    = 0;
 	var totalTables   = 0;
 	var pageSize      = 1;
+	var pageAmount;
 	var sortAscending = true;
 	var sortColumn;
 	var timestamp;
@@ -317,6 +318,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	 */
 	var fillTable = function(table, dataSet){
 		timestamp = dataSet.timestamp;
+		pageAmount = dataSet.pages;
 		var numRows = dataSet.data.length;
 
 		if(numRows === 0){
