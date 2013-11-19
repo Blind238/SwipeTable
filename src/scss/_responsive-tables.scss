@@ -1,12 +1,7 @@
-.st-scrollable {
-	margin-bottom: 0;
-}
-
 .st-pinned {
 	position: absolute;
 	left: 0;
 	top: 0;
-	width: 35%;
 	overflow: hidden;
 	overflow-x: auto;
 	border-right: 1px solid #ccc;
@@ -30,7 +25,7 @@
 }
 
 .st-scrollable {
-	margin-left: 35%;
+	margin-bottom: 0;
 	overflow: auto;
 	overflow-y: hidden;
 }
@@ -45,4 +40,16 @@
 .st-scrollable td:first-child,
 .st-scrollable td:first-child {
 	display: none;
+}
+
+@for $i from 2 through 7
+{
+	.swipe-table.st-#{$i*5}{
+	 	.st-pinned{
+			width: 5% * $i;
+		}
+		.st-scrollable{
+			margin-left: 5% * $i;
+		}
+	}
 }
