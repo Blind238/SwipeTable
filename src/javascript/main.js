@@ -63,6 +63,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	var totalTables   = 0;
 	var pageSize      = 1;
 	var pageAmount;
+	var headerHeight  = 50;
 	var sortAscending = true;
 	var sortColumn;
 	var timestamp;
@@ -82,7 +83,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	 */
 	var init = function(){
 		var tableHeight;
-		var rowHeight;
+		var rowHeights;
 		var dataDeferred = when.defer();
 		var dataTable = createTable();
 		var container;
@@ -98,11 +99,17 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 			tableHeight = parseInt(elementReference.getBoundingClientRect().height, 10);
 		}
 
-		rowHeight = testRowHeight();
+		rowHeights = testRowHeights();
 
-		// Remove one rowHeight for the header;
-		tableHeight -= rowHeight;
-		pageSize = Math.floor(tableHeight / rowHeight);
+		// Add margin for proper spacing of elements
+		stWrap.style.marginTop = headerHeight - rowHeights.header + 'px';
+
+		// Remove height for the Header
+		tableHeight -= headerHeight;
+
+		//TODO: Remove height for the Controls
+
+		pageSize = Math.floor(tableHeight / rowHeights.body);
 
 		makeRequest(
 			dataProvider,
@@ -151,30 +158,51 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 		return viewportH;
 	};
 
-	var testRowHeight = function(){
-		var height;
+	var testRowHeights = function(){
+		var headHeight;
+		var bodyHeight;
+		var totalHeight;
 		var table = document.createElement('table');
+		var tHead = document.createElement('thead');
 		var tBody = document.createElement('tbody');
-		var row = document.createElement('tr');
-		var data = document.createElement('td');
-		var text = document.createTextNode('text');
+		var row   = document.createElement('tr');
+		var row2  = document.createElement('tr');
+		var head  = document.createElement('th');
+		var data  = document.createElement('td');
+		var text  = document.createTextNode('text');
+		var text2 = document.createTextNode('text');
 
 		var stWrap = elementReference.querySelector('.st-wrap');
 		
 		table.className = tableClass;
 		table.style.visibility = 'hidden';
 
-		data.appendChild(text);
-		row.appendChild(data);
-		tBody.appendChild(row);
+		head.appendChild(text);
+		row.appendChild(head);
+		tHead.appendChild(row);
+		table.appendChild(tHead);
+
+		data.appendChild(text2);
+		row2.appendChild(data);
+		tBody.appendChild(row2);
 		table.appendChild(tBody);
+
 		stWrap.appendChild(table);
 
-		height = row.getBoundingClientRect().height;
+		headHeight = row.getBoundingClientRect().height;
 
+		bodyHeight = row2.getBoundingClientRect().height;
+
+		totalHeight = table.getBoundingClientRect().height;
+		//TODO: Determine effects of borders on table size
+		//
 		stWrap.innerHTML = '';
 		
-		return height;
+		return {
+			header : headHeight,
+			body: bodyHeight,
+			total: totalHeight 
+		};
 	};
 
 	var createHeader = function(){
