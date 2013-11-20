@@ -65,7 +65,7 @@ module.exports = function(grunt) {
       },
       javascript: {
         files: 'src/javascript/*.js',
-        tasks: ['concat', 'jshint'],
+        tasks: ['jshint', 'browserify'],
         options: {
           livereload: true
         }
@@ -110,12 +110,12 @@ module.exports = function(grunt) {
                                     ['nodestatic','watch']);
 
   grunt.registerTask('test',    'Run jshint and qunit tests.',
-                                    ['jshint', 'qunit']);
+                                    ['jshint', 'browserify', 'qunit']);
 
-  grunt.registerTask('build',   'Compiles, concatinates and minifies scss and javascript.',
-                                    ['sass','concat', 'jshint', 'qunit', 'uglify']);
+  grunt.registerTask('build',   'Compiles and minifies scss and javascript.',
+                                    ['sass', 'jshint', 'browserify', 'qunit', 'uglify']);
   
-  grunt.registerTask('default', 'Compiles, concatinates and minifies javascript',
+  grunt.registerTask('default', 'Compiles and minifies javascript',
                                     ['jshint', 'browserify', 'qunit', 'uglify']);
 
 };

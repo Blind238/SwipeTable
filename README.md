@@ -84,8 +84,8 @@ Clone the repo, navigate to the directory, then `npm install` to install depende
                     watches /src files and concats, lints
                     and triggers LiveReload if enabled in your browser.
               test  Run jshint and qunit tests.
-             build  Compiles, concatinates and minifies scss and javascript.
-           default  Compiles, concatinates and minifies javascript
+             build  Compiles and minifies scss and javascript.
+           default  Compiles and minifies javascript
 
 So if you want to run the server to preview changes: `grunt server`, then in a browser go to `http://localhost:8080`.
 
