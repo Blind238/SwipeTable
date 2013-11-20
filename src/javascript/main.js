@@ -51,6 +51,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	//Firefox:
 	//IE:
 	elementReference = elem;
+	var currentIndexElement;
 
 	var swipeReference;
 	var deferredContainer = {};
@@ -86,6 +87,10 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 		var dataTable = createTable();
 		var container;
 
+		var stWrap = document.createElement("div");
+		stWrap.className = "st-wrap";
+		elementReference.appendChild(stWrap);
+
 		if(options.fullscreen){
 			tableHeight = viewportHeight();
 		}
@@ -119,7 +124,13 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 			}
 		);
 
-		updateHeader(dataTable);
+		createHeader();
+
+		var doUpdateHeader = updateHeader.bind(this);
+
+		window.addEventListener('resize', function(){
+			doUpdateHeader();
+		});
 
 	};
 
@@ -164,6 +175,42 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 		stWrap.innerHTML = '';
 		
 		return height;
+	};
+
+	var createHeader = function(){
+		var i;
+		var l;
+
+		var header = document.createElement('div');
+		header.className = 'st-header';
+
+		var headerScrollableContainer = document.createElement("div");
+		headerScrollableContainer.className = 'st-scrollable';
+
+		for (i = 1, l = keys.length; i < l; i+=1){
+			var headerDiv = document.createElement("div");
+			headerDiv.appendChild(document.createTextNode(keys[i]));
+			headerScrollableContainer.appendChild(headerDiv);
+		}
+
+		var headerPinned = document.createElement("div");
+		headerPinned.appendChild(document.createTextNode(keys[0]));
+		headerPinned.className = 'st-pinned';
+
+		header.appendChild(headerScrollableContainer);
+		header.appendChild(headerPinned);
+		elementReference.appendChild(header);
+
+		var doSetScrollPosition = updateScroll.setPosition.bind(this);
+		var doUpdate = updateScroll.update.bind(this);
+		
+		headerScrollableContainer.addEventListener('scroll', function(){
+			doSetScrollPosition(this.scrollLeft);
+			doUpdate();
+		});
+
+		updateScroll.setPosition(0);
+
 	};
 
 	/**
@@ -478,39 +525,34 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 	};
 
 	/**
-	 * Copy the given element,
-	 * paste it in the header container and attach onscroll listener,
-	 * execute updateScroll calls when appropriate to update positions.
-	 * TODO: Make this 1 dynamic element
-	 * @param element
+	 * Read widths of given element and adjust header spacing
+	 * @param  {Object} element Element to read from
 	 */
 	var updateHeader = function(element){
-		var copy = element.cloneNode(true);
-		var header = elementReference.querySelector('.st-header');
-		
-		copy.removeAttribute('style');
-		copy.removeAttribute('data-index');
-		header.innerHTML = '';
-		header.appendChild(copy);
+		var i;
 
-		var scrollable = header.querySelector('.st-scrollable');
-		if (scrollable){
-			var doSetScrollPosition = updateScroll.setPosition.bind(this);
-			var doUpdate = updateScroll.update.bind(this);
-			scrollable.onscroll = function(){
-				doSetScrollPosition(this.scrollLeft);
-				doUpdate();
-			};
-
-			var pos = updateScroll.getPosition();
-			if (pos !== undefined){
-				scrollable.scrollLeft = pos;
-				updateScroll.updateScrollables();
-			}
-			else{
-				updateScroll.setPosition(0);
-			}
+		if (element){
+			// Store element so we can reference on window.resize
+			currentIndexElement = element;
 		}
+
+		// Select the first row of the element
+		var tableRow = currentIndexElement.querySelector(".st-scrollable tr");
+		var l = tableRow.children.length;
+		var cellWidths = [];
+
+		for (i=1; i < l; i+=1){
+			var w = tableRow.children[i].getBoundingClientRect().width;
+			w = parseInt(w, 10);
+			cellWidths.push(w);
+		}
+
+		var scrollContainer = elementReference.querySelector('.st-header .st-scrollable');
+		
+		cellWidths.forEach(function(value, index){
+			scrollContainer.children[index].style.width = value + 'px';
+		});
+
 	};
 
 	/**
