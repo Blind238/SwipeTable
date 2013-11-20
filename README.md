@@ -24,31 +24,29 @@ Usage is as follows:
 Place this HTML snippet where you want the table:
 
     <div class="swipe-table">
-        <div class="st-wrap"></div>
-        <div class="st-header"></div>
     </div>
 
 Load the script just before the `</body>` closing tag, then use the following to config and start the table:
 
     <script>
-        (function(root){
+      (function(root){
 
-            var restApiUrl = '/api';
-            var keys = [
-                "id", // this is the 'pinned' column
-                "time",
-                "time2",
-                "location",
-                "location2"
-            ];
-            var stElem = document.getElementsByClassName('swipe-table')[0];
-            var options = {
-                fullscreen: true //default
-            };
+          var restApiUrl = 'http://swipetable.blind238.com/api';
+          var keys = [
+            "id", // this is the 'pinned' column
+            "some",
+            "demo",
+            "dummy",
+            "data"
+          ];
+          var stElem = document.getElementsByClassName('swipe-table')[0];
+          var options = {
+            fullscreen: true //default
+          };
 
-            root.SwipeTable = new SwipeTable(restApiUrl, keys, stElem, options);
+          root.SwipeTable = new SwipeTable(restApiUrl, keys, stElem, options);
 
-        }(this));
+      }(this));
     </script>
 <!-- For advanced usage, see the documentation. -->
 
