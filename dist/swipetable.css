@@ -65,14 +65,10 @@ th {
 .table-striped > tbody > tr:nth-child(odd) > th {
   background-color: #f9f9f9; }
 
-.st-scrollable {
-  margin-bottom: 0; }
-
 .st-pinned {
   position: absolute;
   left: 0;
   top: 0;
-  width: 35%;
   overflow: hidden;
   overflow-x: auto;
   border-right: 1px solid #ccc;
@@ -95,7 +91,7 @@ th {
   display: none; }
 
 .st-scrollable {
-  margin-left: 35%;
+  margin-bottom: 0;
   overflow: auto;
   overflow-y: hidden; }
 
@@ -109,6 +105,36 @@ th {
 .st-scrollable td:first-child,
 .st-scrollable td:first-child {
   display: none; }
+
+.swipe-table.st-10 .st-pinned {
+  width: 10%; }
+.swipe-table.st-10 .st-scrollable {
+  margin-left: 10%; }
+
+.swipe-table.st-15 .st-pinned {
+  width: 15%; }
+.swipe-table.st-15 .st-scrollable {
+  margin-left: 15%; }
+
+.swipe-table.st-20 .st-pinned {
+  width: 20%; }
+.swipe-table.st-20 .st-scrollable {
+  margin-left: 20%; }
+
+.swipe-table.st-25 .st-pinned {
+  width: 25%; }
+.swipe-table.st-25 .st-scrollable {
+  margin-left: 25%; }
+
+.swipe-table.st-30 .st-pinned {
+  width: 30%; }
+.swipe-table.st-30 .st-scrollable {
+  margin-left: 30%; }
+
+.swipe-table.st-35 .st-pinned {
+  width: 35%; }
+.swipe-table.st-35 .st-scrollable {
+  margin-left: 35%; }
 
 body {
   padding: 0;
@@ -134,11 +160,18 @@ body {
   left: 0;
   min-width: 100%;
   width: 100%;
-  height: 33px;
+  height: 50px;
   background-color: #828dff;
-  overflow-y: hidden;
-  overflow-x: auto;
+  overflow: hidden;
   visibility: visible; }
+  .st-header .st-pinned, .st-header .st-scrollable {
+    height: 50px; }
+  .st-header .st-scrollable {
+    white-space: nowrap; }
+    .st-header .st-scrollable div {
+      height: 50px;
+      position: relative;
+      display: inline-block; }
 
 .controls {
   position: relative;

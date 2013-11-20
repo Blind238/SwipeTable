@@ -201,7 +201,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 		return {
 			header : headHeight,
 			body: bodyHeight,
-			total: totalHeight 
+			total: totalHeight
 		};
 	};
 

@@ -23,8 +23,11 @@ Usage is as follows:
 
 Place this HTML snippet where you want the table:
 
-    <div class="swipe-table">
+    <div class="swipe-table  st-##">
     </div>
+
+`st-##` sets the size of the pinned column as a percentage of the table.
+Replace `##` with a number between 10 and 35 in 5 increments.
 
 Load the script just before the `</body>` closing tag, then use the following to config and start the table:
 
@@ -112,6 +115,13 @@ Additional labels for pre-release and build metadata are available as extensions
 
 ## Version History
 
+* 1.0.0:
+    * Uses promises to sync table attachments
+    * Is now a bundle of [forked Swipe](https://github.com/Blind238/Swipe), SwipeTable and [when](https://github.com/cujojs/when) (via [browserify](http://browserify.org/))
+    * Dynamic header sizing (no longer replaces header with a whole table)
+    * Just needs a .swipe-table div in the HTML now (removed children divs)
+    * Pinned column size can be adjusted by changing the `st-##` class
+    * Tests row heights so you can style the table however you like, it still works!
 * 0.0.1: First versioned release.
 
 ## License

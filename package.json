@@ -1,6 +1,6 @@
 {
   "name": "SwipeTable",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "dist/SwipeTable.min.js",
   "description": "Mobile oriented AJAX table",
   "repository": {
