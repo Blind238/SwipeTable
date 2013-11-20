@@ -2,58 +2,58 @@
 @import "responsive-tables";
 
 body{
-	padding: 0;
-	margin: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .swipe-table {
-	overflow: hidden;
-	visibility: hidden;
-	position: relative;
+  overflow: hidden;
+  visibility: hidden;
+  position: relative;
 }
 .st-wrap {
-	overflow: hidden;
-	position: relative;
+  overflow: hidden;
+  position: relative;
 }
 .st-wrap > div {
-	float:left;
-	width:100%;
-	position: relative;
+  float:left;
+  width:100%;
+  position: relative;
 }
 
 .st-header {
-	position: absolute;
-	top: 0;
-	left: 0;
-	min-width: 100%;
-	width: 100%;
-	height: 50px;
-	background-color: #828dff;
-	overflow: hidden;
-	visibility: visible;
-	.st-pinned, .st-scrollable{
-		height: 50px;
-	}
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  width: 100%;
+  height: 50px;
+  background-color: #828dff;
+  overflow: hidden;
+  visibility: visible;
+  .st-pinned, .st-scrollable{
+    height: 50px;
+  }
 
-	.st-scrollable {
-		white-space: nowrap;
-		div {
-			height: 50px;
-			position: relative;
-			display: inline-block;
-		}
-	}
+  .st-scrollable {
+    white-space: nowrap;
+    div {
+      height: 50px;
+      position: relative;
+      display: inline-block;
+    }
+  }
 }
 
 .controls {
-	position: relative;
-	z-index: 1;
-	div {
-		position: absolute;
-		top: 37px;
-		left: 30px;
-	}
-	button {
-		float: left;
-	}
+  position: relative;
+  z-index: 1;
+  div {
+    position: absolute;
+    top: 37px;
+    left: 30px;
+  }
+  button {
+    float: left;
+  }
 }
