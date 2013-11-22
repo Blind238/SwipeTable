@@ -65,12 +65,15 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var pageAmount;
   var headerHeight  = 50;
   var scrollbarHeight = 5;
+  var controlHeight = 50;
   var sortAscending = true;
   var sortColumn;
   var timestamp;
 
   var headerScrollbar;
   var mainScrollbar;
+
+  var controls;
 
   options = options || {};
 
@@ -97,6 +100,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     elementReference.appendChild(stWrap);
 
     if(options.fullscreen){
+      document.body.parentElement.style.height = '100%';
+      document.body.style.height = '100%';
+      elementReference.style.height = '100%';
       tableHeight = viewportHeight();
     }
     else{
@@ -112,6 +118,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     tableHeight -= headerHeight;
 
     tableHeight -= scrollbarHeight;
+
+    tableHeight -= controlHeight;
 
     pageSize = Math.floor(tableHeight / rowHeights.body);
 
@@ -152,6 +160,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     elementReference.appendChild(mainScrollbar);
     elementReference.querySelector('.st-header .st-scrollable').appendChild(headerScrollbar);
+
+    controls = createControls();
 
   };
 
@@ -261,6 +271,82 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     bar.className = 'st-scrollbar';
     bar.appendChild(indicator);
     return bar;
+  };
+
+  var createControls = function(){
+    var i,l;
+
+    var buttonGlyphs  = ['<<', '<', '>', '>>'];
+    var events = ['first', 'previous', 'next', 'last'];
+    var buttons = [];
+
+    var container = document.createElement('div');
+    container.className = 'st-controls';
+
+    var eventHandlers = {
+      first: function(element){
+        var clickEvent = function(){
+          goToPage(0);
+        };
+
+        var doClickEvent = clickEvent.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      previous: function(element){
+        var doClickEvent = swipeFunc.prev.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      next: function(element){
+        var doClickEvent = swipeFunc.next.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      last: function(element){
+        var clickEvent = function(){
+          goToPage(pageAmount);
+        };
+
+        var doClickEvent = clickEvent.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      }
+    };
+
+    var createButton = function(glyph){
+      var button = document.createElement('div');
+      button.appendChild(document.createTextNode(glyph));
+      buttons.push(button);
+    };
+
+    var attachButton = function(index){
+      container.appendChild(buttons[index]);
+    };
+
+    var attachEvent = function(index){
+      eventHandlers[ events[index] ]( buttons[index] );
+    };
+
+    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
+      createButton(buttonGlyphs[i]);
+      attachButton(i);
+    }
+
+    elementReference.appendChild(container);
+
+    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
+      attachEvent(i);
+    }
+
   };
 
   /**
@@ -508,7 +594,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         if(doneTables === 1){
           nextPage();
           deferredContainer.deferred.resolver.resolve();
-          updateHeader(document.getElementsByClassName('st-table-wrap')[0]);
+          updateHeader(elementReference.querySelector('.st-table-wrap'));
         }
       }
       else {
@@ -572,6 +658,10 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       }
     );
 
+  };
+
+  var goToPage = function(page){
+    alert('Going to page ' + (page + 1));
   };
 
   /**

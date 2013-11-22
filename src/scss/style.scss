@@ -56,22 +56,32 @@ body{
   height: 5px;
   width: 100%;
   background-color: #C5CAFC;
-  position: relative;
+  position: absolute;
+  bottom: 50px;
   div {
     background-color: #3A46B1;
     height: 5px;
   }
 }
 
-.controls {
-  position: relative;
-  z-index: 1;
+.st-controls {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flex;
+  justify-content: flex-end;
+  -ms-justify-content: flex-end;
+  -webkit-justify-content: flex-end;
+  height: 50px;
+  text-align: center;
+
   div {
-    position: absolute;
-    top: 37px;
-    left: 30px;
-  }
-  button {
-    float: left;
+    border: 1px solid #3A46B1;
+    flex-grow: 1;
+    -webkit-flex-grow: 1;
+    -ms-flex-grow: 1;
+    background-color: #828dff;
   }
 }
