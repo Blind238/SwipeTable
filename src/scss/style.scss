@@ -42,6 +42,23 @@ body{
       position: relative;
       display: inline-block;
     }
+    .st-scrollbar{
+      position:absolute;
+      display: block;
+      height: 5px;
+      bottom: 0;
+    }
+  }
+}
+
+.st-scrollbar {
+  height: 5px;
+  width: 100%;
+  background-color: #C5CAFC;
+  position: relative;
+  div {
+    background-color: #3A46B1;
+    height: 5px;
   }
 }
 

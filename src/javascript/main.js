@@ -64,9 +64,13 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var pageSize      = 1;
   var pageAmount;
   var headerHeight  = 50;
+  var scrollbarHeight = 5;
   var sortAscending = true;
   var sortColumn;
   var timestamp;
+
+  var headerScrollbar;
+  var mainScrollbar;
 
   options = options || {};
 
@@ -104,10 +108,10 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     // Add margin for proper spacing of elements
     stWrap.style.marginTop = headerHeight - rowHeights.header + 'px';
 
-    // Remove height for the Header
+    // Remove height for other elements
     tableHeight -= headerHeight;
 
-    //TODO: Remove height for the Controls
+    tableHeight -= scrollbarHeight;
 
     pageSize = Math.floor(tableHeight / rowHeights.body);
 
@@ -128,6 +132,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       function(value){
         container.appendChild(value);
         tableDone();
+        updateMainScrollbar(0);
       }
     );
 
@@ -138,6 +143,12 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     window.addEventListener('resize', function(){
       doUpdateHeader();
     });
+
+    mainScrollbar = createScrollbar();
+    headerScrollbar = createScrollbar();
+
+    elementReference.appendChild(mainScrollbar);
+    elementReference.querySelector('.st-header .st-scrollable').appendChild(headerScrollbar);
 
   };
 
@@ -239,6 +250,14 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     updateScroll.setPosition(0);
 
+  };
+
+  var createScrollbar = function(){
+    var bar = document.createElement('div');
+    var indicator = document.createElement('div');
+    bar.className = 'st-scrollbar';
+    bar.appendChild(indicator);
+    return bar;
   };
 
   /**
@@ -465,7 +484,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     if (doneTables === totalTables){
       if(swipeReference === undefined){
         var doNextPage = nextPage.bind(this);
-        var doUpdateHeader = updateHeader.bind(this);
+        var doUpdate = update.bind(this);
         var doResolveTheResolver = resolveTheResolver.bind(this);
 
         /* global Swipe */
@@ -478,7 +497,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
           },
           transitionEnd: function(currentIndex, element){
             doResolveTheResolver();
-            doUpdateHeader(element);
+            doUpdate(currentIndex, element);
           }
         });
         /* global -Swipe */
@@ -581,6 +600,25 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       scrollContainer.children[index].style.width = value + 'px';
     });
 
+  };
+
+  var updateMainScrollbar = function(index){
+    var scrollElement = mainScrollbar.firstChild;
+
+    var style = scrollElement.style;
+    style.width = ( 100 / pageAmount) + '%';
+
+    var position = 100 * index;
+
+    style.webkitTransform = 'translate(' + position + '%)';
+    style.msTransform =
+    style.MozTransform =
+    style.OTransform = 'translateX(' + position + '%)';
+  };
+
+  var update = function(index, element){
+    updateHeader(element);
+    updateMainScrollbar(index);
   };
 
   /**
