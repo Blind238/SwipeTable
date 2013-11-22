@@ -37,7 +37,8 @@ body{
 
   .st-scrollable {
     white-space: nowrap;
-    div {
+    position: relative;
+    > div {
       height: 50px;
       position: relative;
       display: inline-block;

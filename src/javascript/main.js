@@ -133,15 +133,18 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         container.appendChild(value);
         tableDone();
         updateMainScrollbar(0);
+        updateHeaderScrollbar();
       }
     );
 
     createHeader();
 
     var doUpdateHeader = updateHeader.bind(this);
+    var doUpdateHeaderScrollbar = updateHeaderScrollbar.bind(this);
 
     window.addEventListener('resize', function(){
       doUpdateHeader();
+      doUpdateHeaderScrollbar();
     });
 
     mainScrollbar = createScrollbar();
@@ -603,9 +606,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   };
 
   var updateMainScrollbar = function(index){
-    var scrollElement = mainScrollbar.firstChild;
+    var style = mainScrollbar.firstChild.style;
 
-    var style = scrollElement.style;
     style.width = ( 100 / pageAmount) + '%';
 
     var position = 100 * index;
@@ -616,8 +618,32 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     style.OTransform = 'translateX(' + position + '%)';
   };
 
+  var updateHeaderScrollbar = function(){
+    var scrollbarStyle = headerScrollbar.style;
+    var indicatorStyle = headerScrollbar.firstChild.style;
+    var parent = headerScrollbar.parentElement;
+
+    var ratio = parent.getBoundingClientRect().width / parent.scrollWidth;
+    var position = updateScroll.getPosition();
+
+    indicatorStyle.width = ratio * 100 + '%';
+
+    scrollbarStyle.webkitTransform = 'translate(' + position + 'px)translateZ(0)';
+    scrollbarStyle.msTransform =
+    scrollbarStyle.MozTransform =
+    scrollbarStyle.OTransform = 'translateX(' + position + 'px)';
+
+    position = position * ratio;
+
+    indicatorStyle.webkitTransform = 'translate(' + position + 'px)translateZ(0)';
+    indicatorStyle.msTransform =
+    indicatorStyle.MozTransform =
+    indicatorStyle.OTransform = 'translateX(' + position + 'px)';
+  };
+
   var update = function(index, element){
     updateHeader(element);
+    updateHeaderScrollbar();
     updateMainScrollbar(index);
   };
 
@@ -639,10 +665,12 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       update : function(){
         if(!frameRequested){
           var doUpdateScrollables = updateScroll.updateScrollables.bind(this);
+          var doUpdateHeaderScrollbar = updateHeaderScrollbar.bind(this);
           var doFrameRequested = updateScroll.frameRequested.bind(this);
           frameRequested = true;
 
           window.requestAnimationFrame(function(){
+            doUpdateHeaderScrollbar();
             doUpdateScrollables();
             doFrameRequested(false);
           });
