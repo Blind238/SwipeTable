@@ -1,3 +1,9 @@
+var LIVERELOAD_PORT = 35729;
+var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
+var mountFolder = function (connect, dir) {
+    return connect.static(require('path').resolve(dir));
+};
+
 module.exports = function(grunt) {
 
   grunt.initConfig({
@@ -60,20 +66,34 @@ module.exports = function(grunt) {
         files: 'src/scss/*.scss',
         tasks: ['sass'],
         options: {
-          livereload: true
+          livereload: LIVERELOAD_PORT
         }
       },
       javascript: {
         files: 'src/javascript/*.js',
         tasks: ['jshint', 'browserify'],
         options: {
-          livereload: true
+          livereload: LIVERELOAD_PORT
         }
       }
     },
 
-    nodestatic: {
-      usesDefaults: {}
+    connect: {
+      options: {
+        port: 8080,
+        // access the server from outside
+        hostname: '0.0.0.0'
+      },
+      livereload: {
+        options: {
+          middleware: function (connect) {
+            return [
+              lrSnippet,
+              mountFolder(connect, './')
+            ];
+          }
+        }
+      }
     },
 
     browserify: {
@@ -101,13 +121,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-nodestatic');
+  grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('server',  'Hosts project on port 8080,\n' +
                                 'watches /src files and concats, lints\n' +
                                 'and triggers LiveReload if enabled in your browser.',
-                                    ['nodestatic','watch']);
+                                    ['connect:livereload','watch']);
 
   grunt.registerTask('test',    'Run jshint and qunit tests.',
                                     ['jshint', 'browserify', 'qunit']);
