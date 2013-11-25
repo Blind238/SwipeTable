@@ -102,12 +102,6 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name.replace(".js", "") %>.js',
         options: {
           transform: ['debowerify','deamdify'],
-          shim: {
-            Swipe: {
-              path: 'lib/swipe.js',
-              exports: 'Swipe'
-            }
-          },
           standalone: 'SwipeTable'
         }
       }
