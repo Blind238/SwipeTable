@@ -173,6 +173,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         stWrap.style.left = (index * -width) + 'px';
       }
 
+      updateMainScrollbar(index, 0, 0);
+
       container.style.visibility = 'visible';
 
     }
