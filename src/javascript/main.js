@@ -50,6 +50,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   //Firefox:
   //IE:
   container = elem;
+
+  var stWrap;
   var currentIndexElement;
 
   var swipeReference;
@@ -81,37 +83,36 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     options.fullscreen = true;
   }
 
+  // utilities
+  var noop = function() {}; // simple no operation function
+  var offloadFn = function(fn) { setTimeout(fn || noop, 0); }; // offload a functions execution
+
+  // check browser capabilities
+  var browser = {
+    addEventListener: !!window.addEventListener,
+    touch: ('ontouchstart' in window),
+    transitions: (function(temp) {
+      var props = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
+      for ( var i in props ){
+        if (temp.style[ props[i] ] !== undefined){
+          return true;
+        }
+        return false;
+      }
+    })(document.createElement('swipetable'))
+  };
+
+  var slides, slidePos, width, length;
+
   function Swipe(options) {
 
-    // utilities
-    var noop = function() {}; // simple no operation function
-    var offloadFn = function(fn) { setTimeout(fn || noop, 0); }; // offload a functions execution
-
-    // check browser capabilities
-    var browser = {
-      addEventListener: !!window.addEventListener,
-      touch: ('ontouchstart' in window),
-      transitions: (function(temp) {
-        var props = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
-        for ( var i in props ){
-          if (temp.style[ props[i] ] !== undefined){
-            return true;
-          }
-          return false;
-        }
-      })(document.createElement('swipe'))
-    };
-
-    var element = container.children[0];
-    var slides, slidePos, width, length;
-    options = options || {};
     var index = parseInt(options.startSlide, 10) || 0;
     var speed = options.speed || 300;
 
     function setup() {
 
       // cache slides
-      slides = element.children;
+      slides = stWrap.children;
       length = slides.length;
 
 
@@ -121,7 +122,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       // determine width of each slide
       width = container.getBoundingClientRect().width || container.offsetWidth;
 
-      element.style.width = (slides.length * width) + 'px';
+      stWrap.style.width = (slides.length * width) + 'px';
 
       // stack elements
       var pos = slides.length;
@@ -141,7 +142,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
 
       if (!browser.transitions){
-        element.style.left = (index * -width) + 'px';
+        stWrap.style.left = (index * -width) + 'px';
       }
 
       container.style.visibility = 'visible';
@@ -243,7 +244,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       // if not an animation, just reposition
       if (!speed) {
 
-        element.style.left = to + 'px';
+        stWrap.style.left = to + 'px';
         return;
 
       }
@@ -256,7 +257,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         if (timeElap > speed) {
 
-          element.style.left = to + 'px';
+          stWrap.style.left = to + 'px';
 
           options.transitionEnd && options.transitionEnd.call(event, index, slides[index]);
 
@@ -265,7 +266,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         }
 
-        element.style.left = (( (to - from) * (Math.floor((timeElap / speed) * 100) / 100) ) + from) + 'px';
+        stWrap.style.left = (( (to - from) * (Math.floor((timeElap / speed) * 100) / 100) ) + from) + 'px';
 
       }, 4);
 
@@ -321,8 +322,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         delta = {};
 
         // attach touchmove and touchend listeners
-        element.addEventListener('touchmove', this, false);
-        element.addEventListener('touchend', this, false);
+        stWrap.addEventListener('touchmove', this, false);
+        stWrap.addEventListener('touchend', this, false);
 
       },
       move: function(event) {
@@ -428,8 +429,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         }
 
         // kill touchmove and touchend event listeners until touchstart called again
-        element.removeEventListener('touchmove', events, false);
-        element.removeEventListener('touchend', events, false);
+        stWrap.removeEventListener('touchmove', events, false);
+        stWrap.removeEventListener('touchend', events, false);
 
       },
       transitionEnd: function(event) {
@@ -453,15 +454,15 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
       // set touchstart event on element
       if (browser.touch){
-        element.addEventListener('touchstart', events, false);
+        stWrap.addEventListener('touchstart', events, false);
       }
 
       if (browser.transitions) {
-        element.addEventListener('webkitTransitionEnd', events, false);
-        element.addEventListener('msTransitionEnd', events, false);
-        element.addEventListener('oTransitionEnd', events, false);
-        element.addEventListener('otransitionend', events, false);
-        element.addEventListener('transitionend', events, false);
+        stWrap.addEventListener('webkitTransitionEnd', events, false);
+        stWrap.addEventListener('msTransitionEnd', events, false);
+        stWrap.addEventListener('oTransitionEnd', events, false);
+        stWrap.addEventListener('otransitionend', events, false);
+        stWrap.addEventListener('transitionend', events, false);
       }
 
       // set resize event on window
@@ -513,8 +514,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         newElement.style.width = width + 'px';
         newElement.style.left = (length * -width) + 'px';
 
-        element.style.width = (function(){
-          var w = parseInt(element.style.width, 10) / length;
+        stWrap.style.width = (function(){
+          var w = parseInt(stWrap.style.width, 10) / length;
           w *= (length + 1);
           return (w + 'px');
         }());
@@ -536,7 +537,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var dataDeferred = when.defer();
     var dataTable = createTable();
 
-    var stWrap = document.createElement("div");
+    stWrap = document.createElement("div");
     stWrap.className = "st-wrap";
     container.appendChild(stWrap);
 
@@ -634,8 +635,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var data  = document.createElement('td');
     var text  = document.createTextNode('text');
     var text2 = document.createTextNode('text');
-
-    var stWrap = container.querySelector('.st-wrap');
 
     table.className = tableClass;
     table.style.visibility = 'hidden';
@@ -1052,7 +1051,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var pos = swipeReference.getPos() + 1;
     var dataDeferred = when.defer();
     var table;
-    var stWrap;
     deferredContainer.deferred = when.defer();
 
     if(sortColumn === undefined){
@@ -1078,7 +1076,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     }
 
     table = createTable();
-    stWrap = container.querySelector('.st-wrap');
 
     var tablePromise = dataDeferred.promise.then(
       function(value){
