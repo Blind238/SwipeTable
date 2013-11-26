@@ -104,6 +104,34 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   var slides, slidePos, width, length;
 
+  function translate(index, dist, speed, direct) {
+    var slide;
+    if (direct){
+      slide = direct;
+    }
+    else{
+      slide = slides[index];
+    }
+
+    var style = slide && slide.style;
+
+    if (!style){
+      return;
+    }
+
+    style.webkitTransitionDuration =
+    style.MozTransitionDuration =
+    style.msTransitionDuration =
+    style.OTransitionDuration =
+    style.transitionDuration = speed + 'ms';
+
+    style.webkitTransform = 'translate(' + dist + 'px,0)' + 'translateZ(0)';
+    style.msTransform =
+    style.MozTransform =
+    style.OTransform = 'translateX(' + dist + 'px)';
+
+  }
+
   function Swipe(options) {
 
     var index = parseInt(options.startSlide, 10) || 0;
@@ -192,6 +220,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         move(index, width * direction, slideSpeed || speed);
         move(to, 0, slideSpeed || speed);
+        updateMainScrollbar(to, 0, speed);
 
       } else {
 
@@ -208,34 +237,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
       translate(index, dist, speed);
       slidePos[index] = dist;
-
-    }
-
-    function translate(index, dist, speed, direct) {
-      var slide;
-      if (direct){
-        slide = direct;
-      }
-      else{
-        slide = slides[index];
-      }
-
-      var style = slide && slide.style;
-
-      if (!style){
-        return;
-      }
-
-      style.webkitTransitionDuration =
-      style.MozTransitionDuration =
-      style.msTransitionDuration =
-      style.OTransitionDuration =
-      style.transitionDuration = speed + 'ms';
-
-      style.webkitTransform = 'translate(' + dist + 'px,0)' + 'translateZ(0)';
-      style.msTransform =
-      style.MozTransform =
-      style.OTransform = 'translateX(' + dist + 'px)';
 
     }
 
@@ -371,6 +372,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
             translate(index-1, delta.x + slidePos[index-1], 0);
             translate(index, delta.x + slidePos[index], 0);
             translate(index+1, delta.x + slidePos[index+1], 0);
+            updateMainScrollbar(index, delta.x + slidePos[index], 0);
 
         }
 
@@ -404,6 +406,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
                 move(index-1, -width, 0);
 
               move(index, slidePos[index]-width, speed);
+              updateMainScrollbar(index, -width, speed);
               move(circle(index+1), slidePos[circle(index+1)]-width, speed);
               index = circle(index+1);
 
@@ -411,6 +414,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
                 move(index+1, width, 0);
 
               move(index, slidePos[index]+width, speed);
+              updateMainScrollbar(index, width, speed);
               move(circle(index-1), slidePos[circle(index-1)]+width, speed);
               index = circle(index-1);
 
@@ -422,6 +426,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
               move(index-1, -width, speed);
               move(index, 0, speed);
+              updateMainScrollbar(index, 0, speed);
               move(index+1, width, speed);
 
           }
@@ -1128,46 +1133,43 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   };
 
-  var updateMainScrollbar = function(index){
+  var updateMainScrollbar = function(index, dist, speed){
     var style = mainScrollbar.firstChild.style;
+    var indicator = mainScrollbar.firstChild;
+
+    if (dist !== undefined){
+
+      dist /= pageAmount;
+      dist *= -1;
+      dist += (index * width)/pageAmount;
+
+      translate(null, dist, speed, indicator);
+    }
 
     style.width = ( 100 / pageAmount) + '%';
 
-    var position = 100 * index;
-
-    style.webkitTransform = 'translate(' + position + '%)';
-    style.msTransform =
-    style.MozTransform =
-    style.OTransform = 'translateX(' + position + '%)';
   };
 
   var updateHeaderScrollbar = function(){
-    var scrollbarStyle = headerScrollbar.style;
-    var indicatorStyle = headerScrollbar.firstChild.style;
+    var scrollbar = headerScrollbar;
+    var indicator = headerScrollbar.firstChild;
     var parent = headerScrollbar.parentElement;
 
     var ratio = parent.getBoundingClientRect().width / parent.scrollWidth;
     var position = updateScroll.getPosition();
 
-    indicatorStyle.width = ratio * 100 + '%';
+    indicator.style.width = ratio * 100 + '%';
 
-    scrollbarStyle.webkitTransform = 'translate(' + position + 'px)translateZ(0)';
-    scrollbarStyle.msTransform =
-    scrollbarStyle.MozTransform =
-    scrollbarStyle.OTransform = 'translateX(' + position + 'px)';
+    translate(null, position, 0, scrollbar);
 
     position = position * ratio;
 
-    indicatorStyle.webkitTransform = 'translate(' + position + 'px)translateZ(0)';
-    indicatorStyle.msTransform =
-    indicatorStyle.MozTransform =
-    indicatorStyle.OTransform = 'translateX(' + position + 'px)';
+    translate(null, position, 0, indicator);
   };
 
   var update = function(index, element){
     updateHeader(element);
     updateHeaderScrollbar();
-    updateMainScrollbar(index);
   };
 
   /**
