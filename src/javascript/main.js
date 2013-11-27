@@ -545,8 +545,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
               scrollTotal = headerScroll.scrollWidth - headerScroll.getBoundingClientRect().width;
             }
 
-            console.log('deltaTotal :' + scrollTotal);
-
             updateScroll.setPosition(scrollTotal);
             translate(null, -scrollTotal, 0, headerScroll);
             updateScroll.update();
@@ -796,22 +794,22 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var header = document.createElement('div');
     header.className = 'st-header';
 
-    var headerScrollableContainer = document.createElement("div");
-    headerScrollableContainer.className = 'st-scrollable';
-    var stScrollableWrap = headerScrollableContainer.cloneNode(true);
+    var stScrollable = document.createElement("div");
+    stScrollable.className = 'st-scrollable';
+    var stScrollableWrap = stScrollable.cloneNode(true);
     stScrollableWrap.className += '-wrap';
 
     for (i = 1, l = keys.length; i < l; i+=1){
       var headerDiv = document.createElement("div");
       headerDiv.appendChild(document.createTextNode(keys[i]));
-      headerScrollableContainer.appendChild(headerDiv);
+      stScrollable.appendChild(headerDiv);
     }
 
     var headerPinned = document.createElement("div");
     headerPinned.appendChild(document.createTextNode(keys[0]));
     headerPinned.className = 'st-pinned';
 
-    stScrollableWrap.appendChild(headerScrollableContainer);
+    stScrollableWrap.appendChild(stScrollable);
 
     header.appendChild(stScrollableWrap);
     header.appendChild(headerPinned);
