@@ -134,6 +134,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   function Swipe(options) {
 
+    var headerScroll = container.querySelector('.st-header .st-scrollable');
+
     var index = parseInt(options.startSlide, 10) || 0;
     var speed = options.speed || 300;
 
@@ -452,6 +454,118 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     };
 
+    var scrollStart = {};
+    var scrollDelta = {};
+    var scrollOffset;
+    var scrollIsScrolling;
+
+    // setup scroll event capturing
+    var scrollEvents = {
+
+      handleEvent: function(event) {
+
+        switch (event.type) {
+          case 'touchstart': this.start(event); break;
+          case 'touchmove': this.move(event); break;
+          case 'touchend': offloadFn(this.end(event)); break;
+        }
+
+        if (options.stopPropagation){
+          event.stopPropagation();
+        }
+
+      },
+      start: function(event) {
+
+        event.preventDefault();
+
+        var touches = event.touches[0];
+
+        // measure start values
+        scrollStart = {
+
+          // get initial touch coords
+          x: touches.pageX,
+          y: touches.pageY,
+
+          // store time to determine touch duration
+          time: Date.now()
+
+        };
+
+        // used for testing first move event
+        scrollIsScrolling = undefined;
+
+        // reset delta and end measurements
+        scrollDelta = {};
+
+        scrollOffset = updateScroll.getPosition();
+
+        // attach touchmove and touchend listeners
+        headerScroll.addEventListener('touchmove', this, false);
+        headerScroll.addEventListener('touchend', this, false);
+
+      },
+      move: function(event) {
+
+        var scrollTotal;
+
+        // ensure swiping with one touch and not pinching
+        if ( event.touches.length > 1 || event.scale && event.scale !== 1){
+          return;
+        }
+
+        // prevent native scrolling
+        event.preventDefault();
+
+        var touches = event.touches[0];
+
+        // measure change in x and y
+        scrollDelta = {
+          x: touches.pageX - scrollStart.x,
+          y: touches.pageY - scrollStart.y
+        };
+
+        // determine if scrolling test has run - one time test
+        if ( typeof scrollIsScrolling == 'undefined') {
+          scrollIsScrolling = !!( scrollIsScrolling || Math.abs(scrollDelta.x) < Math.abs(scrollDelta.y) );
+        }
+
+        // if user is not trying to scroll vertically
+        if (!scrollIsScrolling) {
+
+          // increase resistance if first or last slide
+
+            scrollTotal = -scrollDelta.x + scrollOffset;
+
+            if (scrollTotal < 0){
+              scrollTotal = 0;
+            }
+            else if (scrollTotal > headerScroll.scrollWidth - headerScroll.getBoundingClientRect().width){
+              scrollTotal = headerScroll.scrollWidth - headerScroll.getBoundingClientRect().width;
+            }
+
+            console.log('deltaTotal :' + scrollTotal);
+
+            updateScroll.setPosition(scrollTotal);
+            translate(null, -scrollTotal, 0, headerScroll);
+            updateScroll.update();
+
+        }
+
+      },
+      end: function() {
+
+        event.preventDefault();
+
+        // kill touchmove and touchend event listeners until touchstart called again
+        headerScroll.removeEventListener('touchmove', scrollEvents, false);
+        headerScroll.removeEventListener('touchend', scrollEvents, false);
+
+      }
+
+    };
+
     // trigger setup
     setup();
 
@@ -462,6 +576,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       // set touchstart event on element
       if (browser.touch){
         stWrap.addEventListener('touchstart', events, false);
+        headerScroll.addEventListener('touchstart', scrollEvents, false);
       }
 
       if (browser.transitions) {
@@ -683,6 +798,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     var headerScrollableContainer = document.createElement("div");
     headerScrollableContainer.className = 'st-scrollable';
+    var stScrollableWrap = headerScrollableContainer.cloneNode(true);
+    stScrollableWrap.className += '-wrap';
 
     for (i = 1, l = keys.length; i < l; i+=1){
       var headerDiv = document.createElement("div");
@@ -694,17 +811,11 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     headerPinned.appendChild(document.createTextNode(keys[0]));
     headerPinned.className = 'st-pinned';
 
-    header.appendChild(headerScrollableContainer);
+    stScrollableWrap.appendChild(headerScrollableContainer);
+
+    header.appendChild(stScrollableWrap);
     header.appendChild(headerPinned);
     container.appendChild(header);
-
-    var doSetScrollPosition = updateScroll.setPosition.bind(this);
-    var doUpdate = updateScroll.update.bind(this);
-
-    headerScrollableContainer.addEventListener('scroll', function(){
-      doSetScrollPosition(this.scrollLeft);
-      doUpdate();
-    });
 
     updateScroll.setPosition(0);
 
@@ -978,20 +1089,23 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var stTableWrap = document.createElement('div');
     // Cloning an element is faster than creating more
     var stScrollable = stTableWrap.cloneNode(true);
+    var stScrollableWrap = stTableWrap.cloneNode(true);
     var stPinned = stTableWrap.cloneNode(true);
 
     // Add classes to the containers
     stTableWrap.className = 'st-table-wrap';
     stScrollable.className = 'st-scrollable';
+    stScrollableWrap.className = 'st-scrollable-wrap';
     stPinned.className = 'st-pinned';
 
     // Clone data and attach both to st-pinned and st-scrollable
     var cloned = table.cloneNode(true);
     stScrollable.appendChild(table);
+    stScrollableWrap.appendChild(stScrollable);
     stPinned.appendChild(cloned);
 
     // Attach to parent
-    stTableWrap.appendChild(stScrollable);
+    stTableWrap.appendChild(stScrollableWrap);
     stTableWrap.appendChild(stPinned);
 
     // Prestyle the table so everything fits nicely when insterted
@@ -1208,7 +1322,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         var i = 0;
         for(i;i<targets.length;i+=1){
-          targets[i].scrollLeft = position;
+          translate(null, -position, 0, targets[i]);
         }
       },
       frameRequested : function(isRequested){
