@@ -1220,52 +1220,18 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     deferredContainer.deferred.resolver.resolve(value);
   };
 
-  /**
-   * Gets position from Swipe.
-   *
-   * Calls createTable(), passes it to makeRequest.
-   */
   var nextPage = function(){
-    var pos = swipeReference.getPos() + 1;
-    var dataDeferred = when.defer();
-    var table;
+    var index = swipeReference.getPos();
+
     deferredContainer.deferred = when.defer();
 
-    if(sortColumn === undefined){
-      makeRequest(
-        dataProvider,
-        {
-          page: pos + 1,
-          timestamp: timestamp
-        },
-        dataDeferred.resolver
-      );
-    }
-    else{
-      makeRequest(
-        dataProvider,
-        {
-          page: pos + 1,
-          sortField: sortColumn,
-          sortAsc: sortAscending
-        },
-        dataDeferred.resolver
-      );
-    }
+    var pagePromise = getPageFromIndex(index + 1);
 
-    table = createTable();
-
-    var tablePromise = dataDeferred.promise.then(
-      function(value){
-        return fillTable(table, value);
-      }
-    );
-
-    when.all([tablePromise, deferredContainer.deferred.promise])
+    when.all([pagePromise, deferredContainer.deferred.promise])
     .then(
       function(values){
-        stWrap.children.item(pos).innerHTML = values[0].innerHTML;
-        stWrap.children.item(pos).setAttribute('data-active', 'true');
+        stWrap.children.item(index + 1).innerHTML = values[0].innerHTML;
+        stWrap.children.item(index + 1).setAttribute('data-active', 'true');
         update(values[1][0],values[1][1]);
         tableDone();
       }
@@ -1274,46 +1240,17 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   };
 
   var previousPage = function(){
-    var pos = swipeReference.getPos();
-    var dataDeferred = when.defer();
-    var table;
+    var index = swipeReference.getPos();
+
     deferredContainer.deferred = when.defer();
 
-    if(sortColumn === undefined){
-      makeRequest(
-        dataProvider,
-        {
-          page: pos,
-          timestamp: timestamp
-        },
-        dataDeferred.resolver
-      );
-    }
-    else{
-      makeRequest(
-        dataProvider,
-        {
-          page: pos,
-          sortField: sortColumn,
-          sortAsc: sortAscending
-        },
-        dataDeferred.resolver
-      );
-    }
+    var pagePromise = getPageFromIndex(index - 1);
 
-    table = createTable();
-
-    var tablePromise = dataDeferred.promise.then(
-      function(value){
-        return fillTable(table, value);
-      }
-    );
-
-    when.all([tablePromise, deferredContainer.deferred.promise])
+    when.all([pagePromise, deferredContainer.deferred.promise])
     .then(
       function(values){
-        stWrap.children.item(pos - 1).innerHTML = values[0].innerHTML;
-        stWrap.children.item(pos - 1).setAttribute('data-active', 'true');
+        stWrap.children.item(index - 1).innerHTML = values[0].innerHTML;
+        stWrap.children.item(index - 1).setAttribute('data-active', 'true');
         update(values[1][0],values[1][1]);
         tableDone();
       }
@@ -1323,38 +1260,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   var goToPage = function(page){
 
-    var dataDeferred = when.defer();
-    var table;
-
-    if(sortColumn === undefined){
-      makeRequest(
-        dataProvider,
-        {
-          page: page,
-          timestamp: timestamp
-        },
-        dataDeferred.resolver
-      );
-    }
-    else{
-      makeRequest(
-        dataProvider,
-        {
-          page: page,
-          sortField: sortColumn,
-          sortAsc: sortAscending
-        },
-        dataDeferred.resolver
-      );
-    }
-
-    table = createTable();
-
-    dataDeferred.promise.then(
-      function(value){
-        return fillTable(table, value);
-      }
-    ).then(
+    getPageFromIndex(page-1).then(
       function(value){
         stWrap.children.item(page-1).innerHTML = value.innerHTML;
         stWrap.children.item(page-1).setAttribute('data-active', 'true');
@@ -1370,6 +1276,44 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       }
     );
 
+  };
+
+  var getPageFromIndex = function(index){
+
+    var dataDeferred = when.defer();
+    var table;
+
+    if(sortColumn === undefined){
+      makeRequest(
+        dataProvider,
+        {
+          page: index + 1,
+          timestamp: timestamp
+        },
+        dataDeferred.resolver
+      );
+    }
+    else{
+      makeRequest(
+        dataProvider,
+        {
+          page: index + 1,
+          sortField: sortColumn,
+          sortAsc: sortAscending
+        },
+        dataDeferred.resolver
+      );
+    }
+
+    table = createTable();
+
+    var tablePromise = dataDeferred.promise.then(
+      function(value){
+        return fillTable(table, value);
+      }
+    );
+
+    return tablePromise;
   };
 
   /**
