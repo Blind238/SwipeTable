@@ -698,10 +698,44 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     tablePromise.then(
       function(value){
+        var stTableWraps = [];
+        var i;
+
+        var stTableWrap = document.createElement('div');
+        stTableWrap.className = 'st-table-wrap';
+        stTableWrap.setAttribute('data-active', 'false');
+
+        stTableWrap.appendChild(document.createTextNode('placeholder'));
+
+        for (i = 1; i < pageAmount; i+=1){
+          stTableWraps.push(stTableWrap.cloneNode(true));
+        }
+
+        value.setAttribute('data-active', 'true');
         stWrap.appendChild(value);
+
+        // Fill with placeholders so that first and last will
+        // function as expected. This also results in less calls
+        // needed to swipeReference.setup()
+        for (i = 1; i < pageAmount; i+=1){
+          stWrap.appendChild(stTableWraps[i-1]);
+        }
+
         tableDone();
         updateMainScrollbar(0);
         updateHeaderScrollbar();
+
+        var headerStyles = container.querySelectorAll('.st-header .st-scrollable > div');
+        console.log(headerStyles);
+        for (var l = 0; l < headerStyles.length; l+=1 ) {
+          var style = headerStyles.item(l).style;
+
+          style.webkitTransition =
+          style.MozTransition =
+          style.msTransition =
+          style.OTransition =
+          style.transition = 'width 300ms';
+        }
       }
     );
 
@@ -840,7 +874,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var eventHandlers = {
       first: function(element){
         var clickEvent = function(){
-          goToPage(0);
+          goToPage(1);
         };
 
         var doClickEvent = clickEvent.bind(this);
@@ -1108,7 +1142,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     // Prestyle the table so everything fits nicely when insterted
     if(swipeReference !== undefined){
-      swipeReference.prepareForAddition(stTableWrap);
+      // swipeReference.prepareForAddition(stTableWrap);
     }
 
     return when.resolve(stTableWrap);
@@ -1130,18 +1164,45 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     if (doneTables === totalTables){
       if(swipeReference === undefined){
         var doNextPage = nextPage.bind(this);
-        var doUpdate = update.bind(this);
+        var doPreviousPage = previousPage.bind(this);
         var doResolveTheResolver = resolveTheResolver.bind(this);
 
         swipeReference = new Swipe({
           callback: function(currentIndex, element){
-            if (currentIndex === element.parentNode.childNodes.length - 1){
-              doNextPage();
+            var nextElement = element.nextElementSibling;
+            var previousElement = element.previousElementSibling;
+            var nextOldElement;
+            var prevOldElement;
+
+            if(nextElement){
+
+              if (nextElement.getAttribute('data-active') === 'false'){
+                doNextPage();
+              }
+
+              nextOldElement = nextElement.nextElementSibling;
+
+              if(nextOldElement){
+                nextOldElement.setAttribute('data-active', 'false');
+              }
             }
+
+            if(previousElement){
+
+              if (previousElement.getAttribute('data-active') === 'false'){
+                doPreviousPage();
+              }
+
+              prevOldElement = previousElement.previousElementSibling;
+
+              if(prevOldElement){
+                prevOldElement.setAttribute('data-active', 'false');
+              }
+            }
+
           },
           transitionEnd: function(currentIndex, element){
-            doResolveTheResolver();
-            doUpdate(currentIndex, element);
+            doResolveTheResolver([currentIndex, element]);
           }
         });
 
@@ -1151,14 +1212,12 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
           updateHeader(container.querySelector('.st-table-wrap'));
         }
       }
-      else {
-        swipeReference.setup();
-      }
+
     }
   };
 
-  var resolveTheResolver = function(){
-    deferredContainer.deferred.resolver.resolve();
+  var resolveTheResolver = function(value){
+    deferredContainer.deferred.resolver.resolve(value);
   };
 
   /**
@@ -1177,7 +1236,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         dataProvider,
         {
           page: pos + 1,
-          timestamp: timestamp,
+          timestamp: timestamp
         },
         dataDeferred.resolver
       );
@@ -1205,7 +1264,57 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     when.all([tablePromise, deferredContainer.deferred.promise])
     .then(
       function(values){
-        stWrap.appendChild(values[0]);
+        stWrap.children.item(pos).innerHTML = values[0].innerHTML;
+        stWrap.children.item(pos).setAttribute('data-active', 'true');
+        update(values[1][0],values[1][1]);
+        tableDone();
+      }
+    );
+
+  };
+
+  var previousPage = function(){
+    var pos = swipeReference.getPos();
+    var dataDeferred = when.defer();
+    var table;
+    deferredContainer.deferred = when.defer();
+
+    if(sortColumn === undefined){
+      makeRequest(
+        dataProvider,
+        {
+          page: pos,
+          timestamp: timestamp
+        },
+        dataDeferred.resolver
+      );
+    }
+    else{
+      makeRequest(
+        dataProvider,
+        {
+          page: pos,
+          sortField: sortColumn,
+          sortAsc: sortAscending
+        },
+        dataDeferred.resolver
+      );
+    }
+
+    table = createTable();
+
+    var tablePromise = dataDeferred.promise.then(
+      function(value){
+        return fillTable(table, value);
+      }
+    );
+
+    when.all([tablePromise, deferredContainer.deferred.promise])
+    .then(
+      function(values){
+        stWrap.children.item(pos - 1).innerHTML = values[0].innerHTML;
+        stWrap.children.item(pos - 1).setAttribute('data-active', 'true');
+        update(values[1][0],values[1][1]);
         tableDone();
       }
     );
@@ -1213,7 +1322,54 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   };
 
   var goToPage = function(page){
-    alert('Going to page ' + (page + 1));
+
+    var dataDeferred = when.defer();
+    var table;
+
+    if(sortColumn === undefined){
+      makeRequest(
+        dataProvider,
+        {
+          page: page,
+          timestamp: timestamp
+        },
+        dataDeferred.resolver
+      );
+    }
+    else{
+      makeRequest(
+        dataProvider,
+        {
+          page: page,
+          sortField: sortColumn,
+          sortAsc: sortAscending
+        },
+        dataDeferred.resolver
+      );
+    }
+
+    table = createTable();
+
+    dataDeferred.promise.then(
+      function(value){
+        return fillTable(table, value);
+      }
+    ).then(
+      function(value){
+        stWrap.children.item(page-1).innerHTML = value.innerHTML;
+        stWrap.children.item(page-1).setAttribute('data-active', 'true');
+        return when.resolve();
+      }
+    ).then(
+      function(){
+        swipeReference.slide(page-1);
+        deferredContainer.deferred.promise.then(
+          function(value){
+            update(value[0],value[1]);
+          });
+      }
+    );
+
   };
 
   /**
@@ -1284,6 +1440,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var update = function(index, element){
     updateHeader(element);
     updateHeaderScrollbar();
+    updateScroll.updateScrollables();
   };
 
   /**
@@ -1316,7 +1473,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         }
       },
       updateScrollables : function(){
-        var targets = container.querySelector('.st-wrap').getElementsByClassName('st-scrollable');
+        var targets = container.querySelector('.st-wrap').querySelectorAll('.st-table-wrap[data-active=true] .st-scrollable');
 
         var i = 0;
         for(i;i<targets.length;i+=1){
