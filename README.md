@@ -115,16 +115,9 @@ Additional labels for pre-release and build metadata are available as extensions
 
 ## Version History
 
-* 1.0.0:
-    * Uses promises to sync table attachments
-    * Is now a bundle of [forked Swipe](https://github.com/Blind238/Swipe), SwipeTable and [when](https://github.com/cujojs/when) (via [browserify](http://browserify.org/))
-    * Dynamic header sizing (no longer replaces header with a whole table)
-    * Just needs a .swipe-table div in the HTML now (removed children divs)
-    * Pinned column size can be adjusted by changing the `st-##` class
-    * Tests row heights so you can style the table however you like, it still works!
-* 0.0.1: First versioned release.
+* 0.0.0:
 
 ## License
 
 Copyright © 2013, Jeremy Granadillo. Undecided open source license(MIT, GPL), for now: All rights reserved.  
-Swipe Copyright © 2013, Brad Birdsall. MIT License.
+Uses parts of Swipe: Copyright © 2013, Brad Birdsall. MIT License.
