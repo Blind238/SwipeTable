@@ -90,10 +90,12 @@ th {
 .st-pinned th:not(:first-child) {
   display: none; }
 
+.st-scrollable-wrap {
+  overflow: hidden; }
+
 .st-scrollable {
   margin-bottom: 0;
-  overflow: auto;
-  overflow-y: hidden; }
+  overflow: visible; }
 
 .st-scrollable td,
 .st-scrollable th {
@@ -108,32 +110,32 @@ th {
 
 .swipe-table.st-10 .st-pinned {
   width: 10%; }
-.swipe-table.st-10 .st-scrollable {
+.swipe-table.st-10 .st-scrollable-wrap {
   margin-left: 10%; }
 
 .swipe-table.st-15 .st-pinned {
   width: 15%; }
-.swipe-table.st-15 .st-scrollable {
+.swipe-table.st-15 .st-scrollable-wrap {
   margin-left: 15%; }
 
 .swipe-table.st-20 .st-pinned {
   width: 20%; }
-.swipe-table.st-20 .st-scrollable {
+.swipe-table.st-20 .st-scrollable-wrap {
   margin-left: 20%; }
 
 .swipe-table.st-25 .st-pinned {
   width: 25%; }
-.swipe-table.st-25 .st-scrollable {
+.swipe-table.st-25 .st-scrollable-wrap {
   margin-left: 25%; }
 
 .swipe-table.st-30 .st-pinned {
   width: 30%; }
-.swipe-table.st-30 .st-scrollable {
+.swipe-table.st-30 .st-scrollable-wrap {
   margin-left: 30%; }
 
 .swipe-table.st-35 .st-pinned {
   width: 35%; }
-.swipe-table.st-35 .st-scrollable {
+.swipe-table.st-35 .st-scrollable-wrap {
   margin-left: 35%; }
 
 body {
@@ -167,20 +169,45 @@ body {
   .st-header .st-pinned, .st-header .st-scrollable {
     height: 50px; }
   .st-header .st-scrollable {
-    white-space: nowrap; }
-    .st-header .st-scrollable div {
+    white-space: nowrap;
+    position: relative; }
+    .st-header .st-scrollable > div {
       height: 50px;
       position: relative;
       display: inline-block; }
+    .st-header .st-scrollable .st-scrollbar {
+      position: absolute;
+      display: block;
+      height: 5px;
+      bottom: 0; }
 
-.controls {
-  position: relative;
-  z-index: 1; }
-  .controls div {
-    position: absolute;
-    top: 37px;
-    left: 30px; }
-  .controls button {
-    float: left; }
+.st-scrollbar {
+  height: 5px;
+  width: 100%;
+  background-color: #C5CAFC;
+  position: absolute;
+  bottom: 50px; }
+  .st-scrollbar div {
+    background-color: #3A46B1;
+    height: 5px; }
+
+.st-controls {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  display: flex;
+  display: -webkit-flex;
+  display: -ms-flex;
+  justify-content: flex-end;
+  -ms-justify-content: flex-end;
+  -webkit-justify-content: flex-end;
+  height: 50px;
+  text-align: center; }
+  .st-controls div {
+    border: 1px solid #3A46B1;
+    flex-grow: 1;
+    -webkit-flex-grow: 1;
+    -ms-flex-grow: 1;
+    background-color: #828dff; }
 
 /*# sourceMappingURL=swipetable.css.map */
