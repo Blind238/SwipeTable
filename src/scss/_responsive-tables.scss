@@ -24,10 +24,13 @@
   display: none;
 }
 
+.st-scrollable-wrap {
+  overflow: hidden;
+}
+
 .st-scrollable {
   margin-bottom: 0;
-  overflow: hidden;
-  overflow-x: auto;
+  overflow: visible;
 }
 
 .st-scrollable td,
@@ -48,7 +51,7 @@
     .st-pinned{
       width: 5% * $i;
     }
-    .st-scrollable{
+    .st-scrollable-wrap{
       margin-left: 5% * $i;
     }
   }
