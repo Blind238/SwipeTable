@@ -1,5 +1,7 @@
 var when = require('when');
 var attachFastClick = require('fastclick');
+//TODO: Find a better way to require bouncefix
+var bouncefix = require('./../../bower_components/bouncefix.js/lib/bouncefix.js');
 
 module.exports = function(dataProviderUrl, tableKeys, elem, options){
   "use strict";
@@ -697,7 +699,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         updateHeaderScrollbar();
 
         var headerStyles = container.querySelectorAll('.st-header .st-scrollable > div');
-        console.log(headerStyles);
         for (var l = 0; l < headerStyles.length; l+=1 ) {
           var style = headerStyles.item(l).style;
 
@@ -711,6 +712,11 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     );
 
     attachFastClick(container);
+
+    // Fixes iOs vertical bouncing on scroll.
+    if(options.fullscreen){
+      bouncefix.add('swipe-table');
+    }
 
   };
 

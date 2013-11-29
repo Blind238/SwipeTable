@@ -15,6 +15,7 @@
   "dependencies": {},
   "devDependencies": {
     "when": "~2.6.0",
-    "fastclick": "~0.6.10"
+    "fastclick": "~0.6.10",
+    "bouncefix.js": "~0.2.0"
   }
 }
