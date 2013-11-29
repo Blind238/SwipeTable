@@ -60,8 +60,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   var tableClass    = 'table';
   tableClass += ' table-condensed';
-  var doneTables    = 0;
-  var totalTables   = 0;
   var pageSize      = 1;
   var pageAmount;
   var headerHeight  = 50;
@@ -654,7 +652,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var init = function(){
     var tableHeight;
     var rowHeights;
-    var dataDeferred = when.defer();
+    var requestDeferred = when.defer();
     var dataTable = createTable();
 
     stWrap = document.createElement("div");
@@ -688,15 +686,33 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     makeRequest(
       dataProvider,
       {},
-      dataDeferred.resolver);
+      requestDeferred.resolver);
 
-    var tablePromise = dataDeferred.promise.then(
+
+    createHeader();
+
+    var doUpdateHeader = updateHeader.bind(this);
+    var doUpdateHeaderScrollbar = updateHeaderScrollbar.bind(this);
+
+    window.addEventListener('resize', function(){
+      doUpdateHeader();
+      doUpdateHeaderScrollbar();
+    });
+
+    mainScrollbar   = createScrollbar();
+    headerScrollbar = createScrollbar();
+
+    container.appendChild(mainScrollbar);
+    container.querySelector('.st-header .st-scrollable').appendChild(headerScrollbar);
+
+    controls = createControls();
+
+    requestDeferred.promise.then(
       function(value){
         return fillTable(dataTable, value);
       }
-    );
 
-    tablePromise.then(
+    ).then(
       function(value){
         var stTableWraps = [];
         var i;
@@ -721,7 +737,12 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
           stWrap.appendChild(stTableWraps[i-1]);
         }
 
-        tableDone();
+        createSwipe();
+
+        nextPage();
+        resolveTheResolver(); // So nextPage's promise passes
+        updateHeader(container.querySelector('.st-table-wrap'));
+
         updateMainScrollbar(0);
         updateHeaderScrollbar();
 
@@ -739,23 +760,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       }
     );
 
-    createHeader();
-
-    var doUpdateHeader = updateHeader.bind(this);
-    var doUpdateHeaderScrollbar = updateHeaderScrollbar.bind(this);
-
-    window.addEventListener('resize', function(){
-      doUpdateHeader();
-      doUpdateHeaderScrollbar();
-    });
-
-    mainScrollbar = createScrollbar();
-    headerScrollbar = createScrollbar();
-
-    container.appendChild(mainScrollbar);
-    container.querySelector('.st-header .st-scrollable').appendChild(headerScrollbar);
-
-    controls = createControls();
 
   };
 
@@ -1050,7 +1054,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     return function(){
 
       if(tableInstance){
-        totalTables += 1;
         var copy = tableInstance.cloneNode(true);
         return copy;
       }
@@ -1072,7 +1075,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         thead.appendChild(tr);
         table.appendChild(thead);
         tableInstance = table.cloneNode(true);
-        totalTables += 1;
         return table;
       }
     };
@@ -1140,11 +1142,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     stTableWrap.appendChild(stScrollableWrap);
     stTableWrap.appendChild(stPinned);
 
-    // Prestyle the table so everything fits nicely when insterted
-    if(swipeReference !== undefined){
-      // swipeReference.prepareForAddition(stTableWrap);
-    }
-
     return when.resolve(stTableWrap);
   };
 
@@ -1158,62 +1155,50 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
    *
    *  If mySwipe was already made, calls mySwipe.setup.
    */
-  var tableDone = function(){
-    doneTables += 1;
+  var createSwipe = function(){
 
-    if (doneTables === totalTables){
-      if(swipeReference === undefined){
-        var doNextPage = nextPage.bind(this);
-        var doPreviousPage = previousPage.bind(this);
-        var doResolveTheResolver = resolveTheResolver.bind(this);
+    var doNextPage = nextPage.bind(this);
+    var doPreviousPage = previousPage.bind(this);
+    var doResolveTheResolver = resolveTheResolver.bind(this);
 
-        swipeReference = new Swipe({
-          callback: function(currentIndex, element){
-            var nextElement = element.nextElementSibling;
-            var previousElement = element.previousElementSibling;
-            var nextOldElement;
-            var prevOldElement;
+    swipeReference = new Swipe({
+      callback: function(currentIndex, element){
+        var nextElement = element.nextElementSibling;
+        var previousElement = element.previousElementSibling;
+        var nextOldElement;
+        var prevOldElement;
 
-            if(nextElement){
+        if(nextElement){
 
-              if (nextElement.getAttribute('data-active') === 'false'){
-                doNextPage();
-              }
-
-              nextOldElement = nextElement.nextElementSibling;
-
-              if(nextOldElement){
-                nextOldElement.setAttribute('data-active', 'false');
-              }
-            }
-
-            if(previousElement){
-
-              if (previousElement.getAttribute('data-active') === 'false'){
-                doPreviousPage();
-              }
-
-              prevOldElement = previousElement.previousElementSibling;
-
-              if(prevOldElement){
-                prevOldElement.setAttribute('data-active', 'false');
-              }
-            }
-
-          },
-          transitionEnd: function(currentIndex, element){
-            doResolveTheResolver([currentIndex, element]);
+          if (nextElement.getAttribute('data-active') === 'false'){
+            doNextPage();
           }
-        });
 
-        if(doneTables === 1){
-          nextPage();
-          deferredContainer.deferred.resolver.resolve();
-          updateHeader(container.querySelector('.st-table-wrap'));
+          nextOldElement = nextElement.nextElementSibling;
+
+          if(nextOldElement){
+            nextOldElement.setAttribute('data-active', 'false');
+          }
         }
-      }
 
-    }
+        if(previousElement){
+
+          if (previousElement.getAttribute('data-active') === 'false'){
+            doPreviousPage();
+          }
+
+          prevOldElement = previousElement.previousElementSibling;
+
+          if(prevOldElement){
+            prevOldElement.setAttribute('data-active', 'false');
+          }
+        }
+
+      },
+      transitionEnd: function(currentIndex, element){
+        doResolveTheResolver([currentIndex, element]);
+      }
+    });
   };
 
   var resolveTheResolver = function(value){
@@ -1233,7 +1218,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         stWrap.children.item(index + 1).innerHTML = values[0].innerHTML;
         stWrap.children.item(index + 1).setAttribute('data-active', 'true');
         update(values[1][0],values[1][1]);
-        tableDone();
       }
     );
 
@@ -1252,7 +1236,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         stWrap.children.item(index - 1).innerHTML = values[0].innerHTML;
         stWrap.children.item(index - 1).setAttribute('data-active', 'true');
         update(values[1][0],values[1][1]);
-        tableDone();
       }
     );
 
