@@ -40,6 +40,124 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   var slides, slidePos, width, length;
 
+  var init = function(){
+    var tableHeight;
+    var rowHeights;
+    var requestDeferred = when.defer();
+    var dataTable = createTable();
+
+    stWrap = document.createElement("div");
+    stWrap.className = "st-wrap";
+    container.appendChild(stWrap);
+
+    if(options.fullscreen){
+      document.body.parentElement.style.height = '100%';
+      document.body.style.height = '100%';
+      container.style.height = '100%';
+      tableHeight = viewportHeight();
+    }
+    else{
+      tableHeight = parseInt(container.getBoundingClientRect().height, 10);
+    }
+
+    rowHeights = testRowHeights();
+
+    // Add margin for proper spacing of elements
+    stWrap.style.marginTop = headerHeight - rowHeights.header + 'px';
+
+    // Remove height for other elements
+    tableHeight -= headerHeight;
+
+    tableHeight -= scrollbarHeight;
+
+    tableHeight -= controlHeight;
+
+    pageSize = Math.floor(tableHeight / rowHeights.body);
+
+    makeRequest(
+      dataProvider,
+      {},
+      requestDeferred.resolver);
+
+
+    createHeader();
+
+    var doUpdateHeader = updateHeader.bind(this);
+    var doUpdateHeaderScrollbar = updateHeaderScrollbar.bind(this);
+
+    window.addEventListener('resize', function(){
+      doUpdateHeader();
+      doUpdateHeaderScrollbar();
+    });
+
+    mainScrollbar   = createScrollbar();
+    headerScrollbar = createScrollbar();
+
+    container.appendChild(mainScrollbar);
+    container.querySelector('.st-header .st-scrollable').appendChild(headerScrollbar);
+
+    controls = createControls();
+
+    requestDeferred.promise.then(
+      function(value){
+        return fillTable(dataTable, value);
+      }
+
+    ).then(
+      function(value){
+        var stTableWraps = [];
+        var i;
+
+        var stTableWrap = document.createElement('div');
+        stTableWrap.className = 'st-table-wrap';
+        stTableWrap.setAttribute('data-active', 'false');
+
+        stTableWrap.appendChild(document.createTextNode('placeholder'));
+
+        for (i = 1; i < pageAmount; i+=1){
+          stTableWraps.push(stTableWrap.cloneNode(true));
+        }
+
+        value.setAttribute('data-active', 'true');
+        stWrap.appendChild(value);
+
+        // Fill with placeholders so that first and last will
+        // function as expected. This also results in less calls
+        // needed to swipeReference.setup()
+        for (i = 1; i < pageAmount; i+=1){
+          stWrap.appendChild(stTableWraps[i-1]);
+        }
+
+        createSwipe();
+
+        nextPage();
+        resolveTheResolver(); // So nextPage's promise passes
+        updateHeader(container.querySelector('.st-table-wrap'));
+
+        updateMainScrollbar(0);
+        updateHeaderScrollbar();
+
+        var headerStyles = container.querySelectorAll('.st-header .st-scrollable > div');
+        for (var l = 0; l < headerStyles.length; l+=1 ) {
+          var style = headerStyles.item(l).style;
+
+          style.webkitTransition =
+          style.MozTransition =
+          style.msTransition =
+          style.OTransition =
+          style.transition = 'width 300ms';
+        }
+      }
+    );
+
+    attachFastClick(container);
+
+    // Fixes iOs vertical bouncing on scroll.
+    if(options.fullscreen){
+      bouncefix.add('swipe-table');
+    }
+  };
+
   function translate(index, dist, speed, direct) {
     var slide;
     if (direct){
@@ -65,11 +183,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     style.msTransform =
     style.MozTransform =
     style.OTransform = 'translateX(' + dist + 'px)';
-
   }
 
   function Swipe(options) {
-
 
     // utilities
     var noop = function() {}; // simple no operation function
@@ -598,127 +714,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       }
 
     };
-
   }
-
-  var init = function(){
-    var tableHeight;
-    var rowHeights;
-    var requestDeferred = when.defer();
-    var dataTable = createTable();
-
-    stWrap = document.createElement("div");
-    stWrap.className = "st-wrap";
-    container.appendChild(stWrap);
-
-    if(options.fullscreen){
-      document.body.parentElement.style.height = '100%';
-      document.body.style.height = '100%';
-      container.style.height = '100%';
-      tableHeight = viewportHeight();
-    }
-    else{
-      tableHeight = parseInt(container.getBoundingClientRect().height, 10);
-    }
-
-    rowHeights = testRowHeights();
-
-    // Add margin for proper spacing of elements
-    stWrap.style.marginTop = headerHeight - rowHeights.header + 'px';
-
-    // Remove height for other elements
-    tableHeight -= headerHeight;
-
-    tableHeight -= scrollbarHeight;
-
-    tableHeight -= controlHeight;
-
-    pageSize = Math.floor(tableHeight / rowHeights.body);
-
-    makeRequest(
-      dataProvider,
-      {},
-      requestDeferred.resolver);
-
-
-    createHeader();
-
-    var doUpdateHeader = updateHeader.bind(this);
-    var doUpdateHeaderScrollbar = updateHeaderScrollbar.bind(this);
-
-    window.addEventListener('resize', function(){
-      doUpdateHeader();
-      doUpdateHeaderScrollbar();
-    });
-
-    mainScrollbar   = createScrollbar();
-    headerScrollbar = createScrollbar();
-
-    container.appendChild(mainScrollbar);
-    container.querySelector('.st-header .st-scrollable').appendChild(headerScrollbar);
-
-    controls = createControls();
-
-    requestDeferred.promise.then(
-      function(value){
-        return fillTable(dataTable, value);
-      }
-
-    ).then(
-      function(value){
-        var stTableWraps = [];
-        var i;
-
-        var stTableWrap = document.createElement('div');
-        stTableWrap.className = 'st-table-wrap';
-        stTableWrap.setAttribute('data-active', 'false');
-
-        stTableWrap.appendChild(document.createTextNode('placeholder'));
-
-        for (i = 1; i < pageAmount; i+=1){
-          stTableWraps.push(stTableWrap.cloneNode(true));
-        }
-
-        value.setAttribute('data-active', 'true');
-        stWrap.appendChild(value);
-
-        // Fill with placeholders so that first and last will
-        // function as expected. This also results in less calls
-        // needed to swipeReference.setup()
-        for (i = 1; i < pageAmount; i+=1){
-          stWrap.appendChild(stTableWraps[i-1]);
-        }
-
-        createSwipe();
-
-        nextPage();
-        resolveTheResolver(); // So nextPage's promise passes
-        updateHeader(container.querySelector('.st-table-wrap'));
-
-        updateMainScrollbar(0);
-        updateHeaderScrollbar();
-
-        var headerStyles = container.querySelectorAll('.st-header .st-scrollable > div');
-        for (var l = 0; l < headerStyles.length; l+=1 ) {
-          var style = headerStyles.item(l).style;
-
-          style.webkitTransition =
-          style.MozTransition =
-          style.msTransition =
-          style.OTransition =
-          style.transition = 'width 300ms';
-        }
-      }
-    );
-
-    attachFastClick(container);
-
-    // Fixes iOs vertical bouncing on scroll.
-    if(options.fullscreen){
-      bouncefix.add('swipe-table');
-    }
-
-  };
 
   var viewportHeight = function(){
     // responsejs.com/labs/dimensions/
@@ -811,7 +807,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     container.appendChild(header);
 
     updateScroll.setPosition(0);
-
   };
 
   var createScrollbar = function(){
@@ -895,7 +890,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
       attachEvent(i);
     }
-
   };
 
   /**
@@ -1011,8 +1005,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         return copy;
       }
       else{
-        var i;
-        var l;
+        var i, l;
 
         var table = document.createElement("table");
         table.className = tableClass;
@@ -1034,6 +1027,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   }());
 
   var fillTable = function(table, dataSet){
+    var i, j;
     timestamp = dataSet.timestamp;
     pageAmount = dataSet.pages;
     var numRows = dataSet.data.length;
@@ -1045,13 +1039,13 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var tbody = document.createElement("tbody");
     table.appendChild(tbody);
 
-    var i = 0;
+    i = 0;
     while (i < numRows){
       var col = dataSet.data[i];
       var tr = document.createElement("tr");
       var colCells = Object.keys(col).length;
 
-      var j = 0;
+      j = 0;
       while (j < colCells){
         var td = document.createElement("td");
         td.appendChild(document.createTextNode(col[keys[j]]));
@@ -1127,7 +1121,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
             prevOldElement.setAttribute('data-active', 'false');
           }
         }
-
       },
       transitionEnd: function(currentIndex, element){
         doResolveTheResolver([currentIndex, element]);
@@ -1154,7 +1147,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         update(values[1][0],values[1][1]);
       }
     );
-
   };
 
   var previousPage = function(){
@@ -1172,7 +1164,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         update(values[1][0],values[1][1]);
       }
     );
-
   };
 
   var goToPage = function(page){
@@ -1192,7 +1183,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
           });
       }
     );
-
   };
 
   var getPageFromIndex = function(index){
@@ -1238,7 +1228,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
    * @param  {Object} element Element to read from
    */
   var updateHeader = function(element){
-    var i;
+    var i, l;
 
     if (element){
       // Store element so we can reference on window.resize
@@ -1247,7 +1237,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     // Select the first row of the element
     var tableRow = currentIndexElement.querySelector(".st-scrollable tr");
-    var l = tableRow.children.length;
+    l = tableRow.children.length;
     var cellWidths = [];
 
     for (i=1; i < l; i+=1){
@@ -1261,7 +1251,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     cellWidths.forEach(function(value, index){
       scrollContainer.children[index].style.width = value + 'px';
     });
-
   };
 
   var updateMainScrollbar = function(index, dist, speed){
@@ -1278,7 +1267,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     }
 
     style.width = ( 100 / pageAmount) + '%';
-
   };
 
   var updateHeaderScrollbar = function(){
@@ -1362,5 +1350,4 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   };
 
   init();
-
 };
