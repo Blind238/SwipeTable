@@ -2,75 +2,27 @@ var when = require('when');
 
 module.exports = function(dataProviderUrl, tableKeys, elem, options){
   "use strict";
-  /**
-   * Config
-   *
-   * Use the following format to call SwipeTable
-   *----------------------------------------
-   *  (function(root){
-   *
-   *    var restApiUrl = '/api';
-   *    var keys = [
-   *        "id", // this is the 'pinned' column
-   *        "time",
-   *        "time2",
-   *        "location",
-   *        "location2"
-   *    ];
-   *    var stElem = document.getElementsByClassName('swipe-table')[0];
-   *
-   *    root.SwipeTable = new SwipeTable(restApiUrl, keys, stElem);
-   *
-   *  }(this));
-   *----------------------------------------
-   */
 
-  //=== Variables ===
-  // Check and store parameters
-  var dataProvider;
-  var keys;
-  var container;
+  var dataProvider = dataProviderUrl,
+      keys         = tableKeys,
+      container    = elem;
 
-  if(typeof dataProviderUrl === 'string'){
-    dataProvider = dataProviderUrl;
-  }
-  else{
-    throw new TypeError('First parameter is not a string');
-  }
+  var stWrap,
+      currentIndexElement,
+      swipeReference,
+      deferredContainer = {};
 
-  if(tableKeys instanceof Array){
-    keys = tableKeys;
-  }
-  else{
-    throw new TypeError('Second parameter is not an array');
-  }
+  var pageSize,
+      pageAmount,
+      headerHeight    = 50,
+      scrollbarHeight = 5,
+      controlHeight   = 50,
+      sortAscending   = true,
+      sortColumn,
+      timestamp;
 
-  //TODO: Check element type in different browsers
-  //Chrome: 'object'
-  //Firefox:
-  //IE:
-  container = elem;
-
-  var stWrap;
-  var currentIndexElement;
-
-  var swipeReference;
-  var deferredContainer = {};
-  deferredContainer.deferred = when.defer();
-
-  var tableClass    = 'table';
-  tableClass += ' table-condensed';
-  var pageSize      = 1;
-  var pageAmount;
-  var headerHeight  = 50;
-  var scrollbarHeight = 5;
-  var controlHeight = 50;
-  var sortAscending = true;
-  var sortColumn;
-  var timestamp;
-
-  var headerScrollbar;
-  var mainScrollbar;
+  var headerScrollbar,
+      mainScrollbar;
 
   var controls;
 
@@ -81,24 +33,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     options.fullscreen = true;
   }
 
-  // utilities
-  var noop = function() {}; // simple no operation function
-  var offloadFn = function(fn) { setTimeout(fn || noop, 0); }; // offload a functions execution
-
-  // check browser capabilities
-  var browser = {
-    addEventListener: !!window.addEventListener,
-    touch: ('ontouchstart' in window),
-    transitions: (function(temp) {
-      var props = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
-      for ( var i in props ){
-        if (temp.style[ props[i] ] !== undefined){
-          return true;
-        }
-        return false;
-      }
-    })(document.createElement('swipetable'))
-  };
+  var tableClass = options.tableClass || 'table table-condensed';
 
   var slides, slidePos, width, length;
 
@@ -131,6 +66,26 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   }
 
   function Swipe(options) {
+
+
+    // utilities
+    var noop = function() {}; // simple no operation function
+    var offloadFn = function(fn) { setTimeout(fn || noop, 0); }; // offload a functions execution
+
+    // check browser capabilities
+    var browser = {
+      addEventListener: !!window.addEventListener,
+      touch: ('ontouchstart' in window),
+      transitions: (function(temp) {
+        var props = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
+        for ( var i in props ){
+          if (temp.style[ props[i] ] !== undefined){
+            return true;
+          }
+          return false;
+        }
+      })(document.createElement('swipetable'))
+    };
 
     var headerScroll = container.querySelector('.st-header .st-scrollable');
 
@@ -643,12 +598,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   }
 
-  //=== Functions ===
-
-  /**
-   * Fetch the viewport size and set the
-   * pageSize(num of rows) based on rowHeight
-   */
   var init = function(){
     var tableHeight;
     var rowHeights;
@@ -942,19 +891,17 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   };
 
   /**
-   * Takes an object that contains:
-   * REQ* server: address of the API
-   * REQ* pageSize
-   * REQ* table: container to attach the results to
+   * Figures out the request based on parameters given in the queries object.
+   *
+   * The queries object can contain:
    *    * page
    *    * timestamp
    *    * sortField
    *    * sortAsc
-   * Items marked with REQ are required or the request will fail.
    *
-   * Fetches according to parameters given
-   * and gives results + table to parseResponse.
-   * @param {Object}queries Object containing quieries
+   * @param  {String} server   [description]
+   * @param  {Object} queries  Request parameter queries
+   * @param  {Function} resolver Deferred resolver
    */
   var makeRequest = function (server, queries, resolver){
     if(typeof server !== 'string'){
@@ -1044,8 +991,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   /**
    * Creates a table with appropriate headers(thead).
    *
-   * Increments totalTables.
-   *
    * Returns a partial table.
    */
   var createTable = (function(){
@@ -1080,15 +1025,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     };
   }());
 
-  /**
-   * Goes through dataSet and attaches rows to
-   * the table reference, then attaches the
-   * table to the container in the DOM.
-   *
-   * Calls tableDone() when done.
-   * @param table Partial table to fill
-   * @param dataSet Parsed data to fill with
-   */
   var fillTable = function(table, dataSet){
     timestamp = dataSet.timestamp;
     pageAmount = dataSet.pages;
@@ -1145,16 +1081,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     return when.resolve(stTableWrap);
   };
 
-  /**
-   *  Increments doneTables and executes if equal to totalTables.
-   *  Checks if mySwipe is made and if it isn't,
-   *  makes it and gives arguments to mySwipe.
-   *  If it's the first table to be finished,
-   *  sets up the next one to be fetched and placed,
-   *  also updates the header.
-   *
-   *  If mySwipe was already made, calls mySwipe.setup.
-   */
   var createSwipe = function(){
 
     var doNextPage = nextPage.bind(this);
@@ -1370,10 +1296,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     updateScroll.updateScrollables();
   };
 
-  /**
-   * Exposes scroll positions to the outside
-   * and function to update all scrollables.
-   */
   var updateScroll = (function(){
     var position;
     var frameRequested = false;
@@ -1431,31 +1353,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     }
   };
 
-  //=== Logic ===
   init();
 
-  var methods = {
-    // Expose test object to test inner functions
-    test : {
-      init : init,
-      makeRequest : makeRequest,
-      executeRequest :executeRequest,
-      parseResponse : parseResponse,
-      createTable : createTable,
-      fillTable : fillTable,
-      tableDone : tableDone,
-      updateHeader : updateHeader,
-      updateScroll: updateScroll
-    },
-    nextPage : nextPage,
-    updateHeader : updateHeader,
-    getScrollPosition : updateScroll.getPosition,
-    setScrollPosition : updateScroll.setPosition,
-    updateScrollables : updateScroll.updateScrollables,
-    next : swipeFunc.next,
-    prev : swipeFunc.prev
-  };
-
-  return methods;
 };
-/* exported SwipeTable */
