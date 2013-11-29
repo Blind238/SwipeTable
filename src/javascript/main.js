@@ -1110,6 +1110,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var doNextPage = nextPage.bind(this);
     var doPreviousPage = previousPage.bind(this);
     var doResolveTheResolver = resolveTheResolver.bind(this);
+    var doUpdateHeader = updateHeader.bind(this);
 
     swipeReference = new Swipe({
       callback: function(currentIndex, element){
@@ -1143,6 +1144,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
             prevOldElement.setAttribute('data-active', 'false');
           }
         }
+
+        doUpdateHeader(element);
       },
       transitionEnd: function(currentIndex, element){
         doResolveTheResolver([currentIndex, element]);
@@ -1310,6 +1313,15 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     var ratio = parent.getBoundingClientRect().width / parent.scrollWidth;
     var position = updateScroll.getPosition();
+
+    if (ratio > 0.99){
+      scrollbar.style.visibility =
+      indicator.style.visibility = 'hidden';
+    }
+    else{
+      scrollbar.style.visibility =
+      indicator.style.visibility = 'visible';
+    }
 
     indicator.style.width = ratio * 100 + '%';
 
