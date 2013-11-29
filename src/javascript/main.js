@@ -6,6 +6,9 @@ var bouncefix = require('./../../bower_components/bouncefix.js/lib/bouncefix.js'
 module.exports = function(dataProviderUrl, tableKeys, elem, options){
   "use strict";
 
+  /*---------------- Vars ----------------*\
+  \*----------------      ----------------*/
+
   var dataProvider = dataProviderUrl,
       keys         = tableKeys,
       container    = elem;
@@ -18,7 +21,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var pageSize,
       pageAmount,
       headerHeight    = 50,
-      scrollbarHeight = 5,
+      scrollbarHeight =  5,
       controlHeight   = 50,
       sortAscending   = true,
       sortColumn,
@@ -39,6 +42,11 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var tableClass = options.tableClass || 'table table-condensed';
 
   var slides, slidePos, width, length;
+
+  /*---------------- Init ----------------*\
+   Test element heights, create UI elements,
+   get the first page and prep the next one
+  \*----------------      ----------------*/
 
   var init = function(){
     var tableHeight;
@@ -67,18 +75,16 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     // Remove height for other elements
     tableHeight -= headerHeight;
-
     tableHeight -= scrollbarHeight;
-
     tableHeight -= controlHeight;
 
     pageSize = Math.floor(tableHeight / rowHeights.body);
 
+    // Make the request for the first page
     makeRequest(
       dataProvider,
       {},
       requestDeferred.resolver);
-
 
     createHeader();
 
@@ -150,13 +156,396 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       }
     );
 
+    // Remove click delay for mobile
     attachFastClick(container);
 
-    // Fixes iOs vertical bouncing on scroll.
+    // Fixes iOs vertical bouncing on scroll
     if(options.fullscreen){
       bouncefix.add('swipe-table');
     }
   };
+
+  /*---------------- Test ----------------*\
+  \*----------------      ----------------*/
+
+  var viewportHeight = function(){
+    // responsejs.com/labs/dimensions/
+    var matchMedia = window.matchMedia || window.msMatchMedia;
+    var viewportH = (function(win, docElem, mM) {
+      var client = docElem.clientHeight,
+          inner = win.innerHeight;
+      if (mM && client < inner && true === mM('(min-height:' + inner + 'px)').matches){
+        return win.innerHeight;
+      }
+      else{
+        return docElem.clientHeight;
+      }
+    }(window, document.documentElement, matchMedia));
+
+    return viewportH;
+  };
+
+  var testRowHeights = function(){
+    var headHeight;
+    var bodyHeight;
+    var totalHeight;
+    var table = document.createElement('table');
+    var tHead = document.createElement('thead');
+    var tBody = document.createElement('tbody');
+    var row   = document.createElement('tr');
+    var row2  = document.createElement('tr');
+    var head  = document.createElement('th');
+    var data  = document.createElement('td');
+    var text  = document.createTextNode('text');
+    var text2 = document.createTextNode('text');
+
+    table.className = tableClass;
+    table.style.visibility = 'hidden';
+
+    head.appendChild(text);
+    row.appendChild(head);
+    tHead.appendChild(row);
+    table.appendChild(tHead);
+
+    data.appendChild(text2);
+    row2.appendChild(data);
+    tBody.appendChild(row2);
+    table.appendChild(tBody);
+
+    stWrap.appendChild(table);
+
+    headHeight = row.getBoundingClientRect().height;
+
+    bodyHeight = row2.getBoundingClientRect().height;
+
+    totalHeight = table.getBoundingClientRect().height;
+    //TODO: Determine effects of borders on table size
+    //
+    stWrap.innerHTML = '';
+
+    return {
+      header : headHeight,
+      body: bodyHeight,
+      total: totalHeight
+    };
+  };
+
+  /*--------------- Create ---------------*\
+  \*---------------        ---------------*/
+
+  var createHeader = function(){
+    var i;
+    var l;
+
+    var header = document.createElement('div');
+    header.className = 'st-header';
+
+    var stScrollable = document.createElement("div");
+    stScrollable.className = 'st-scrollable';
+    var stScrollableWrap = stScrollable.cloneNode(true);
+    stScrollableWrap.className += '-wrap';
+
+    for (i = 1, l = keys.length; i < l; i+=1){
+      var headerDiv = document.createElement("div");
+      headerDiv.appendChild(document.createTextNode(keys[i]));
+      stScrollable.appendChild(headerDiv);
+    }
+
+    var headerPinned = document.createElement("div");
+    headerPinned.appendChild(document.createTextNode(keys[0]));
+    headerPinned.className = 'st-pinned';
+
+    stScrollableWrap.appendChild(stScrollable);
+
+    header.appendChild(stScrollableWrap);
+    header.appendChild(headerPinned);
+    container.appendChild(header);
+
+    updateScroll.setPosition(0);
+  };
+
+  var createScrollbar = function(){
+    var bar = document.createElement('div');
+    var indicator = document.createElement('div');
+    bar.className = 'st-scrollbar';
+    bar.appendChild(indicator);
+    return bar;
+  };
+
+  var createControls = function(){
+    var i,l;
+
+    var buttonGlyphs  = ['<<', '<', '>', '>>'];
+    var events = ['first', 'previous', 'next', 'last'];
+    var buttons = [];
+
+    var stControls = document.createElement('div');
+    stControls.className = 'st-controls';
+
+    var eventHandlers = {
+      first: function(element){
+        var clickEvent = function(){
+          goToPage(1);
+        };
+
+        var doClickEvent = clickEvent.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      previous: function(element){
+        var doClickEvent = swipeFunc.prev.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      next: function(element){
+        var doClickEvent = swipeFunc.next.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      last: function(element){
+        var clickEvent = function(){
+          goToPage(pageAmount);
+        };
+
+        var doClickEvent = clickEvent.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      }
+    };
+
+    var createButton = function(glyph){
+      var button = document.createElement('div');
+      button.appendChild(document.createTextNode(glyph));
+      buttons.push(button);
+    };
+
+    var attachButton = function(index){
+      stControls.appendChild(buttons[index]);
+    };
+
+    var attachEvent = function(index){
+      eventHandlers[ events[index] ]( buttons[index] );
+    };
+
+    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
+      createButton(buttonGlyphs[i]);
+      attachButton(i);
+    }
+
+    container.appendChild(stControls);
+
+    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
+      attachEvent(i);
+    }
+  };
+
+  /*--------------- Request ---------------*\
+  \*---------------         ---------------*/
+
+  /**
+   * Figures out the request based on parameters given in the queries object.
+   *
+   * The queries object can contain:
+   *    * page
+   *    * timestamp
+   *    * sortField
+   *    * sortAsc
+   *
+   * @param  {String} server   [description]
+   * @param  {Object} queries  Request parameter queries
+   * @param  {Function} resolver Deferred resolver
+   */
+  var makeRequest = function (server, queries, resolver){
+    if(typeof server !== 'string'){
+      // No server provided, nothing to do here.
+      return;
+    }
+    if(queries.timestamp){
+
+      // If there's a sort parameter, both must be given
+      if(queries.sortField || queries.sortAsc){
+        if(!queries.sortField || !queries.sortAsc){
+          return;
+        }
+
+        // If there's a page given, it's a sorted page request
+        if(queries.page){
+          executeRequest("GET",
+                          server +
+                            "?p=" + queries.page +
+                            "&ps=" + pageSize +
+                            "&ts=" + queries.timestamp +
+                            "&sort[field]=" + queries.sortField +
+                            "&sort[asc]=" + queries.sortAsc,
+                          resolver);
+        }
+        // Else, it's a sorted and timestamped first page equest
+        else{
+          executeRequest("GET",
+                          server +
+                            "?ps=" + pageSize +
+                            "&ts=" + queries.timestamp +
+                            "&sort[field]=" + queries.sortField +
+                            "&sort[asc]=" + queries.sortAsc,
+                          resolver);
+        }
+      }
+      // So we have timestamp, but no sorting
+      else{
+        // We need a page parameter to continue
+        if(!queries.page){
+          // Spec requires a page, nothing more to do here
+          return;
+        }
+        // Make a page request
+        executeRequest("GET",
+                        server +
+                          "?p=" + queries.page +
+                          "&ps=" + pageSize +
+                          "&ts=" + queries.timestamp,
+                        resolver);
+      }
+    }
+    else{
+      // No timestamp given, it's a fresh page request
+      executeRequest("GET",
+                      server +
+                        "?ps=" + pageSize,
+                      resolver);
+    }
+  };
+
+  /**
+   * Executes a request with method, parameters and the table give to next function
+   * @param  {String} method Valid HTTP method eg. GET, POST
+   * @param  {String} url Complete url string (server + parameters)
+   * @param  {Object} table Partial table object
+   */
+  var executeRequest = function(method, url, resolver){
+    var r = new XMLHttpRequest();
+    r.open(method, url, true);
+    r.onreadystatechange = function(){
+      if(r.readyState !== 4 || r.status !== 200){
+        return;
+      }
+      parseResponse(r.responseText, resolver);
+    };
+    r.send(null);
+  };
+
+  // parseResponse(table, response)
+  //  Calls fillTable with table and JSON.parse
+  //TODO: Work parseResponse into appropriate function
+  var parseResponse = function(response, resolver){
+    resolver.resolve(JSON.parse(response));
+  };
+
+  /*--------------- Tables ---------------*\
+  \*---------------        ---------------*/
+
+  /**
+   * Creates a table with appropriate headers(thead).
+   *
+   * Returns a partial table.
+   */
+  var createTable = (function(){
+    var tableInstance;
+
+    return function(){
+
+      if(tableInstance){
+        var copy = tableInstance.cloneNode(true);
+        return copy;
+      }
+      else{
+        var i, l;
+
+        var table = document.createElement("table");
+        table.className = tableClass;
+        var thead = document.createElement("thead");
+        var tr = document.createElement("tr");
+
+        for (i = 0, l = keys.length; i < l; i+=1){
+          var th = document.createElement("th");
+          th.appendChild(document.createTextNode(keys[i]));
+          tr.appendChild(th);
+        }
+
+        thead.appendChild(tr);
+        table.appendChild(thead);
+        tableInstance = table.cloneNode(true);
+        return table;
+      }
+    };
+  }());
+
+  var fillTable = function(table, dataSet){
+    var i, j;
+    timestamp = dataSet.timestamp;
+    pageAmount = dataSet.pages;
+    var numRows = dataSet.data.length;
+
+    if(numRows === 0){
+      return;
+    }
+
+    var tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+
+    i = 0;
+    while (i < numRows){
+      var col = dataSet.data[i];
+      var tr = document.createElement("tr");
+      var colCells = Object.keys(col).length;
+
+      j = 0;
+      while (j < colCells){
+        var td = document.createElement("td");
+        td.appendChild(document.createTextNode(col[keys[j]]));
+        tr.appendChild(td);
+        j+=1;
+      }
+
+      tbody.appendChild(tr);
+      i+=1;
+    }
+
+    // Make a table container to hold the split elements
+    var stTableWrap = document.createElement('div');
+    // Cloning an element is faster than creating more
+    var stScrollable = stTableWrap.cloneNode(true);
+    var stScrollableWrap = stTableWrap.cloneNode(true);
+    var stPinned = stTableWrap.cloneNode(true);
+
+    // Add classes to the containers
+    stTableWrap.className = 'st-table-wrap';
+    stScrollable.className = 'st-scrollable';
+    stScrollableWrap.className = 'st-scrollable-wrap';
+    stPinned.className = 'st-pinned';
+
+    // Clone data and attach both to st-pinned and st-scrollable
+    var cloned = table.cloneNode(true);
+    stScrollable.appendChild(table);
+    stScrollableWrap.appendChild(stScrollable);
+    stPinned.appendChild(cloned);
+
+    // Attach to parent
+    stTableWrap.appendChild(stScrollableWrap);
+    stTableWrap.appendChild(stPinned);
+
+    return when.resolve(stTableWrap);
+  };
+
+  /*--------------- Swipe ---------------*\
+  \*---------------       ---------------*/
 
   function translate(index, dist, speed, direct) {
     var slide;
@@ -716,373 +1105,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     };
   }
 
-  var viewportHeight = function(){
-    // responsejs.com/labs/dimensions/
-    var matchMedia = window.matchMedia || window.msMatchMedia;
-    var viewportH = (function(win, docElem, mM) {
-      var client = docElem.clientHeight,
-          inner = win.innerHeight;
-      if (mM && client < inner && true === mM('(min-height:' + inner + 'px)').matches){
-        return win.innerHeight;
-      }
-      else{
-        return docElem.clientHeight;
-      }
-    }(window, document.documentElement, matchMedia));
-
-    return viewportH;
-  };
-
-  var testRowHeights = function(){
-    var headHeight;
-    var bodyHeight;
-    var totalHeight;
-    var table = document.createElement('table');
-    var tHead = document.createElement('thead');
-    var tBody = document.createElement('tbody');
-    var row   = document.createElement('tr');
-    var row2  = document.createElement('tr');
-    var head  = document.createElement('th');
-    var data  = document.createElement('td');
-    var text  = document.createTextNode('text');
-    var text2 = document.createTextNode('text');
-
-    table.className = tableClass;
-    table.style.visibility = 'hidden';
-
-    head.appendChild(text);
-    row.appendChild(head);
-    tHead.appendChild(row);
-    table.appendChild(tHead);
-
-    data.appendChild(text2);
-    row2.appendChild(data);
-    tBody.appendChild(row2);
-    table.appendChild(tBody);
-
-    stWrap.appendChild(table);
-
-    headHeight = row.getBoundingClientRect().height;
-
-    bodyHeight = row2.getBoundingClientRect().height;
-
-    totalHeight = table.getBoundingClientRect().height;
-    //TODO: Determine effects of borders on table size
-    //
-    stWrap.innerHTML = '';
-
-    return {
-      header : headHeight,
-      body: bodyHeight,
-      total: totalHeight
-    };
-  };
-
-  var createHeader = function(){
-    var i;
-    var l;
-
-    var header = document.createElement('div');
-    header.className = 'st-header';
-
-    var stScrollable = document.createElement("div");
-    stScrollable.className = 'st-scrollable';
-    var stScrollableWrap = stScrollable.cloneNode(true);
-    stScrollableWrap.className += '-wrap';
-
-    for (i = 1, l = keys.length; i < l; i+=1){
-      var headerDiv = document.createElement("div");
-      headerDiv.appendChild(document.createTextNode(keys[i]));
-      stScrollable.appendChild(headerDiv);
-    }
-
-    var headerPinned = document.createElement("div");
-    headerPinned.appendChild(document.createTextNode(keys[0]));
-    headerPinned.className = 'st-pinned';
-
-    stScrollableWrap.appendChild(stScrollable);
-
-    header.appendChild(stScrollableWrap);
-    header.appendChild(headerPinned);
-    container.appendChild(header);
-
-    updateScroll.setPosition(0);
-  };
-
-  var createScrollbar = function(){
-    var bar = document.createElement('div');
-    var indicator = document.createElement('div');
-    bar.className = 'st-scrollbar';
-    bar.appendChild(indicator);
-    return bar;
-  };
-
-  var createControls = function(){
-    var i,l;
-
-    var buttonGlyphs  = ['<<', '<', '>', '>>'];
-    var events = ['first', 'previous', 'next', 'last'];
-    var buttons = [];
-
-    var stControls = document.createElement('div');
-    stControls.className = 'st-controls';
-
-    var eventHandlers = {
-      first: function(element){
-        var clickEvent = function(){
-          goToPage(1);
-        };
-
-        var doClickEvent = clickEvent.bind(this);
-
-        element.addEventListener('click', function(){
-          doClickEvent();
-        });
-      },
-      previous: function(element){
-        var doClickEvent = swipeFunc.prev.bind(this);
-
-        element.addEventListener('click', function(){
-          doClickEvent();
-        });
-      },
-      next: function(element){
-        var doClickEvent = swipeFunc.next.bind(this);
-
-        element.addEventListener('click', function(){
-          doClickEvent();
-        });
-      },
-      last: function(element){
-        var clickEvent = function(){
-          goToPage(pageAmount);
-        };
-
-        var doClickEvent = clickEvent.bind(this);
-
-        element.addEventListener('click', function(){
-          doClickEvent();
-        });
-      }
-    };
-
-    var createButton = function(glyph){
-      var button = document.createElement('div');
-      button.appendChild(document.createTextNode(glyph));
-      buttons.push(button);
-    };
-
-    var attachButton = function(index){
-      stControls.appendChild(buttons[index]);
-    };
-
-    var attachEvent = function(index){
-      eventHandlers[ events[index] ]( buttons[index] );
-    };
-
-    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
-      createButton(buttonGlyphs[i]);
-      attachButton(i);
-    }
-
-    container.appendChild(stControls);
-
-    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
-      attachEvent(i);
-    }
-  };
-
-  /**
-   * Figures out the request based on parameters given in the queries object.
-   *
-   * The queries object can contain:
-   *    * page
-   *    * timestamp
-   *    * sortField
-   *    * sortAsc
-   *
-   * @param  {String} server   [description]
-   * @param  {Object} queries  Request parameter queries
-   * @param  {Function} resolver Deferred resolver
-   */
-  var makeRequest = function (server, queries, resolver){
-    if(typeof server !== 'string'){
-      // No server provided, nothing to do here.
-      return;
-    }
-    if(queries.timestamp){
-
-      // If there's a sort parameter, both must be given
-      if(queries.sortField || queries.sortAsc){
-        if(!queries.sortField || !queries.sortAsc){
-          return;
-        }
-
-        // If there's a page given, it's a sorted page request
-        if(queries.page){
-          executeRequest("GET",
-                          server +
-                            "?p=" + queries.page +
-                            "&ps=" + pageSize +
-                            "&ts=" + queries.timestamp +
-                            "&sort[field]=" + queries.sortField +
-                            "&sort[asc]=" + queries.sortAsc,
-                          resolver);
-        }
-        // Else, it's a sorted and timestamped first page equest
-        else{
-          executeRequest("GET",
-                          server +
-                            "?ps=" + pageSize +
-                            "&ts=" + queries.timestamp +
-                            "&sort[field]=" + queries.sortField +
-                            "&sort[asc]=" + queries.sortAsc,
-                          resolver);
-        }
-      }
-      // So we have timestamp, but no sorting
-      else{
-        // We need a page parameter to continue
-        if(!queries.page){
-          // Spec requires a page, nothing more to do here
-          return;
-        }
-        // Make a page request
-        executeRequest("GET",
-                        server +
-                          "?p=" + queries.page +
-                          "&ps=" + pageSize +
-                          "&ts=" + queries.timestamp,
-                        resolver);
-      }
-    }
-    else{
-      // No timestamp given, it's a fresh page request
-      executeRequest("GET",
-                      server +
-                        "?ps=" + pageSize,
-                      resolver);
-    }
-  };
-
-  /**
-   * Executes a request with method, parameters and the table give to next function
-   * @param  {String} method Valid HTTP method eg. GET, POST
-   * @param  {String} url Complete url string (server + parameters)
-   * @param  {Object} table Partial table object
-   */
-  var executeRequest = function(method, url, resolver){
-    var r = new XMLHttpRequest();
-    r.open(method, url, true);
-    r.onreadystatechange = function(){
-      if(r.readyState !== 4 || r.status !== 200){
-        return;
-      }
-      parseResponse(r.responseText, resolver);
-    };
-    r.send(null);
-  };
-
-  // parseResponse(table, response)
-  //  Calls fillTable with table and JSON.parse
-  //TODO: Work parseResponse into appropriate function
-  var parseResponse = function(response, resolver){
-    resolver.resolve(JSON.parse(response));
-  };
-
-  /**
-   * Creates a table with appropriate headers(thead).
-   *
-   * Returns a partial table.
-   */
-  var createTable = (function(){
-    var tableInstance;
-
-    return function(){
-
-      if(tableInstance){
-        var copy = tableInstance.cloneNode(true);
-        return copy;
-      }
-      else{
-        var i, l;
-
-        var table = document.createElement("table");
-        table.className = tableClass;
-        var thead = document.createElement("thead");
-        var tr = document.createElement("tr");
-
-        for (i = 0, l = keys.length; i < l; i+=1){
-          var th = document.createElement("th");
-          th.appendChild(document.createTextNode(keys[i]));
-          tr.appendChild(th);
-        }
-
-        thead.appendChild(tr);
-        table.appendChild(thead);
-        tableInstance = table.cloneNode(true);
-        return table;
-      }
-    };
-  }());
-
-  var fillTable = function(table, dataSet){
-    var i, j;
-    timestamp = dataSet.timestamp;
-    pageAmount = dataSet.pages;
-    var numRows = dataSet.data.length;
-
-    if(numRows === 0){
-      return;
-    }
-
-    var tbody = document.createElement("tbody");
-    table.appendChild(tbody);
-
-    i = 0;
-    while (i < numRows){
-      var col = dataSet.data[i];
-      var tr = document.createElement("tr");
-      var colCells = Object.keys(col).length;
-
-      j = 0;
-      while (j < colCells){
-        var td = document.createElement("td");
-        td.appendChild(document.createTextNode(col[keys[j]]));
-        tr.appendChild(td);
-        j+=1;
-      }
-
-      tbody.appendChild(tr);
-      i+=1;
-    }
-
-    // Make a table container to hold the split elements
-    var stTableWrap = document.createElement('div');
-    // Cloning an element is faster than creating more
-    var stScrollable = stTableWrap.cloneNode(true);
-    var stScrollableWrap = stTableWrap.cloneNode(true);
-    var stPinned = stTableWrap.cloneNode(true);
-
-    // Add classes to the containers
-    stTableWrap.className = 'st-table-wrap';
-    stScrollable.className = 'st-scrollable';
-    stScrollableWrap.className = 'st-scrollable-wrap';
-    stPinned.className = 'st-pinned';
-
-    // Clone data and attach both to st-pinned and st-scrollable
-    var cloned = table.cloneNode(true);
-    stScrollable.appendChild(table);
-    stScrollableWrap.appendChild(stScrollable);
-    stPinned.appendChild(cloned);
-
-    // Attach to parent
-    stTableWrap.appendChild(stScrollableWrap);
-    stTableWrap.appendChild(stPinned);
-
-    return when.resolve(stTableWrap);
-  };
-
   var createSwipe = function(){
 
     var doNextPage = nextPage.bind(this);
@@ -1131,6 +1153,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var resolveTheResolver = function(value){
     deferredContainer.deferred.resolver.resolve(value);
   };
+
+  /*-------------- Navigate --------------*\
+  \*--------------          --------------*/
 
   var nextPage = function(){
     var index = swipeReference.getPos();
@@ -1223,6 +1248,15 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     return tablePromise;
   };
 
+  /*--------------- Update ---------------*\
+  \*---------------        ---------------*/
+
+  var update = function(index, element){
+    updateHeader(element);
+    updateHeaderScrollbar();
+    updateScroll.updateScrollables();
+  };
+
   /**
    * Read widths of given element and adjust header spacing
    * @param  {Object} element Element to read from
@@ -1284,12 +1318,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     position = position * ratio;
 
     translate(null, position, 0, indicator);
-  };
-
-  var update = function(index, element){
-    updateHeader(element);
-    updateHeaderScrollbar();
-    updateScroll.updateScrollables();
   };
 
   var updateScroll = (function(){
