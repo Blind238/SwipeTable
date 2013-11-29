@@ -1,4 +1,5 @@
 var when = require('when');
+var attachFastClick = require('fastclick');
 
 module.exports = function(dataProviderUrl, tableKeys, elem, options){
   "use strict";
@@ -709,6 +710,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       }
     );
 
+    attachFastClick(container);
 
   };
 
