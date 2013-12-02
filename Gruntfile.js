@@ -1,7 +1,7 @@
 var LIVERELOAD_PORT = 35729;
 var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
 var mountFolder = function (connect, dir) {
-    return connect.static(require('path').resolve(dir));
+    return connect.static(require('path').resolve(dir),{ maxAge : 0 });
 };
 
 module.exports = function(grunt) {
