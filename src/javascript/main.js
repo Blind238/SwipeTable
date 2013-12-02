@@ -25,7 +25,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       controlHeight   = 50,
       sortAscending   = true,
       sortColumn,
-      timestamp;
+      timestamp,
+      newItems;
 
   var headerScrollbar,
       mainScrollbar;
@@ -38,6 +39,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     // Use default
     options.fullscreen = true;
   }
+
+  options.demo == options.demo || false;
 
   var tableClass = options.tableClass || 'table table-condensed';
 
@@ -81,10 +84,19 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     pageSize = Math.floor(tableHeight / rowHeights.body);
 
     // Make the request for the first page
-    makeRequest(
-      dataProvider,
-      {},
-      requestDeferred.resolver);
+    if (options.demo){
+      makeRequest(
+        dataProvider,
+        {demo: true},
+        requestDeferred.resolver);
+      options.demo = false;
+    }
+    else{
+      makeRequest(
+        dataProvider,
+        {},
+        requestDeferred.resolver);
+    }
 
     createHeader();
 
@@ -125,6 +137,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         }
 
         value.setAttribute('data-active', 'true');
+        value.setAttribute('data-timestamp', timestamp);
         stWrap.appendChild(value);
 
         // Fill with placeholders so that first and last will
@@ -275,8 +288,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var createControls = function(){
     var i,l;
 
-    var buttonGlyphs  = ['<<', '<', '>', '>>'];
-    var events = ['first', 'previous', 'next', 'last'];
+    var buttonGlyphs  = ['<<', '<', 'R', '>', '>>'];
+    var events = ['first', 'previous', 'refresh', 'next', 'last'];
     var buttons = [];
 
     var stControls = document.createElement('div');
@@ -296,6 +309,22 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       },
       previous: function(element){
         var doClickEvent = swipeFunc.prev.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      refresh: function(element){
+        var clickEvent = function(){
+          if (newItems > 0){
+            //TODO: Proper refresh
+            container.innerHTML = '';
+
+            init();
+          }
+        };
+
+        var doClickEvent = clickEvent.bind(this);
 
         element.addEventListener('click', function(){
           doClickEvent();
@@ -416,10 +445,19 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     }
     else{
       // No timestamp given, it's a fresh page request
-      executeRequest("GET",
-                      server +
-                        "?ps=" + pageSize,
-                      resolver);
+      if (queries.demo){
+        executeRequest("GET",
+                        server +
+                          "?ps=" + pageSize +
+                          "&demo=true",
+                        resolver);
+      }
+      else{
+        executeRequest("GET",
+                        server +
+                          "?ps=" + pageSize,
+                        resolver);
+      }
     }
   };
 
@@ -489,6 +527,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   var fillTable = function(table, dataSet){
     var i, j;
+    newItems = dataSet.newItems;
     timestamp = dataSet.timestamp;
     pageAmount = dataSet.pages;
     var numRows = dataSet.data.length;
@@ -1123,9 +1162,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         if(nextElement){
 
-          if (nextElement.getAttribute('data-active') === 'false'){
-            doNextPage();
-          }
+          doNextPage();
 
           nextOldElement = nextElement.nextElementSibling;
 
@@ -1136,9 +1173,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         if(previousElement){
 
-          if (previousElement.getAttribute('data-active') === 'false'){
-            doPreviousPage();
-          }
+          doPreviousPage();
 
           prevOldElement = previousElement.previousElementSibling;
 
@@ -1182,16 +1217,29 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     deferredContainer[index + 1] = when.defer();
 
-    var pagePromise = getPageFromIndex(index + 1);
+    if (stWrap.children.item(index + 1).getAttribute('data-timestamp') == timestamp){
 
-    when.all([pagePromise, deferredContainer[index + 1].promise])
-    .then(
-      function(values){
-        stWrap.children.item(index + 1).innerHTML = values[0].innerHTML;
-        stWrap.children.item(index + 1).setAttribute('data-active', 'true');
-        update(values[1][0],values[1][1]);
-      }
-    );
+      deferredContainer[index + 1].promise.then(
+          function(value){
+          stWrap.children.item(index + 1).setAttribute('data-active', 'true');
+          update(value[0],value[1]);
+          }
+        );
+    }
+    else{
+
+      var pagePromise = getPageFromIndex(index + 1);
+
+      when.all([pagePromise, deferredContainer[index + 1].promise])
+      .then(
+        function(values){
+          stWrap.children.item(index + 1).innerHTML = values[0].innerHTML;
+          stWrap.children.item(index + 1).setAttribute('data-active', 'true');
+          stWrap.children.item(index + 1).setAttribute('data-timestamp', timestamp);
+          update(values[1][0],values[1][1]);
+        }
+      );
+    }
   };
 
   var previousPage = function(){
@@ -1199,37 +1247,64 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     deferredContainer[index - 1] = when.defer();
 
-    var pagePromise = getPageFromIndex(index - 1);
+    if (stWrap.children.item(index - 1).getAttribute('data-timestamp') == timestamp){
 
-    when.all([pagePromise, deferredContainer[index - 1].promise])
-    .then(
-      function(values){
-        stWrap.children.item(index - 1).innerHTML = values[0].innerHTML;
-        stWrap.children.item(index - 1).setAttribute('data-active', 'true');
-        update(values[1][0],values[1][1]);
-      }
-    );
+      deferredContainer[index - 1].promise.then(
+          function(value){
+          stWrap.children.item(index - 1).setAttribute('data-active', 'true');
+          update(value[0],value[1]);
+          }
+        );
+    }
+    else{
+
+      var pagePromise = getPageFromIndex(index - 1);
+
+      when.all([pagePromise, deferredContainer[index - 1].promise])
+      .then(
+        function(values){
+          stWrap.children.item(index - 1).innerHTML = values[0].innerHTML;
+          stWrap.children.item(index - 1).setAttribute('data-active', 'true');
+          stWrap.children.item(index - 1).setAttribute('data-timestamp', timestamp);
+          update(values[1][0],values[1][1]);
+        }
+      );
+    }
   };
 
   var goToPage = function(page){
 
     deferredContainer[page - 1] = when.defer();
 
-    getPageFromIndex(page-1).then(
-      function(value){
-        stWrap.children.item(page-1).innerHTML = value.innerHTML;
-        stWrap.children.item(page-1).setAttribute('data-active', 'true');
-        return when.resolve();
-      }
-    ).then(
-      function(){
-        swipeReference.slide(page-1);
-        deferredContainer[page - 1].promise.then(
+    if (stWrap.children.item(page - 1).getAttribute('data-timestamp') == timestamp){
+
+      swipeReference.slide(page-1);
+      deferredContainer[page - 1].promise.then(
           function(value){
+            stWrap.children.item(page - 1).setAttribute('data-active', 'true');
             update(value[0],value[1]);
-          });
-      }
-    );
+          }
+        );
+    }
+    else{
+
+      getPageFromIndex(page-1).then(
+        function(value){
+          stWrap.children.item(page-1).innerHTML = value.innerHTML;
+          stWrap.children.item(page-1).setAttribute('data-active', 'true');
+          stWrap.children.item(page-1).setAttribute('data-timestamp', timestamp);
+          return when.resolve();
+        }
+      ).then(
+        function(){
+          swipeReference.slide(page-1);
+          deferredContainer[page - 1].promise.then(
+            function(value){
+              update(value[0],value[1]);
+            });
+        }
+      );
+    }
   };
 
   var getPageFromIndex = function(index){

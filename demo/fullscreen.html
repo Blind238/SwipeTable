@@ -37,9 +37,12 @@
           "dummy",
           "data"
         ];
+        var options = {
+          demo:true
+        };
         var stElem = document.getElementsByClassName('swipe-table')[0];
 
-        root.mySwipeTable = new SwipeTable(restApiUrl, keys, stElem);
+        root.mySwipeTable = new SwipeTable(restApiUrl, keys, stElem, options);
 
       }(this));
 
