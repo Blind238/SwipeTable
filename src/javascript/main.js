@@ -780,6 +780,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     // setup initial vars
     var start = {};
     var delta = {};
+    var twoTouches;
     var isScrolling;
 
     // setup event capturing
@@ -823,6 +824,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         // used for testing first move event
         isScrolling = undefined;
 
+        twoTouches = undefined;
+
         // reset delta and end measurements
         delta = {};
 
@@ -833,8 +836,10 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       },
       move: function(event) {
 
+        console.log(event.touches);
+
         // ensure swiping with one touch and not pinching
-        if ( event.touches.length > 1 || event.scale && event.scale !== 1){
+        if ( event.touches.length > 2){
           return;
         }
 
@@ -843,6 +848,10 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         }
 
         var touches = event.touches[0];
+
+        if (event.touches.length === 2){
+          twoTouches = true;
+        }
 
         // measure change in x and y
         delta = {
@@ -907,21 +916,31 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
             if (direction) {
 
+              if(twoTouches){
+                goToPage(pageAmount);
+              }
+              else{
                 move(index-1, -width, 0);
 
-              move(index, slidePos[index]-width, speed);
-              updateMainScrollbar(index, -width, speed);
-              move(circle(index+1), slidePos[circle(index+1)]-width, speed);
-              index = circle(index+1);
+                move(index, slidePos[index]-width, speed);
+                updateMainScrollbar(index, -width, speed);
+                move(circle(index+1), slidePos[circle(index+1)]-width, speed);
+                index = circle(index+1);
+              }
 
             } else {
+
+              if(twoTouches){
+                goToPage(1);
+              }
+              else{
                 move(index+1, width, 0);
 
-              move(index, slidePos[index]+width, speed);
-              updateMainScrollbar(index, width, speed);
-              move(circle(index-1), slidePos[circle(index-1)]+width, speed);
-              index = circle(index-1);
-
+                move(index, slidePos[index]+width, speed);
+                updateMainScrollbar(index, width, speed);
+                move(circle(index-1), slidePos[circle(index-1)]+width, speed);
+                index = circle(index-1);
+              }
             }
 
             options.callback && options.callback(index, slides[index]);
