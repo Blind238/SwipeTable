@@ -16,7 +16,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var stWrap,
       currentIndexElement,
       swipeReference,
-      deferredContainer = {};
+      deferredContainer = [];
 
   var pageSize,
       pageAmount,
@@ -137,7 +137,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         createSwipe();
 
         nextPage();
-        resolveTheResolver(); // So nextPage's promise passes
+        resolveTheResolver(1); // So nextPage's promise passes
         updateHeader(container.querySelector('.st-table-wrap'));
 
         updateMainScrollbar(0);
@@ -1110,7 +1110,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var doNextPage = nextPage.bind(this);
     var doPreviousPage = previousPage.bind(this);
     var doResolveTheResolver = resolveTheResolver.bind(this);
+    var doPushDeferred = pushDeferred.bind(this);
     var doUpdateHeader = updateHeader.bind(this);
+    var doUpdate = update.bind(this);
 
     swipeReference = new Swipe({
       callback: function(currentIndex, element){
@@ -1145,16 +1147,31 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
           }
         }
 
+        if(!nextElement || !previousElement){
+          doPushDeferred(currentIndex).then(
+            function(value){
+              doUpdate(value[0],value[1]);
+            }
+          );
+        }
+
         doUpdateHeader(element);
       },
       transitionEnd: function(currentIndex, element){
-        doResolveTheResolver([currentIndex, element]);
+        doResolveTheResolver(currentIndex, element);
       }
     });
   };
 
-  var resolveTheResolver = function(value){
-    deferredContainer.deferred.resolver.resolve(value);
+  var resolveTheResolver = function(theIndex, theValue){
+    deferredContainer.forEach(function(value, index){
+      deferredContainer[index].resolver.resolve([theIndex, theValue]);
+    });
+  };
+
+  var pushDeferred = function(index){
+    deferredContainer[index] = when.defer();
+    return deferredContainer[index].promise;
   };
 
   /*-------------- Navigate --------------*\
@@ -1163,11 +1180,11 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var nextPage = function(){
     var index = swipeReference.getPos();
 
-    deferredContainer.deferred = when.defer();
+    deferredContainer[index + 1] = when.defer();
 
     var pagePromise = getPageFromIndex(index + 1);
 
-    when.all([pagePromise, deferredContainer.deferred.promise])
+    when.all([pagePromise, deferredContainer[index + 1].promise])
     .then(
       function(values){
         stWrap.children.item(index + 1).innerHTML = values[0].innerHTML;
@@ -1180,11 +1197,11 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var previousPage = function(){
     var index = swipeReference.getPos();
 
-    deferredContainer.deferred = when.defer();
+    deferredContainer[index - 1] = when.defer();
 
     var pagePromise = getPageFromIndex(index - 1);
 
-    when.all([pagePromise, deferredContainer.deferred.promise])
+    when.all([pagePromise, deferredContainer[index - 1].promise])
     .then(
       function(values){
         stWrap.children.item(index - 1).innerHTML = values[0].innerHTML;
@@ -1196,6 +1213,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   var goToPage = function(page){
 
+    deferredContainer[page - 1] = when.defer();
+
     getPageFromIndex(page-1).then(
       function(value){
         stWrap.children.item(page-1).innerHTML = value.innerHTML;
@@ -1205,7 +1224,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     ).then(
       function(){
         swipeReference.slide(page-1);
-        deferredContainer.deferred.promise.then(
+        deferredContainer[page - 1].promise.then(
           function(value){
             update(value[0],value[1]);
           });
