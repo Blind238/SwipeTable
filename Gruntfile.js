@@ -61,10 +61,19 @@ module.exports = function(grunt) {
       }
     },
 
+    autoprefixer: {
+      options: {
+        browsers: ['last 1 version', 'android 4']
+      },
+      dist: {
+        src: 'dist/swipetable.css'
+      },
+    },
+
     watch: {
       scss: {
         files: 'src/scss/*.scss',
-        tasks: ['sass'],
+        tasks: ['sass', 'autoprefixer'],
         options: {
           livereload: LIVERELOAD_PORT
         }
@@ -120,7 +129,7 @@ module.exports = function(grunt) {
                                     ['jshint', 'browserify', 'qunit']);
 
   grunt.registerTask('build',   'Compiles and minifies scss and javascript.',
-                                    ['sass', 'jshint', 'browserify', 'qunit', 'uglify']);
+                                    ['sass', 'autoprefixer', 'jshint', 'browserify', 'qunit', 'uglify']);
   
   grunt.registerTask('default', 'Compiles and minifies javascript',
                                     ['jshint', 'browserify', 'qunit', 'uglify']);
