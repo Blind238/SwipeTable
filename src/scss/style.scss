@@ -38,6 +38,11 @@ body{
     height: 50px;
   }
 
+  .st-scrollable-wrap{
+    border-radius: 6px;
+    box-shadow: inset 0 0 9px -1px ;
+  }
+
   .st-scrollable {
     white-space: nowrap;
     position: relative;
@@ -56,6 +61,7 @@ body{
 }
 
 .st-scrollbar {
+  box-shadow: inset 0 0 1px;
   height: 5px;
   width: 100%;
   background-color: desaturate(lighten($color, 12%), 10%);;
@@ -72,16 +78,13 @@ body{
   position: absolute;
   width: 100%;
   bottom: 0;
-  display: flex;
-  display: -webkit-flex;
-  display: -ms-flex;
+  display:         flex;
   justify-content: flex-end;
-  -ms-justify-content: flex-end;
-  -webkit-justify-content: flex-end;
   height: 50px;
   text-align: center;
 
   div {
+    border-radius: 0 0 6px 6px;
     border: 1px solid desaturate(darken($color, 25%), 40%);
     background-color: $color;
   }
@@ -91,8 +94,6 @@ body{
   .st-controls {
     div {
       flex-grow: 1;
-      -webkit-flex-grow: 1;
-      -ms-flex-grow: 1;
     }
   }
 }
@@ -101,15 +102,11 @@ body{
   .st-controls {
     div {
       flex-basis: 50px;
-      -ms-flex-basis: 50px;
-      -webkit-flex-basis: 50px;
     }
 
     div:nth-child(3){
       order: -1;
       flex-grow: 1;
-      -webkit-flex-grow: 1;
-      -ms-flex-grow: 1;
     }
   }
 }
