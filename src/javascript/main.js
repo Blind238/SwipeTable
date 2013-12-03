@@ -40,6 +40,13 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     options.fullscreen = true;
   }
 
+  if(options.fullscreen){
+    container.className+= ' st-fullscreen';
+  }
+  else{
+    container.className+= ' st-not-fullscreen';
+  }
+
   options.demo == options.demo || false;
 
   var tableClass = options.tableClass || 'table table-condensed';

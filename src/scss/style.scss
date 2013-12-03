@@ -1,6 +1,8 @@
 @import "bootstrap-table";
 @import "responsive-tables";
 
+$color: #828dff;
+
 body{
   padding: 0;
   margin: 0;
@@ -22,13 +24,14 @@ body{
 }
 
 .st-header {
+  line-height: 50px;
   position: absolute;
   top: 0;
   left: 0;
   min-width: 100%;
   width: 100%;
   height: 50px;
-  background-color: #828dff;
+  background-color: $color;
   overflow: hidden;
   visibility: visible;
   .st-pinned, .st-scrollable{
@@ -55,16 +58,17 @@ body{
 .st-scrollbar {
   height: 5px;
   width: 100%;
-  background-color: #C5CAFC;
+  background-color: desaturate(lighten($color, 12%), 10%);;
   position: absolute;
   bottom: 50px;
   div {
-    background-color: #3A46B1;
+    background-color: desaturate(darken($color, 25%), 40%);
     height: 5px;
   }
 }
 
 .st-controls {
+  line-height: 50px;
   position: absolute;
   width: 100%;
   bottom: 0;
@@ -78,10 +82,34 @@ body{
   text-align: center;
 
   div {
-    border: 1px solid #3A46B1;
-    flex-grow: 1;
-    -webkit-flex-grow: 1;
-    -ms-flex-grow: 1;
-    background-color: #828dff;
+    border: 1px solid desaturate(darken($color, 25%), 40%);
+    background-color: $color;
+  }
+}
+
+.st-fullscreen {
+  .st-controls {
+    div {
+      flex-grow: 1;
+      -webkit-flex-grow: 1;
+      -ms-flex-grow: 1;
+    }
+  }
+}
+
+.st-not-fullscreen {
+  .st-controls {
+    div {
+      flex-basis: 50px;
+      -ms-flex-basis: 50px;
+      -webkit-flex-basis: 50px;
+    }
+
+    div:nth-child(3){
+      order: -1;
+      flex-grow: 1;
+      -webkit-flex-grow: 1;
+      -ms-flex-grow: 1;
+    }
   }
 }
