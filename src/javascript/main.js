@@ -35,6 +35,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   var controls;
 
+  var boundEvents = {};
+
   options = options || {};
 
   if(typeof options.fullscreen !== 'boolean'){
@@ -61,6 +63,11 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   \*----------------      ----------------*/
 
   var init = function(){
+    if(swipeReference){
+      swipeReference.kill();
+      window.removeEventListener('orientationchange', boundEvents.init);
+      window.removeEventListener('resize', boundEvents.update);
+    }
     // Remove everything inside the container
     container.innerHTML = '';
 
@@ -114,17 +121,16 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var doUpdateHeader = updateHeader.bind(this);
     var doUpdateHeaderScrollbar = updateHeaderScrollbar.bind(this);
 
-    window.addEventListener('resize', function(){
+    boundEvents.update = function(){
       doUpdateHeader();
       doUpdateHeaderScrollbar();
-    });
+    };
 
-    var doInit = init.bind(this);
+    window.addEventListener('resize', boundEvents.update);
 
-    window.addEventListener('orientationchange', function(){
-      // alert('Orientation changed');
-      doInit();
-    });
+    boundEvents.init = init.bind(this);
+
+    window.addEventListener('orientationchange', boundEvents.init);
 
     mainScrollbar   = createScrollbar();
     headerScrollbar = createScrollbar();
@@ -174,7 +180,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         updateMainScrollbar(0);
         updateHeaderScrollbar();
 
-        var headerStyles = container.querySelectorAll('.st-header .st-scrollable > div');
+        var headerStyles = container.querySelectorAll('.st-header .st-scrollable th');
         for (var l = 0; l < headerStyles.length; l+=1 ) {
           var style = headerStyles.item(l).style;
 
@@ -1219,6 +1225,47 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
           w *= (length + 1);
           return (w + 'px');
         }());
+      },
+      kill: function() {
+
+        // reset element
+        stWrap.style.width = 'auto';
+        stWrap.style.left = 0;
+
+        // reset slides
+        var pos = slides.length;
+        while(pos--) {
+
+          var slide = slides[pos];
+          slide.style.width = '100%';
+          slide.style.left = 0;
+
+          if (browser.transitions) {
+            translate(pos, 0, 0);
+          }
+
+        }
+
+        // removed event listeners
+        if (browser.addEventListener) {
+
+          // remove current event listeners
+          stWrap.removeEventListener('touchstart', events, false);
+          headerScroll.removeEventListener('touchstart', scrollEvents, false);
+          stWrap.removeEventListener('webkitTransitionEnd', events, false);
+          stWrap.removeEventListener('msTransitionEnd', events, false);
+          stWrap.removeEventListener('oTransitionEnd', events, false);
+          stWrap.removeEventListener('otransitionend', events, false);
+          stWrap.removeEventListener('transitionend', events, false);
+          window.removeEventListener('resize', events, false);
+
+        }
+        else {
+
+          window.onresize = null;
+
+        }
+
       }
 
     };
