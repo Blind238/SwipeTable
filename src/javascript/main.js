@@ -61,6 +61,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   \*----------------      ----------------*/
 
   var init = function(){
+    // Remove everything inside the container
+    container.innerHTML = '';
+
     var tableHeight;
     var requestDeferred = when.defer();
     var dataTable = createTable();
@@ -114,6 +117,13 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     window.addEventListener('resize', function(){
       doUpdateHeader();
       doUpdateHeaderScrollbar();
+    });
+
+    var doInit = init.bind(this);
+
+    window.addEventListener('orientationchange', function(){
+      // alert('Orientation changed');
+      doInit();
     });
 
     mainScrollbar   = createScrollbar();
@@ -373,8 +383,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         var clickEvent = function(){
           if (newItems > 0){
             //TODO: Proper refresh
-            container.innerHTML = '';
-
             init();
           }
         };
