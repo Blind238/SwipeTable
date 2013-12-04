@@ -1,4 +1,945 @@
 !function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.SwipeTable=e():"undefined"!=typeof global?global.SwipeTable=e():"undefined"!=typeof self&&(self.SwipeTable=e())}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*!
+ * v0.2.0
+ * Copyright (c) 2013 Jarid Margolin
+ * bouncefix.js is open sourced under the MIT license.
+ */ 
+
+;(function (name, context, definition) {
+  if (typeof module !== 'undefined' && module.exports) { module.exports = definition(); }
+  else if (typeof define === 'function' && define.amd) { define(definition); }
+  else { context[name] = definition(); }
+})('bouncefix', this, function () {
+// Define module
+var bouncefix = {
+  Fix: Fix,
+  cache: {}
+};  
+
+//
+// Add/Create new instance
+//
+bouncefix.add = function (className) {
+  if (!this.cache[className]) {
+    this.cache[className] = new this.Fix(className);
+  }
+};
+
+//
+// Delete/Remove instance
+//
+bouncefix.remove = function (className) {
+  if (this.cache[className]) {
+    this.cache[className].remove();
+    delete this.cache[className];
+  }
+};
+//
+// Class Constructor - Called with new BounceFix(el)
+// Responsible for setting up required instance
+// variables, and listeners.
+//
+function Fix(className) {
+  // If there is no element, then do nothing  
+  if(!className) { return false; }
+  this.className = className;
+
+  // The engine
+  this.startListener = new EventListener(document, {
+    evt: 'touchstart',
+    handler: this.touchStart,
+    context: this
+  }).add();
+
+  // Cleanup
+  this.endListener = new EventListener(document, {
+    evt: 'touchend',
+    handler: this.touchEnd,
+    context: this
+  }).add();
+}
+
+//
+// touchstart handler
+//
+Fix.prototype.touchStart = function (evt) {
+  this.target = utils.getTargetedEl(evt.target, this.className);
+  if (this.target) {
+    // If scrollable, adjust
+    if (utils.isScrollable(this.target)) { return utils.scrollToEnd(this.target); }
+    // Else block touchmove
+    this.endListener = new EventListener(this.target, {
+      evt: 'touchmove',
+      handler: this.touchMove,
+      context: this
+    }).add();
+  }
+};
+
+//
+// If this event is called, we block scrolling
+// by preventing default behavior.
+//
+Fix.prototype.touchMove = function (evt) {
+  evt.preventDefault(); 
+};
+
+//
+// On touchend we need to remove and listeners
+// we may have added.
+//
+Fix.prototype.touchEnd = function (evt) {
+  if (this.moveListener) {
+    this.moveListener.remove();
+  }
+};
+
+//
+// touchend handler
+//
+Fix.prototype.remove = function () {
+  this.startListener.remove();
+  this.endListener.remove();
+};
+// Define module
+var utils = {};
+
+//
+// Search nodes to find target el. Return if exists
+//
+utils.getTargetedEl = function (el, className) {
+  while (true) {
+    if (el.classList.contains(className)) { break; }
+    if ((el = el.parentElement)) { continue; }
+    break;
+  }
+  return el;
+};
+
+//
+// Return true or false depending on if content
+// is scrollable
+//
+utils.isScrollable = function (el) {
+  return (el.scrollHeight > el.offsetHeight);
+};
+
+//
+// Keep scrool from hitting end bounds
+//
+utils.scrollToEnd = function (el) {
+  var curPos = el.scrollTop,
+      height = el.offsetHeight,
+      scroll = el.scrollHeight;
+  
+  // If at top, bump down 1px
+  if(curPos <= 0) { el.scrollTop = 1; }
+
+  // If at bottom, bump up 1px
+  if(curPos + height >= scroll) {
+    el.scrollTop = scroll - height - 1;
+  }
+};
+//
+// Class used to work with addEventListener. Allows
+// context to be specified on handler, and provides
+// a method for easy removal.
+//
+function EventListener(el, opts) {
+  // Make args available to instance
+  this.evt = opts.evt;
+  this.el = el;
+  // Default
+  this.handler = opts.handler;
+  // If context passed call with context
+  if (opts.context) {
+    this.handler = function (evt) {
+      opts.handler.call(opts.context, evt);
+    };
+  }
+}
+
+//
+// Add EventListener on instance el
+//
+EventListener.prototype.add = function () {
+  this.el.addEventListener(this.evt, this.handler, false);
+};
+
+//
+// Removes EventListener on instance el
+//
+EventListener.prototype.remove = function () {
+  this.el.removeEventListener(this.evt, this.handler);
+};
+
+return bouncefix;
+
+});
+},{}],2:[function(require,module,exports){
+/**
+ * @preserve FastClick: polyfill to remove click delays on browsers with touch UIs.
+ *
+ * @version 0.6.9
+ * @codingstandard ftlabs-jsv2
+ * @copyright The Financial Times Limited [All Rights Reserved]
+ * @license MIT License (see LICENSE.txt)
+ */
+
+/*jslint browser:true, node:true*/
+/*global define, Event, Node*/
+
+
+/**
+ * Instantiate fast-clicking listeners on the specificed layer.
+ *
+ * @constructor
+ * @param {Element} layer The layer to listen on
+ */
+function FastClick(layer) {
+	'use strict';
+	var oldOnClick, self = this;
+
+
+	/**
+	 * Whether a click is currently being tracked.
+	 *
+	 * @type boolean
+	 */
+	this.trackingClick = false;
+
+
+	/**
+	 * Timestamp for when when click tracking started.
+	 *
+	 * @type number
+	 */
+	this.trackingClickStart = 0;
+
+
+	/**
+	 * The element being tracked for a click.
+	 *
+	 * @type EventTarget
+	 */
+	this.targetElement = null;
+
+
+	/**
+	 * X-coordinate of touch start event.
+	 *
+	 * @type number
+	 */
+	this.touchStartX = 0;
+
+
+	/**
+	 * Y-coordinate of touch start event.
+	 *
+	 * @type number
+	 */
+	this.touchStartY = 0;
+
+
+	/**
+	 * ID of the last touch, retrieved from Touch.identifier.
+	 *
+	 * @type number
+	 */
+	this.lastTouchIdentifier = 0;
+
+
+	/**
+	 * Touchmove boundary, beyond which a click will be cancelled.
+	 *
+	 * @type number
+	 */
+	this.touchBoundary = 10;
+
+
+	/**
+	 * The FastClick layer.
+	 *
+	 * @type Element
+	 */
+	this.layer = layer;
+
+	if (!layer || !layer.nodeType) {
+		throw new TypeError('Layer must be a document node');
+	}
+
+	/** @type function() */
+	this.onClick = function() { return FastClick.prototype.onClick.apply(self, arguments); };
+
+	/** @type function() */
+	this.onMouse = function() { return FastClick.prototype.onMouse.apply(self, arguments); };
+
+	/** @type function() */
+	this.onTouchStart = function() { return FastClick.prototype.onTouchStart.apply(self, arguments); };
+
+	/** @type function() */
+	this.onTouchMove = function() { return FastClick.prototype.onTouchMove.apply(self, arguments); };
+
+	/** @type function() */
+	this.onTouchEnd = function() { return FastClick.prototype.onTouchEnd.apply(self, arguments); };
+
+	/** @type function() */
+	this.onTouchCancel = function() { return FastClick.prototype.onTouchCancel.apply(self, arguments); };
+
+	if (FastClick.notNeeded(layer)) {
+		return;
+	}
+
+	// Set up event handlers as required
+	if (this.deviceIsAndroid) {
+		layer.addEventListener('mouseover', this.onMouse, true);
+		layer.addEventListener('mousedown', this.onMouse, true);
+		layer.addEventListener('mouseup', this.onMouse, true);
+	}
+
+	layer.addEventListener('click', this.onClick, true);
+	layer.addEventListener('touchstart', this.onTouchStart, false);
+	layer.addEventListener('touchmove', this.onTouchMove, false);
+	layer.addEventListener('touchend', this.onTouchEnd, false);
+	layer.addEventListener('touchcancel', this.onTouchCancel, false);
+
+	// Hack is required for browsers that don't support Event#stopImmediatePropagation (e.g. Android 2)
+	// which is how FastClick normally stops click events bubbling to callbacks registered on the FastClick
+	// layer when they are cancelled.
+	if (!Event.prototype.stopImmediatePropagation) {
+		layer.removeEventListener = function(type, callback, capture) {
+			var rmv = Node.prototype.removeEventListener;
+			if (type === 'click') {
+				rmv.call(layer, type, callback.hijacked || callback, capture);
+			} else {
+				rmv.call(layer, type, callback, capture);
+			}
+		};
+
+		layer.addEventListener = function(type, callback, capture) {
+			var adv = Node.prototype.addEventListener;
+			if (type === 'click') {
+				adv.call(layer, type, callback.hijacked || (callback.hijacked = function(event) {
+					if (!event.propagationStopped) {
+						callback(event);
+					}
+				}), capture);
+			} else {
+				adv.call(layer, type, callback, capture);
+			}
+		};
+	}
+
+	// If a handler is already declared in the element's onclick attribute, it will be fired before
+	// FastClick's onClick handler. Fix this by pulling out the user-defined handler function and
+	// adding it as listener.
+	if (typeof layer.onclick === 'function') {
+
+		// Android browser on at least 3.2 requires a new reference to the function in layer.onclick
+		// - the old one won't work if passed to addEventListener directly.
+		oldOnClick = layer.onclick;
+		layer.addEventListener('click', function(event) {
+			oldOnClick(event);
+		}, false);
+		layer.onclick = null;
+	}
+}
+
+
+/**
+ * Android requires exceptions.
+ *
+ * @type boolean
+ */
+FastClick.prototype.deviceIsAndroid = navigator.userAgent.indexOf('Android') > 0;
+
+
+/**
+ * iOS requires exceptions.
+ *
+ * @type boolean
+ */
+FastClick.prototype.deviceIsIOS = /iP(ad|hone|od)/.test(navigator.userAgent);
+
+
+/**
+ * iOS 4 requires an exception for select elements.
+ *
+ * @type boolean
+ */
+FastClick.prototype.deviceIsIOS4 = FastClick.prototype.deviceIsIOS && (/OS 4_\d(_\d)?/).test(navigator.userAgent);
+
+
+/**
+ * iOS 6.0(+?) requires the target element to be manually derived
+ *
+ * @type boolean
+ */
+FastClick.prototype.deviceIsIOSWithBadTarget = FastClick.prototype.deviceIsIOS && (/OS ([6-9]|\d{2})_\d/).test(navigator.userAgent);
+
+
+/**
+ * Determine whether a given element requires a native click.
+ *
+ * @param {EventTarget|Element} target Target DOM element
+ * @returns {boolean} Returns true if the element needs a native click
+ */
+FastClick.prototype.needsClick = function(target) {
+	'use strict';
+	switch (target.nodeName.toLowerCase()) {
+
+	// Don't send a synthetic click to disabled inputs (issue #62)
+	case 'button':
+	case 'select':
+	case 'textarea':
+		if (target.disabled) {
+			return true;
+		}
+
+		break;
+	case 'input':
+
+		// File inputs need real clicks on iOS 6 due to a browser bug (issue #68)
+		if ((this.deviceIsIOS && target.type === 'file') || target.disabled) {
+			return true;
+		}
+
+		break;
+	case 'label':
+	case 'video':
+		return true;
+	}
+
+	return (/\bneedsclick\b/).test(target.className);
+};
+
+
+/**
+ * Determine whether a given element requires a call to focus to simulate click into element.
+ *
+ * @param {EventTarget|Element} target Target DOM element
+ * @returns {boolean} Returns true if the element requires a call to focus to simulate native click.
+ */
+FastClick.prototype.needsFocus = function(target) {
+	'use strict';
+	switch (target.nodeName.toLowerCase()) {
+	case 'textarea':
+	case 'select':
+		return true;
+	case 'input':
+		switch (target.type) {
+		case 'button':
+		case 'checkbox':
+		case 'file':
+		case 'image':
+		case 'radio':
+		case 'submit':
+			return false;
+		}
+
+		// No point in attempting to focus disabled inputs
+		return !target.disabled && !target.readOnly;
+	default:
+		return (/\bneedsfocus\b/).test(target.className);
+	}
+};
+
+
+/**
+ * Send a click event to the specified element.
+ *
+ * @param {EventTarget|Element} targetElement
+ * @param {Event} event
+ */
+FastClick.prototype.sendClick = function(targetElement, event) {
+	'use strict';
+	var clickEvent, touch;
+
+	// On some Android devices activeElement needs to be blurred otherwise the synthetic click will have no effect (#24)
+	if (document.activeElement && document.activeElement !== targetElement) {
+		document.activeElement.blur();
+	}
+
+	touch = event.changedTouches[0];
+
+	// Synthesise a click event, with an extra attribute so it can be tracked
+	clickEvent = document.createEvent('MouseEvents');
+	clickEvent.initMouseEvent('click', true, true, window, 1, touch.screenX, touch.screenY, touch.clientX, touch.clientY, false, false, false, false, 0, null);
+	clickEvent.forwardedTouchEvent = true;
+	targetElement.dispatchEvent(clickEvent);
+};
+
+
+/**
+ * @param {EventTarget|Element} targetElement
+ */
+FastClick.prototype.focus = function(targetElement) {
+	'use strict';
+	var length;
+
+	if (this.deviceIsIOS && targetElement.setSelectionRange) {
+		length = targetElement.value.length;
+		targetElement.setSelectionRange(length, length);
+	} else {
+		targetElement.focus();
+	}
+};
+
+
+/**
+ * Check whether the given target element is a child of a scrollable layer and if so, set a flag on it.
+ *
+ * @param {EventTarget|Element} targetElement
+ */
+FastClick.prototype.updateScrollParent = function(targetElement) {
+	'use strict';
+	var scrollParent, parentElement;
+
+	scrollParent = targetElement.fastClickScrollParent;
+
+	// Attempt to discover whether the target element is contained within a scrollable layer. Re-check if the
+	// target element was moved to another parent.
+	if (!scrollParent || !scrollParent.contains(targetElement)) {
+		parentElement = targetElement;
+		do {
+			if (parentElement.scrollHeight > parentElement.offsetHeight) {
+				scrollParent = parentElement;
+				targetElement.fastClickScrollParent = parentElement;
+				break;
+			}
+
+			parentElement = parentElement.parentElement;
+		} while (parentElement);
+	}
+
+	// Always update the scroll top tracker if possible.
+	if (scrollParent) {
+		scrollParent.fastClickLastScrollTop = scrollParent.scrollTop;
+	}
+};
+
+
+/**
+ * @param {EventTarget} targetElement
+ * @returns {Element|EventTarget}
+ */
+FastClick.prototype.getTargetElementFromEventTarget = function(eventTarget) {
+	'use strict';
+
+	// On some older browsers (notably Safari on iOS 4.1 - see issue #56) the event target may be a text node.
+	if (eventTarget.nodeType === Node.TEXT_NODE) {
+		return eventTarget.parentNode;
+	}
+
+	return eventTarget;
+};
+
+
+/**
+ * On touch start, record the position and scroll offset.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onTouchStart = function(event) {
+	'use strict';
+	var targetElement, touch, selection;
+
+	// Ignore multiple touches, otherwise pinch-to-zoom is prevented if both fingers are on the FastClick element (issue #111).
+	if (event.targetTouches.length > 1) {
+		return true;
+	}
+
+	targetElement = this.getTargetElementFromEventTarget(event.target);
+	touch = event.targetTouches[0];
+
+	if (this.deviceIsIOS) {
+
+		// Only trusted events will deselect text on iOS (issue #49)
+		selection = window.getSelection();
+		if (selection.rangeCount && !selection.isCollapsed) {
+			return true;
+		}
+
+		if (!this.deviceIsIOS4) {
+
+			// Weird things happen on iOS when an alert or confirm dialog is opened from a click event callback (issue #23):
+			// when the user next taps anywhere else on the page, new touchstart and touchend events are dispatched
+			// with the same identifier as the touch event that previously triggered the click that triggered the alert.
+			// Sadly, there is an issue on iOS 4 that causes some normal touch events to have the same identifier as an
+			// immediately preceeding touch event (issue #52), so this fix is unavailable on that platform.
+			if (touch.identifier === this.lastTouchIdentifier) {
+				event.preventDefault();
+				return false;
+			}
+
+			this.lastTouchIdentifier = touch.identifier;
+
+			// If the target element is a child of a scrollable layer (using -webkit-overflow-scrolling: touch) and:
+			// 1) the user does a fling scroll on the scrollable layer
+			// 2) the user stops the fling scroll with another tap
+			// then the event.target of the last 'touchend' event will be the element that was under the user's finger
+			// when the fling scroll was started, causing FastClick to send a click event to that layer - unless a check
+			// is made to ensure that a parent layer was not scrolled before sending a synthetic click (issue #42).
+			this.updateScrollParent(targetElement);
+		}
+	}
+
+	this.trackingClick = true;
+	this.trackingClickStart = event.timeStamp;
+	this.targetElement = targetElement;
+
+	this.touchStartX = touch.pageX;
+	this.touchStartY = touch.pageY;
+
+	// Prevent phantom clicks on fast double-tap (issue #36)
+	if ((event.timeStamp - this.lastClickTime) < 200) {
+		event.preventDefault();
+	}
+
+	return true;
+};
+
+
+/**
+ * Based on a touchmove event object, check whether the touch has moved past a boundary since it started.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.touchHasMoved = function(event) {
+	'use strict';
+	var touch = event.changedTouches[0], boundary = this.touchBoundary;
+
+	if (Math.abs(touch.pageX - this.touchStartX) > boundary || Math.abs(touch.pageY - this.touchStartY) > boundary) {
+		return true;
+	}
+
+	return false;
+};
+
+
+/**
+ * Update the last position.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onTouchMove = function(event) {
+	'use strict';
+	if (!this.trackingClick) {
+		return true;
+	}
+
+	// If the touch has moved, cancel the click tracking
+	if (this.targetElement !== this.getTargetElementFromEventTarget(event.target) || this.touchHasMoved(event)) {
+		this.trackingClick = false;
+		this.targetElement = null;
+	}
+
+	return true;
+};
+
+
+/**
+ * Attempt to find the labelled control for the given label element.
+ *
+ * @param {EventTarget|HTMLLabelElement} labelElement
+ * @returns {Element|null}
+ */
+FastClick.prototype.findControl = function(labelElement) {
+	'use strict';
+
+	// Fast path for newer browsers supporting the HTML5 control attribute
+	if (labelElement.control !== undefined) {
+		return labelElement.control;
+	}
+
+	// All browsers under test that support touch events also support the HTML5 htmlFor attribute
+	if (labelElement.htmlFor) {
+		return document.getElementById(labelElement.htmlFor);
+	}
+
+	// If no for attribute exists, attempt to retrieve the first labellable descendant element
+	// the list of which is defined here: http://www.w3.org/TR/html5/forms.html#category-label
+	return labelElement.querySelector('button, input:not([type=hidden]), keygen, meter, output, progress, select, textarea');
+};
+
+
+/**
+ * On touch end, determine whether to send a click event at once.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onTouchEnd = function(event) {
+	'use strict';
+	var forElement, trackingClickStart, targetTagName, scrollParent, touch, targetElement = this.targetElement;
+
+	if (!this.trackingClick) {
+		return true;
+	}
+
+	// Prevent phantom clicks on fast double-tap (issue #36)
+	if ((event.timeStamp - this.lastClickTime) < 200) {
+		this.cancelNextClick = true;
+		return true;
+	}
+
+	this.lastClickTime = event.timeStamp;
+
+	trackingClickStart = this.trackingClickStart;
+	this.trackingClick = false;
+	this.trackingClickStart = 0;
+
+	// On some iOS devices, the targetElement supplied with the event is invalid if the layer
+	// is performing a transition or scroll, and has to be re-detected manually. Note that
+	// for this to function correctly, it must be called *after* the event target is checked!
+	// See issue #57; also filed as rdar://13048589 .
+	if (this.deviceIsIOSWithBadTarget) {
+		touch = event.changedTouches[0];
+
+		// In certain cases arguments of elementFromPoint can be negative, so prevent setting targetElement to null
+		targetElement = document.elementFromPoint(touch.pageX - window.pageXOffset, touch.pageY - window.pageYOffset) || targetElement;
+		targetElement.fastClickScrollParent = this.targetElement.fastClickScrollParent;
+	}
+
+	targetTagName = targetElement.tagName.toLowerCase();
+	if (targetTagName === 'label') {
+		forElement = this.findControl(targetElement);
+		if (forElement) {
+			this.focus(targetElement);
+			if (this.deviceIsAndroid) {
+				return false;
+			}
+
+			targetElement = forElement;
+		}
+	} else if (this.needsFocus(targetElement)) {
+
+		// Case 1: If the touch started a while ago (best guess is 100ms based on tests for issue #36) then focus will be triggered anyway. Return early and unset the target element reference so that the subsequent click will be allowed through.
+		// Case 2: Without this exception for input elements tapped when the document is contained in an iframe, then any inputted text won't be visible even though the value attribute is updated as the user types (issue #37).
+		if ((event.timeStamp - trackingClickStart) > 100 || (this.deviceIsIOS && window.top !== window && targetTagName === 'input')) {
+			this.targetElement = null;
+			return false;
+		}
+
+		this.focus(targetElement);
+
+		// Select elements need the event to go through on iOS 4, otherwise the selector menu won't open.
+		if (!this.deviceIsIOS4 || targetTagName !== 'select') {
+			this.targetElement = null;
+			event.preventDefault();
+		}
+
+		return false;
+	}
+
+	if (this.deviceIsIOS && !this.deviceIsIOS4) {
+
+		// Don't send a synthetic click event if the target element is contained within a parent layer that was scrolled
+		// and this tap is being used to stop the scrolling (usually initiated by a fling - issue #42).
+		scrollParent = targetElement.fastClickScrollParent;
+		if (scrollParent && scrollParent.fastClickLastScrollTop !== scrollParent.scrollTop) {
+			return true;
+		}
+	}
+
+	// Prevent the actual click from going though - unless the target node is marked as requiring
+	// real clicks or if it is in the whitelist in which case only non-programmatic clicks are permitted.
+	if (!this.needsClick(targetElement)) {
+		event.preventDefault();
+		this.sendClick(targetElement, event);
+	}
+
+	return false;
+};
+
+
+/**
+ * On touch cancel, stop tracking the click.
+ *
+ * @returns {void}
+ */
+FastClick.prototype.onTouchCancel = function() {
+	'use strict';
+	this.trackingClick = false;
+	this.targetElement = null;
+};
+
+
+/**
+ * Determine mouse events which should be permitted.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onMouse = function(event) {
+	'use strict';
+
+	// If a target element was never set (because a touch event was never fired) allow the event
+	if (!this.targetElement) {
+		return true;
+	}
+
+	if (event.forwardedTouchEvent) {
+		return true;
+	}
+
+	// Programmatically generated events targeting a specific element should be permitted
+	if (!event.cancelable) {
+		return true;
+	}
+
+	// Derive and check the target element to see whether the mouse event needs to be permitted;
+	// unless explicitly enabled, prevent non-touch click events from triggering actions,
+	// to prevent ghost/doubleclicks.
+	if (!this.needsClick(this.targetElement) || this.cancelNextClick) {
+
+		// Prevent any user-added listeners declared on FastClick element from being fired.
+		if (event.stopImmediatePropagation) {
+			event.stopImmediatePropagation();
+		} else {
+
+			// Part of the hack for browsers that don't support Event#stopImmediatePropagation (e.g. Android 2)
+			event.propagationStopped = true;
+		}
+
+		// Cancel the event
+		event.stopPropagation();
+		event.preventDefault();
+
+		return false;
+	}
+
+	// If the mouse event is permitted, return true for the action to go through.
+	return true;
+};
+
+
+/**
+ * On actual clicks, determine whether this is a touch-generated click, a click action occurring
+ * naturally after a delay after a touch (which needs to be cancelled to avoid duplication), or
+ * an actual click which should be permitted.
+ *
+ * @param {Event} event
+ * @returns {boolean}
+ */
+FastClick.prototype.onClick = function(event) {
+	'use strict';
+	var permitted;
+
+	// It's possible for another FastClick-like library delivered with third-party code to fire a click event before FastClick does (issue #44). In that case, set the click-tracking flag back to false and return early. This will cause onTouchEnd to return early.
+	if (this.trackingClick) {
+		this.targetElement = null;
+		this.trackingClick = false;
+		return true;
+	}
+
+	// Very odd behaviour on iOS (issue #18): if a submit element is present inside a form and the user hits enter in the iOS simulator or clicks the Go button on the pop-up OS keyboard the a kind of 'fake' click event will be triggered with the submit-type input element as the target.
+	if (event.target.type === 'submit' && event.detail === 0) {
+		return true;
+	}
+
+	permitted = this.onMouse(event);
+
+	// Only unset targetElement if the click is not permitted. This will ensure that the check for !targetElement in onMouse fails and the browser's click doesn't go through.
+	if (!permitted) {
+		this.targetElement = null;
+	}
+
+	// If clicks are permitted, return true for the action to go through.
+	return permitted;
+};
+
+
+/**
+ * Remove all FastClick's event listeners.
+ *
+ * @returns {void}
+ */
+FastClick.prototype.destroy = function() {
+	'use strict';
+	var layer = this.layer;
+
+	if (this.deviceIsAndroid) {
+		layer.removeEventListener('mouseover', this.onMouse, true);
+		layer.removeEventListener('mousedown', this.onMouse, true);
+		layer.removeEventListener('mouseup', this.onMouse, true);
+	}
+
+	layer.removeEventListener('click', this.onClick, true);
+	layer.removeEventListener('touchstart', this.onTouchStart, false);
+	layer.removeEventListener('touchmove', this.onTouchMove, false);
+	layer.removeEventListener('touchend', this.onTouchEnd, false);
+	layer.removeEventListener('touchcancel', this.onTouchCancel, false);
+};
+
+
+/**
+ * Check whether FastClick is needed.
+ *
+ * @param {Element} layer The layer to listen on
+ */
+FastClick.notNeeded = function(layer) {
+	'use strict';
+	var metaViewport;
+
+	// Devices that don't support touch don't need FastClick
+	if (typeof window.ontouchstart === 'undefined') {
+		return true;
+	}
+
+	if ((/Chrome\/[0-9]+/).test(navigator.userAgent)) {
+
+		// Chrome on Android with user-scalable="no" doesn't need FastClick (issue #89)
+		if (FastClick.prototype.deviceIsAndroid) {
+			metaViewport = document.querySelector('meta[name=viewport]');
+			if (metaViewport && metaViewport.content.indexOf('user-scalable=no') !== -1) {
+				return true;
+			}
+
+		// Chrome desktop doesn't need FastClick (issue #15)
+		} else {
+			return true;
+		}
+	}
+
+	// IE10 with -ms-touch-action: none, which disables double-tap-to-zoom (issue #97)
+	if (layer.style.msTouchAction === 'none') {
+		return true;
+	}
+
+	return false;
+};
+
+
+/**
+ * Factory method for creating a FastClick object
+ *
+ * @param {Element} layer The layer to listen on
+ */
+FastClick.attach = function(layer) {
+	'use strict';
+	return new FastClick(layer);
+};
+
+
+if (typeof define !== 'undefined' && define.amd) {
+
+	// AMD. Register as an anonymous module.
+	define(function() {
+		'use strict';
+		return FastClick;
+	});
+} else if (typeof module !== 'undefined' && module.exports) {
+	module.exports = FastClick.attach;
+	module.exports.FastClick = FastClick;
+} else {
+	window.FastClick = FastClick;
+}
+
+},{}],3:[function(require,module,exports){
 var process=require("__browserify_process");/** @license MIT License (c) copyright 2011-2013 original author or authors */
 
 /**
@@ -952,7 +1893,7 @@ define(function (require) {
 });
 })(typeof define === 'function' && define.amd ? define : function (factory) { module.exports = factory(require); }, this);
 
-},{"__browserify_process":2}],2:[function(require,module,exports){
+},{"__browserify_process":4}],4:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -1006,84 +1947,45 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var when = require("./..\\..\\bower_components\\when\\when.js");
+var attachFastClick = require("./..\\..\\bower_components\\fastclick\\lib\\fastclick.js");
+//TODO: Find a better way to require bouncefix
+var bouncefix = require('./../../bower_components/bouncefix.js/lib/bouncefix.js');
 
 module.exports = function(dataProviderUrl, tableKeys, elem, options){
   "use strict";
-  /**
-   * Config
-   *
-   * Use the following format to call SwipeTable
-   *----------------------------------------
-   *  (function(root){
-   *
-   *    var restApiUrl = '/api';
-   *    var keys = [
-   *        "id", // this is the 'pinned' column
-   *        "time",
-   *        "time2",
-   *        "location",
-   *        "location2"
-   *    ];
-   *    var stElem = document.getElementsByClassName('swipe-table')[0];
-   *
-   *    root.SwipeTable = new SwipeTable(restApiUrl, keys, stElem);
-   *
-   *  }(this));
-   *----------------------------------------
-   */
 
-  //=== Variables ===
-  // Check and store parameters
-  var dataProvider;
-  var keys;
-  var container;
+  /*---------------- Vars ----------------*\
+  \*----------------      ----------------*/
 
-  if(typeof dataProviderUrl === 'string'){
-    dataProvider = dataProviderUrl;
-  }
-  else{
-    throw new TypeError('First parameter is not a string');
-  }
+  var dataProvider = dataProviderUrl,
+      keys         = tableKeys,
+      container    = elem;
 
-  if(tableKeys instanceof Array){
-    keys = tableKeys;
-  }
-  else{
-    throw new TypeError('Second parameter is not an array');
-  }
+  var stWrap,
+      currentIndexElement,
+      swipeReference,
+      deferredContainer = [];
 
-  //TODO: Check element type in different browsers
-  //Chrome: 'object'
-  //Firefox:
-  //IE:
-  container = elem;
+  var pageSize,
+      pageAmount,
+      headerHeight    = 50,
+      scrollbarHeight =  5,
+      controlHeight   = 50,
+      rowSizes;
 
-  var stWrap;
-  var currentIndexElement;
+  var sortAscending   = true,
+      sortColumn,
+      timestamp,
+      newItems;
 
-  var swipeReference;
-  var deferredContainer = {};
-  deferredContainer.deferred = when.defer();
-
-  var tableClass    = 'table';
-  tableClass += ' table-condensed';
-  var doneTables    = 0;
-  var totalTables   = 0;
-  var pageSize      = 1;
-  var pageAmount;
-  var headerHeight  = 50;
-  var scrollbarHeight = 5;
-  var controlHeight = 50;
-  var sortAscending = true;
-  var sortColumn;
-  var timestamp;
-
-  var headerScrollbar;
-  var mainScrollbar;
+  var headerScrollbar,
+      mainScrollbar;
 
   var controls;
+
+  var boundEvents = {};
 
   options = options || {};
 
@@ -1092,26 +1994,616 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     options.fullscreen = true;
   }
 
-  // utilities
-  var noop = function() {}; // simple no operation function
-  var offloadFn = function(fn) { setTimeout(fn || noop, 0); }; // offload a functions execution
+  if(options.fullscreen){
+    container.className+= ' st-fullscreen';
+  }
+  else{
+    container.className+= ' st-not-fullscreen';
+  }
 
-  // check browser capabilities
-  var browser = {
-    addEventListener: !!window.addEventListener,
-    touch: ('ontouchstart' in window),
-    transitions: (function(temp) {
-      var props = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
-      for ( var i in props ){
-        if (temp.style[ props[i] ] !== undefined){
-          return true;
-        }
-        return false;
-      }
-    })(document.createElement('swipetable'))
-  };
+  options.demo == options.demo || false;
+
+  var tableClass = options.tableClass || 'table table-condensed';
 
   var slides, slidePos, width, length;
+
+  /*---------------- Init ----------------*\
+   Test element heights, create UI elements,
+   get the first page and prep the next one
+  \*----------------      ----------------*/
+
+  var init = function(){
+    if(swipeReference){
+      swipeReference.kill();
+      window.removeEventListener('orientationchange', boundEvents.init);
+      window.removeEventListener('resize', boundEvents.update);
+    }
+    // Remove everything inside the container
+    container.innerHTML = '';
+
+    var tableHeight;
+    var requestDeferred = when.defer();
+    var dataTable = createTable();
+
+    stWrap = document.createElement("div");
+    stWrap.className = "st-wrap";
+    container.appendChild(stWrap);
+
+    if(options.fullscreen){
+      document.body.parentElement.style.height = '100%';
+      document.body.style.height = '100%';
+      container.style.height = '100%';
+      tableHeight = viewportHeight();
+    }
+    else{
+      tableHeight = parseInt(container.getBoundingClientRect().height, 10);
+    }
+
+    rowSizes = testSizes();
+
+    // Add margin for proper spacing of elements
+    stWrap.style.marginTop = headerHeight - rowSizes.headerHeight + 'px';
+
+    // Remove height for other elements
+    tableHeight -= headerHeight;
+    tableHeight -= scrollbarHeight;
+    tableHeight -= controlHeight;
+
+    pageSize = Math.floor(tableHeight / rowSizes.bodyHeight);
+
+    // Make the request for the first page
+    if (options.demo){
+      makeRequest(
+        dataProvider,
+        {demo: true},
+        requestDeferred.resolver);
+      options.demo = false;
+    }
+    else{
+      makeRequest(
+        dataProvider,
+        {},
+        requestDeferred.resolver);
+    }
+
+    createHeader();
+
+    var doUpdateHeader = updateHeader.bind(this);
+    var doUpdateHeaderScrollbar = updateHeaderScrollbar.bind(this);
+
+    boundEvents.update = function(){
+      doUpdateHeader();
+      doUpdateHeaderScrollbar();
+    };
+
+    window.addEventListener('resize', boundEvents.update);
+
+    boundEvents.init = init.bind(this);
+
+    window.addEventListener('orientationchange', boundEvents.init);
+
+    mainScrollbar   = createScrollbar();
+    headerScrollbar = createScrollbar();
+
+    container.appendChild(mainScrollbar);
+    container.querySelector('.st-header .st-scrollable').appendChild(headerScrollbar);
+
+    controls = createControls();
+
+    requestDeferred.promise.then(
+      function(value){
+        return fillTable(dataTable, value);
+      }
+
+    ).then(
+      function(value){
+        var stTableWraps = [];
+        var i;
+
+        var stTableWrap = document.createElement('div');
+        stTableWrap.className = 'st-table-wrap';
+        stTableWrap.setAttribute('data-active', 'false');
+
+        stTableWrap.appendChild(document.createTextNode('placeholder'));
+
+        for (i = 1; i < pageAmount; i+=1){
+          stTableWraps.push(stTableWrap.cloneNode(true));
+        }
+
+        value.setAttribute('data-active', 'true');
+        value.setAttribute('data-timestamp', timestamp);
+        stWrap.appendChild(value);
+
+        // Fill with placeholders so that first and last will
+        // function as expected. This also results in less calls
+        // needed to swipeReference.setup()
+        for (i = 1; i < pageAmount; i+=1){
+          stWrap.appendChild(stTableWraps[i-1]);
+        }
+
+        createSwipe();
+
+        nextPage();
+        resolveTheResolver(1); // So nextPage's promise passes
+        updateHeader(container.querySelector('.st-table-wrap'));
+
+        updateMainScrollbar(0);
+        updateHeaderScrollbar();
+
+        var headerStyles = container.querySelectorAll('.st-header .st-scrollable th');
+        for (var l = 0; l < headerStyles.length; l+=1 ) {
+          var style = headerStyles.item(l).style;
+
+          style.webkitTransition =
+          style.MozTransition =
+          style.msTransition =
+          style.OTransition =
+          style.transition = 'width 300ms';
+        }
+      }
+    );
+
+    // Remove click delay for mobile
+    attachFastClick(container);
+
+    // Fixes iOs vertical bouncing on scroll
+    if(options.fullscreen){
+      bouncefix.add('swipe-table');
+    }
+  };
+
+  /*---------------- Test ----------------*\
+  \*----------------      ----------------*/
+
+  var viewportHeight = function(){
+    // responsejs.com/labs/dimensions/
+    var matchMedia = window.matchMedia || window.msMatchMedia;
+    var viewportH = (function(win, docElem, mM) {
+      var client = docElem.clientHeight,
+          inner = win.innerHeight;
+      if (mM && client < inner && true === mM('(min-height:' + inner + 'px)').matches){
+        return win.innerHeight;
+      }
+      else{
+        return docElem.clientHeight;
+      }
+    }(window, document.documentElement, matchMedia));
+
+    return viewportH;
+  };
+
+  var testSizes = function(){
+    var headerHeight,
+        headerCellWidth,
+        headerCellPadding,
+        bodyHeight,
+        bodyCellWidth,
+        bodyCellPadding,
+        totalHeight;
+
+    var table = document.createElement('table');
+    var tHead = document.createElement('thead');
+    var tBody = document.createElement('tbody');
+    var row   = document.createElement('tr');
+    var row2  = document.createElement('tr');
+    var head  = document.createElement('th');
+    var data  = document.createElement('td');
+    var text  = document.createTextNode('text');
+    var text2 = document.createTextNode('text');
+
+    table.className = tableClass;
+    table.style.visibility = 'hidden';
+    table.style.width = '40px';
+    table.style.tableLayout = 'fixed';
+
+    head.appendChild(text);
+    head.style.width = '80px';
+    row.appendChild(head);
+    tHead.appendChild(row);
+    table.appendChild(tHead);
+
+    data.appendChild(text2);
+    data.style.width = '80px';
+    row2.appendChild(data);
+    tBody.appendChild(row2);
+    table.appendChild(tBody);
+
+    stWrap.appendChild(table);
+
+    headerHeight = row.getBoundingClientRect().height;
+    headerCellWidth = head.getBoundingClientRect().width;
+
+    bodyHeight = row2.getBoundingClientRect().height;
+    bodyCellWidth = data.getBoundingClientRect().width;
+
+    totalHeight = table.getBoundingClientRect().height;
+
+    head.style.padding = '0';
+    data.style.padding = '0';
+    headerCellPadding = headerCellWidth - head.getBoundingClientRect().width;
+    bodyCellPadding = bodyCellWidth - data.getBoundingClientRect().width;
+
+    //TODO: Determine effects of borders on table size
+    //
+    stWrap.innerHTML = '';
+
+    return {
+      headerHeight      : headerHeight,
+      headerCellWidth   : headerCellWidth,
+      headerCellPadding : headerCellPadding,
+      bodyHeight        : bodyHeight,
+      bodyCellWidth     : bodyCellWidth,
+      bodyCellPadding   : bodyCellPadding,
+      totalHeight       : totalHeight,
+
+    };
+  };
+
+  /*--------------- Create ---------------*\
+  \*---------------        ---------------*/
+
+  var createHeader = function(){
+    var i;
+    var l;
+
+    var header = document.createElement('div');
+    header.className = 'st-header';
+
+    var table = document.createElement('table');
+    var tHead = document.createElement('thead');
+    var row   = document.createElement('tr');
+
+    var tableClone = table.cloneNode(true);
+    var tHeadClone = tHead.cloneNode(true);
+    var rowClone = row.cloneNode(true);
+
+    var pinnedClone;
+
+    var stScrollable = document.createElement("div");
+    stScrollable.className = 'st-scrollable';
+    var stScrollableWrap = stScrollable.cloneNode(true);
+    stScrollableWrap.className += '-wrap';
+
+    for (i = 0, l = keys.length; i < l; i+=1){
+      var head = document.createElement("th");
+      head.appendChild(document.createTextNode(keys[i]));
+
+      if(i === 0){
+        pinnedClone = head.cloneNode(true);
+      }
+
+      row.appendChild(head);
+    }
+
+    tHead.appendChild(row);
+    table.appendChild(tHead);
+    table.className = tableClass;
+
+    rowClone.appendChild(pinnedClone);
+    tHeadClone.appendChild(rowClone);
+    tableClone.appendChild(tHeadClone);
+    tableClone.className = tableClass;
+
+    var stPinned = document.createElement("div");
+    stPinned.appendChild(tableClone);
+    stPinned.className = 'st-pinned';
+
+    stScrollable.appendChild(table);
+    stScrollableWrap.appendChild(stScrollable);
+
+    header.appendChild(stScrollableWrap);
+    header.appendChild(stPinned);
+    container.appendChild(header);
+
+    updateScroll.setPosition(0);
+  };
+
+  var createScrollbar = function(){
+    var bar = document.createElement('div');
+    var indicator = document.createElement('div');
+    bar.className = 'st-scrollbar';
+    bar.appendChild(indicator);
+    return bar;
+  };
+
+  var createControls = function(){
+    var i,l;
+
+    var buttonGlyphs  = ['<<', '<', 'R', '>', '>>'];
+    var events = ['first', 'previous', 'refresh', 'next', 'last'];
+    var buttons = [];
+
+    var stControls = document.createElement('div');
+    stControls.className = 'st-controls';
+
+    var eventHandlers = {
+      first: function(element){
+        var clickEvent = function(){
+          goToPage(1);
+        };
+
+        var doClickEvent = clickEvent.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      previous: function(element){
+        var doClickEvent = swipeFunc.prev.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      refresh: function(element){
+        var clickEvent = function(){
+          if (newItems > 0){
+            //TODO: Proper refresh
+            init();
+          }
+        };
+
+        var doClickEvent = clickEvent.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      next: function(element){
+        var doClickEvent = swipeFunc.next.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      },
+      last: function(element){
+        var clickEvent = function(){
+          goToPage(pageAmount);
+        };
+
+        var doClickEvent = clickEvent.bind(this);
+
+        element.addEventListener('click', function(){
+          doClickEvent();
+        });
+      }
+    };
+
+    var createButton = function(glyph){
+      var button = document.createElement('div');
+      button.appendChild(document.createTextNode(glyph));
+      buttons.push(button);
+    };
+
+    var attachButton = function(index){
+      stControls.appendChild(buttons[index]);
+    };
+
+    var attachEvent = function(index){
+      eventHandlers[ events[index] ]( buttons[index] );
+    };
+
+    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
+      createButton(buttonGlyphs[i]);
+      attachButton(i);
+    }
+
+    container.appendChild(stControls);
+
+    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
+      attachEvent(i);
+    }
+  };
+
+  /*--------------- Request ---------------*\
+  \*---------------         ---------------*/
+
+  /**
+   * Figures out the request based on parameters given in the queries object.
+   *
+   * The queries object can contain:
+   *    * page
+   *    * timestamp
+   *    * sortField
+   *    * sortAsc
+   *
+   * @param  {String} server   [description]
+   * @param  {Object} queries  Request parameter queries
+   * @param  {Function} resolver Deferred resolver
+   */
+  var makeRequest = function (server, queries, resolver){
+    if(typeof server !== 'string'){
+      // No server provided, nothing to do here.
+      return;
+    }
+    if(queries.timestamp){
+
+      // If there's a sort parameter, both must be given
+      if(queries.sortField || queries.sortAsc){
+        if(!queries.sortField || !queries.sortAsc){
+          return;
+        }
+
+        // If there's a page given, it's a sorted page request
+        if(queries.page){
+          executeRequest("GET",
+                          server +
+                            "?p=" + queries.page +
+                            "&ps=" + pageSize +
+                            "&ts=" + queries.timestamp +
+                            "&sort[field]=" + queries.sortField +
+                            "&sort[asc]=" + queries.sortAsc,
+                          resolver);
+        }
+        // Else, it's a sorted and timestamped first page equest
+        else{
+          executeRequest("GET",
+                          server +
+                            "?ps=" + pageSize +
+                            "&ts=" + queries.timestamp +
+                            "&sort[field]=" + queries.sortField +
+                            "&sort[asc]=" + queries.sortAsc,
+                          resolver);
+        }
+      }
+      // So we have timestamp, but no sorting
+      else{
+        // We need a page parameter to continue
+        if(!queries.page){
+          // Spec requires a page, nothing more to do here
+          return;
+        }
+        // Make a page request
+        executeRequest("GET",
+                        server +
+                          "?p=" + queries.page +
+                          "&ps=" + pageSize +
+                          "&ts=" + queries.timestamp,
+                        resolver);
+      }
+    }
+    else{
+      // No timestamp given, it's a fresh page request
+      if (queries.demo){
+        executeRequest("GET",
+                        server +
+                          "?ps=" + pageSize +
+                          "&demo=true",
+                        resolver);
+      }
+      else{
+        executeRequest("GET",
+                        server +
+                          "?ps=" + pageSize,
+                        resolver);
+      }
+    }
+  };
+
+  /**
+   * Executes a request with method, parameters and the table give to next function
+   * @param  {String} method Valid HTTP method eg. GET, POST
+   * @param  {String} url Complete url string (server + parameters)
+   * @param  {Object} table Partial table object
+   */
+  var executeRequest = function(method, url, resolver){
+    var r = new XMLHttpRequest();
+    r.open(method, url, true);
+    r.onreadystatechange = function(){
+      if(r.readyState !== 4 || r.status !== 200){
+        return;
+      }
+      parseResponse(r.responseText, resolver);
+    };
+    r.send(null);
+  };
+
+  // parseResponse(table, response)
+  //  Calls fillTable with table and JSON.parse
+  //TODO: Work parseResponse into appropriate function
+  var parseResponse = function(response, resolver){
+    resolver.resolve(JSON.parse(response));
+  };
+
+  /*--------------- Tables ---------------*\
+  \*---------------        ---------------*/
+
+  /**
+   * Creates a table with appropriate headers(thead).
+   *
+   * Returns a partial table.
+   */
+  var createTable = (function(){
+    var tableInstance;
+
+    return function(){
+
+      if(tableInstance){
+        var copy = tableInstance.cloneNode(true);
+        return copy;
+      }
+      else{
+        var i, l;
+
+        var table = document.createElement("table");
+        table.className = tableClass;
+        var thead = document.createElement("thead");
+        var tr = document.createElement("tr");
+
+        for (i = 0, l = keys.length; i < l; i+=1){
+          var th = document.createElement("th");
+          th.appendChild(document.createTextNode(keys[i]));
+          tr.appendChild(th);
+        }
+
+        thead.appendChild(tr);
+        table.appendChild(thead);
+        tableInstance = table.cloneNode(true);
+        return table;
+      }
+    };
+  }());
+
+  var fillTable = function(table, dataSet){
+    var i, j;
+    newItems = dataSet.newItems;
+    timestamp = dataSet.timestamp;
+    pageAmount = dataSet.pages;
+    var numRows = dataSet.data.length;
+
+    if(numRows === 0){
+      return;
+    }
+
+    var tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+
+    i = 0;
+    while (i < numRows){
+      var col = dataSet.data[i];
+      var tr = document.createElement("tr");
+      var colCells = Object.keys(col).length;
+
+      j = 0;
+      while (j < colCells){
+        var td = document.createElement("td");
+        td.appendChild(document.createTextNode(col[keys[j]]));
+        tr.appendChild(td);
+        j+=1;
+      }
+
+      tbody.appendChild(tr);
+      i+=1;
+    }
+
+    // Make a table container to hold the split elements
+    var stTableWrap = document.createElement('div');
+    // Cloning an element is faster than creating more
+    var stScrollable = stTableWrap.cloneNode(true);
+    var stScrollableWrap = stTableWrap.cloneNode(true);
+    var stPinned = stTableWrap.cloneNode(true);
+
+    // Add classes to the containers
+    stTableWrap.className = 'st-table-wrap';
+    stScrollable.className = 'st-scrollable';
+    stScrollableWrap.className = 'st-scrollable-wrap';
+    stPinned.className = 'st-pinned';
+
+    // Clone data and attach both to st-pinned and st-scrollable
+    var cloned = table.cloneNode(true);
+    stScrollable.appendChild(table);
+    stScrollableWrap.appendChild(stScrollable);
+    stPinned.appendChild(cloned);
+
+    // Attach to parent
+    stTableWrap.appendChild(stScrollableWrap);
+    stTableWrap.appendChild(stPinned);
+
+    return when.resolve(stTableWrap);
+  };
+
+  /*--------------- Swipe ---------------*\
+  \*---------------       ---------------*/
 
   function translate(index, dist, speed, direct) {
     var slide;
@@ -1138,10 +2630,28 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     style.msTransform =
     style.MozTransform =
     style.OTransform = 'translateX(' + dist + 'px)';
-
   }
 
   function Swipe(options) {
+
+    // utilities
+    var noop = function() {}; // simple no operation function
+    var offloadFn = function(fn) { setTimeout(fn || noop, 0); }; // offload a functions execution
+
+    // check browser capabilities
+    var browser = {
+      addEventListener: !!window.addEventListener,
+      touch: ('ontouchstart' in window),
+      transitions: (function(temp) {
+        var props = ['transitionProperty', 'WebkitTransition', 'MozTransition', 'OTransition', 'msTransition'];
+        for ( var i in props ){
+          if (temp.style[ props[i] ] !== undefined){
+            return true;
+          }
+          return false;
+        }
+      })(document.createElement('swipetable'))
+    };
 
     var headerScroll = container.querySelector('.st-header .st-scrollable');
 
@@ -1289,6 +2799,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     // setup initial vars
     var start = {};
     var delta = {};
+    var twoTouches;
     var isScrolling;
 
     // setup event capturing
@@ -1332,6 +2843,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         // used for testing first move event
         isScrolling = undefined;
 
+        twoTouches = undefined;
+
         // reset delta and end measurements
         delta = {};
 
@@ -1343,7 +2856,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       move: function(event) {
 
         // ensure swiping with one touch and not pinching
-        if ( event.touches.length > 1 || event.scale && event.scale !== 1){
+        if ( event.touches.length > 2){
           return;
         }
 
@@ -1352,6 +2865,10 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         }
 
         var touches = event.touches[0];
+
+        if (event.touches.length === 2){
+          twoTouches = true;
+        }
 
         // measure change in x and y
         delta = {
@@ -1416,21 +2933,31 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
             if (direction) {
 
+              if(twoTouches){
+                goToPage(pageAmount);
+              }
+              else{
                 move(index-1, -width, 0);
 
-              move(index, slidePos[index]-width, speed);
-              updateMainScrollbar(index, -width, speed);
-              move(circle(index+1), slidePos[circle(index+1)]-width, speed);
-              index = circle(index+1);
+                move(index, slidePos[index]-width, speed);
+                updateMainScrollbar(index, -width, speed);
+                move(circle(index+1), slidePos[circle(index+1)]-width, speed);
+                index = circle(index+1);
+              }
 
             } else {
+
+              if(twoTouches){
+                goToPage(1);
+              }
+              else{
                 move(index+1, width, 0);
 
-              move(index, slidePos[index]+width, speed);
-              updateMainScrollbar(index, width, speed);
-              move(circle(index-1), slidePos[circle(index-1)]+width, speed);
-              index = circle(index-1);
-
+                move(index, slidePos[index]+width, speed);
+                updateMainScrollbar(index, width, speed);
+                move(circle(index-1), slidePos[circle(index-1)]+width, speed);
+                index = circle(index-1);
+              }
             }
 
             options.callback && options.callback(index, slides[index]);
@@ -1648,643 +3175,213 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
           w *= (length + 1);
           return (w + 'px');
         }());
+      },
+      kill: function() {
+
+        // reset element
+        stWrap.style.width = 'auto';
+        stWrap.style.left = 0;
+
+        // reset slides
+        var pos = slides.length;
+        while(pos--) {
+
+          var slide = slides[pos];
+          slide.style.width = '100%';
+          slide.style.left = 0;
+
+          if (browser.transitions) {
+            translate(pos, 0, 0);
+          }
+
+        }
+
+        // removed event listeners
+        if (browser.addEventListener) {
+
+          // remove current event listeners
+          stWrap.removeEventListener('touchstart', events, false);
+          headerScroll.removeEventListener('touchstart', scrollEvents, false);
+          stWrap.removeEventListener('webkitTransitionEnd', events, false);
+          stWrap.removeEventListener('msTransitionEnd', events, false);
+          stWrap.removeEventListener('oTransitionEnd', events, false);
+          stWrap.removeEventListener('otransitionend', events, false);
+          stWrap.removeEventListener('transitionend', events, false);
+          window.removeEventListener('resize', events, false);
+
+        }
+        else {
+
+          window.onresize = null;
+
+        }
+
       }
 
     };
-
   }
 
-  //=== Functions ===
+  var createSwipe = function(){
 
-  /**
-   * Fetch the viewport size and set the
-   * pageSize(num of rows) based on rowHeight
-   */
-  var init = function(){
-    var tableHeight;
-    var rowHeights;
-    var dataDeferred = when.defer();
-    var dataTable = createTable();
-
-    stWrap = document.createElement("div");
-    stWrap.className = "st-wrap";
-    container.appendChild(stWrap);
-
-    if(options.fullscreen){
-      document.body.parentElement.style.height = '100%';
-      document.body.style.height = '100%';
-      container.style.height = '100%';
-      tableHeight = viewportHeight();
-    }
-    else{
-      tableHeight = parseInt(container.getBoundingClientRect().height, 10);
-    }
-
-    rowHeights = testRowHeights();
-
-    // Add margin for proper spacing of elements
-    stWrap.style.marginTop = headerHeight - rowHeights.header + 'px';
-
-    // Remove height for other elements
-    tableHeight -= headerHeight;
-
-    tableHeight -= scrollbarHeight;
-
-    tableHeight -= controlHeight;
-
-    pageSize = Math.floor(tableHeight / rowHeights.body);
-
-    makeRequest(
-      dataProvider,
-      {},
-      dataDeferred.resolver);
-
-    var tablePromise = dataDeferred.promise.then(
-      function(value){
-        return fillTable(dataTable, value);
-      }
-    );
-
-    tablePromise.then(
-      function(value){
-        var stTableWraps = [];
-        var i;
-
-        var stTableWrap = document.createElement('div');
-        stTableWrap.className = 'st-table-wrap';
-        stTableWrap.setAttribute('data-active', 'false');
-
-        stTableWrap.appendChild(document.createTextNode('placeholder'));
-
-        for (i = 1; i < pageAmount; i+=1){
-          stTableWraps.push(stTableWrap.cloneNode(true));
-        }
-
-        value.setAttribute('data-active', 'true');
-        stWrap.appendChild(value);
-
-        // Fill with placeholders so that first and last will
-        // function as expected. This also results in less calls
-        // needed to swipeReference.setup()
-        for (i = 1; i < pageAmount; i+=1){
-          stWrap.appendChild(stTableWraps[i-1]);
-        }
-
-        tableDone();
-        updateMainScrollbar(0);
-        updateHeaderScrollbar();
-
-        var headerStyles = container.querySelectorAll('.st-header .st-scrollable > div');
-        console.log(headerStyles);
-        for (var l = 0; l < headerStyles.length; l+=1 ) {
-          var style = headerStyles.item(l).style;
-
-          style.webkitTransition =
-          style.MozTransition =
-          style.msTransition =
-          style.OTransition =
-          style.transition = 'width 300ms';
-        }
-      }
-    );
-
-    createHeader();
-
+    var doNextPage = nextPage.bind(this);
+    var doPreviousPage = previousPage.bind(this);
+    var doResolveTheResolver = resolveTheResolver.bind(this);
+    var doPushDeferred = pushDeferred.bind(this);
     var doUpdateHeader = updateHeader.bind(this);
-    var doUpdateHeaderScrollbar = updateHeaderScrollbar.bind(this);
+    var doUpdate = update.bind(this);
 
-    window.addEventListener('resize', function(){
-      doUpdateHeader();
-      doUpdateHeaderScrollbar();
-    });
+    swipeReference = new Swipe({
+      callback: function(currentIndex, element){
+        var nextElement = element.nextElementSibling;
+        var previousElement = element.previousElementSibling;
+        var nextOldElement;
+        var prevOldElement;
 
-    mainScrollbar = createScrollbar();
-    headerScrollbar = createScrollbar();
+        if(nextElement){
 
-    container.appendChild(mainScrollbar);
-    container.querySelector('.st-header .st-scrollable').appendChild(headerScrollbar);
+          doNextPage();
 
-    controls = createControls();
+          nextOldElement = nextElement.nextElementSibling;
 
-  };
-
-  var viewportHeight = function(){
-    // responsejs.com/labs/dimensions/
-    var matchMedia = window.matchMedia || window.msMatchMedia;
-    var viewportH = (function(win, docElem, mM) {
-      var client = docElem.clientHeight,
-          inner = win.innerHeight;
-      if (mM && client < inner && true === mM('(min-height:' + inner + 'px)').matches){
-        return win.innerHeight;
-      }
-      else{
-        return docElem.clientHeight;
-      }
-    }(window, document.documentElement, matchMedia));
-
-    return viewportH;
-  };
-
-  var testRowHeights = function(){
-    var headHeight;
-    var bodyHeight;
-    var totalHeight;
-    var table = document.createElement('table');
-    var tHead = document.createElement('thead');
-    var tBody = document.createElement('tbody');
-    var row   = document.createElement('tr');
-    var row2  = document.createElement('tr');
-    var head  = document.createElement('th');
-    var data  = document.createElement('td');
-    var text  = document.createTextNode('text');
-    var text2 = document.createTextNode('text');
-
-    table.className = tableClass;
-    table.style.visibility = 'hidden';
-
-    head.appendChild(text);
-    row.appendChild(head);
-    tHead.appendChild(row);
-    table.appendChild(tHead);
-
-    data.appendChild(text2);
-    row2.appendChild(data);
-    tBody.appendChild(row2);
-    table.appendChild(tBody);
-
-    stWrap.appendChild(table);
-
-    headHeight = row.getBoundingClientRect().height;
-
-    bodyHeight = row2.getBoundingClientRect().height;
-
-    totalHeight = table.getBoundingClientRect().height;
-    //TODO: Determine effects of borders on table size
-    //
-    stWrap.innerHTML = '';
-
-    return {
-      header : headHeight,
-      body: bodyHeight,
-      total: totalHeight
-    };
-  };
-
-  var createHeader = function(){
-    var i;
-    var l;
-
-    var header = document.createElement('div');
-    header.className = 'st-header';
-
-    var stScrollable = document.createElement("div");
-    stScrollable.className = 'st-scrollable';
-    var stScrollableWrap = stScrollable.cloneNode(true);
-    stScrollableWrap.className += '-wrap';
-
-    for (i = 1, l = keys.length; i < l; i+=1){
-      var headerDiv = document.createElement("div");
-      headerDiv.appendChild(document.createTextNode(keys[i]));
-      stScrollable.appendChild(headerDiv);
-    }
-
-    var headerPinned = document.createElement("div");
-    headerPinned.appendChild(document.createTextNode(keys[0]));
-    headerPinned.className = 'st-pinned';
-
-    stScrollableWrap.appendChild(stScrollable);
-
-    header.appendChild(stScrollableWrap);
-    header.appendChild(headerPinned);
-    container.appendChild(header);
-
-    updateScroll.setPosition(0);
-
-  };
-
-  var createScrollbar = function(){
-    var bar = document.createElement('div');
-    var indicator = document.createElement('div');
-    bar.className = 'st-scrollbar';
-    bar.appendChild(indicator);
-    return bar;
-  };
-
-  var createControls = function(){
-    var i,l;
-
-    var buttonGlyphs  = ['<<', '<', '>', '>>'];
-    var events = ['first', 'previous', 'next', 'last'];
-    var buttons = [];
-
-    var stControls = document.createElement('div');
-    stControls.className = 'st-controls';
-
-    var eventHandlers = {
-      first: function(element){
-        var clickEvent = function(){
-          goToPage(1);
-        };
-
-        var doClickEvent = clickEvent.bind(this);
-
-        element.addEventListener('click', function(){
-          doClickEvent();
-        });
-      },
-      previous: function(element){
-        var doClickEvent = swipeFunc.prev.bind(this);
-
-        element.addEventListener('click', function(){
-          doClickEvent();
-        });
-      },
-      next: function(element){
-        var doClickEvent = swipeFunc.next.bind(this);
-
-        element.addEventListener('click', function(){
-          doClickEvent();
-        });
-      },
-      last: function(element){
-        var clickEvent = function(){
-          goToPage(pageAmount);
-        };
-
-        var doClickEvent = clickEvent.bind(this);
-
-        element.addEventListener('click', function(){
-          doClickEvent();
-        });
-      }
-    };
-
-    var createButton = function(glyph){
-      var button = document.createElement('div');
-      button.appendChild(document.createTextNode(glyph));
-      buttons.push(button);
-    };
-
-    var attachButton = function(index){
-      stControls.appendChild(buttons[index]);
-    };
-
-    var attachEvent = function(index){
-      eventHandlers[ events[index] ]( buttons[index] );
-    };
-
-    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
-      createButton(buttonGlyphs[i]);
-      attachButton(i);
-    }
-
-    container.appendChild(stControls);
-
-    for(i = 0, l = buttonGlyphs.length; i < l; i+=1){
-      attachEvent(i);
-    }
-
-  };
-
-  /**
-   * Takes an object that contains:
-   * REQ* server: address of the API
-   * REQ* pageSize
-   * REQ* table: container to attach the results to
-   *    * page
-   *    * timestamp
-   *    * sortField
-   *    * sortAsc
-   * Items marked with REQ are required or the request will fail.
-   *
-   * Fetches according to parameters given
-   * and gives results + table to parseResponse.
-   * @param {Object}queries Object containing quieries
-   */
-  var makeRequest = function (server, queries, resolver){
-    if(typeof server !== 'string'){
-      // No server provided, nothing to do here.
-      return;
-    }
-    if(queries.timestamp){
-
-      // If there's a sort parameter, both must be given
-      if(queries.sortField || queries.sortAsc){
-        if(!queries.sortField || !queries.sortAsc){
-          return;
-        }
-
-        // If there's a page given, it's a sorted page request
-        if(queries.page){
-          executeRequest("GET",
-                          server +
-                            "?p=" + queries.page +
-                            "&ps=" + pageSize +
-                            "&ts=" + queries.timestamp +
-                            "&sort[field]=" + queries.sortField +
-                            "&sort[asc]=" + queries.sortAsc,
-                          resolver);
-        }
-        // Else, it's a sorted and timestamped first page equest
-        else{
-          executeRequest("GET",
-                          server +
-                            "?ps=" + pageSize +
-                            "&ts=" + queries.timestamp +
-                            "&sort[field]=" + queries.sortField +
-                            "&sort[asc]=" + queries.sortAsc,
-                          resolver);
-        }
-      }
-      // So we have timestamp, but no sorting
-      else{
-        // We need a page parameter to continue
-        if(!queries.page){
-          // Spec requires a page, nothing more to do here
-          return;
-        }
-        // Make a page request
-        executeRequest("GET",
-                        server +
-                          "?p=" + queries.page +
-                          "&ps=" + pageSize +
-                          "&ts=" + queries.timestamp,
-                        resolver);
-      }
-    }
-    else{
-      // No timestamp given, it's a fresh page request
-      executeRequest("GET",
-                      server +
-                        "?ps=" + pageSize,
-                      resolver);
-    }
-  };
-
-  /**
-   * Executes a request with method, parameters and the table give to next function
-   * @param  {String} method Valid HTTP method eg. GET, POST
-   * @param  {String} url Complete url string (server + parameters)
-   * @param  {Object} table Partial table object
-   */
-  var executeRequest = function(method, url, resolver){
-    var r = new XMLHttpRequest();
-    r.open(method, url, true);
-    r.onreadystatechange = function(){
-      if(r.readyState !== 4 || r.status !== 200){
-        return;
-      }
-      parseResponse(r.responseText, resolver);
-    };
-    r.send(null);
-  };
-
-  // parseResponse(table, response)
-  //  Calls fillTable with table and JSON.parse
-  //TODO: Work parseResponse into appropriate function
-  var parseResponse = function(response, resolver){
-    resolver.resolve(JSON.parse(response));
-  };
-
-  /**
-   * Creates a table with appropriate headers(thead).
-   *
-   * Increments totalTables.
-   *
-   * Returns a partial table.
-   */
-  var createTable = (function(){
-    var tableInstance;
-
-    return function(){
-
-      if(tableInstance){
-        totalTables += 1;
-        var copy = tableInstance.cloneNode(true);
-        return copy;
-      }
-      else{
-        var i;
-        var l;
-
-        var table = document.createElement("table");
-        table.className = tableClass;
-        var thead = document.createElement("thead");
-        var tr = document.createElement("tr");
-
-        for (i = 0, l = keys.length; i < l; i+=1){
-          var th = document.createElement("th");
-          th.appendChild(document.createTextNode(keys[i]));
-          tr.appendChild(th);
-        }
-
-        thead.appendChild(tr);
-        table.appendChild(thead);
-        tableInstance = table.cloneNode(true);
-        totalTables += 1;
-        return table;
-      }
-    };
-  }());
-
-  /**
-   * Goes through dataSet and attaches rows to
-   * the table reference, then attaches the
-   * table to the container in the DOM.
-   *
-   * Calls tableDone() when done.
-   * @param table Partial table to fill
-   * @param dataSet Parsed data to fill with
-   */
-  var fillTable = function(table, dataSet){
-    timestamp = dataSet.timestamp;
-    pageAmount = dataSet.pages;
-    var numRows = dataSet.data.length;
-
-    if(numRows === 0){
-      return;
-    }
-
-    var tbody = document.createElement("tbody");
-    table.appendChild(tbody);
-
-    var i = 0;
-    while (i < numRows){
-      var col = dataSet.data[i];
-      var tr = document.createElement("tr");
-      var colCells = Object.keys(col).length;
-
-      var j = 0;
-      while (j < colCells){
-        var td = document.createElement("td");
-        td.appendChild(document.createTextNode(col[keys[j]]));
-        tr.appendChild(td);
-        j+=1;
-      }
-
-      tbody.appendChild(tr);
-      i+=1;
-    }
-
-    // Make a table container to hold the split elements
-    var stTableWrap = document.createElement('div');
-    // Cloning an element is faster than creating more
-    var stScrollable = stTableWrap.cloneNode(true);
-    var stScrollableWrap = stTableWrap.cloneNode(true);
-    var stPinned = stTableWrap.cloneNode(true);
-
-    // Add classes to the containers
-    stTableWrap.className = 'st-table-wrap';
-    stScrollable.className = 'st-scrollable';
-    stScrollableWrap.className = 'st-scrollable-wrap';
-    stPinned.className = 'st-pinned';
-
-    // Clone data and attach both to st-pinned and st-scrollable
-    var cloned = table.cloneNode(true);
-    stScrollable.appendChild(table);
-    stScrollableWrap.appendChild(stScrollable);
-    stPinned.appendChild(cloned);
-
-    // Attach to parent
-    stTableWrap.appendChild(stScrollableWrap);
-    stTableWrap.appendChild(stPinned);
-
-    // Prestyle the table so everything fits nicely when insterted
-    if(swipeReference !== undefined){
-      // swipeReference.prepareForAddition(stTableWrap);
-    }
-
-    return when.resolve(stTableWrap);
-  };
-
-  /**
-   *  Increments doneTables and executes if equal to totalTables.
-   *  Checks if mySwipe is made and if it isn't,
-   *  makes it and gives arguments to mySwipe.
-   *  If it's the first table to be finished,
-   *  sets up the next one to be fetched and placed,
-   *  also updates the header.
-   *
-   *  If mySwipe was already made, calls mySwipe.setup.
-   */
-  var tableDone = function(){
-    doneTables += 1;
-
-    if (doneTables === totalTables){
-      if(swipeReference === undefined){
-        var doNextPage = nextPage.bind(this);
-        var doPreviousPage = previousPage.bind(this);
-        var doResolveTheResolver = resolveTheResolver.bind(this);
-
-        swipeReference = new Swipe({
-          callback: function(currentIndex, element){
-            var nextElement = element.nextElementSibling;
-            var previousElement = element.previousElementSibling;
-            var nextOldElement;
-            var prevOldElement;
-
-            if(nextElement){
-
-              if (nextElement.getAttribute('data-active') === 'false'){
-                doNextPage();
-              }
-
-              nextOldElement = nextElement.nextElementSibling;
-
-              if(nextOldElement){
-                nextOldElement.setAttribute('data-active', 'false');
-              }
-            }
-
-            if(previousElement){
-
-              if (previousElement.getAttribute('data-active') === 'false'){
-                doPreviousPage();
-              }
-
-              prevOldElement = previousElement.previousElementSibling;
-
-              if(prevOldElement){
-                prevOldElement.setAttribute('data-active', 'false');
-              }
-            }
-
-          },
-          transitionEnd: function(currentIndex, element){
-            doResolveTheResolver([currentIndex, element]);
+          if(nextOldElement){
+            nextOldElement.setAttribute('data-active', 'false');
           }
-        });
-
-        if(doneTables === 1){
-          nextPage();
-          deferredContainer.deferred.resolver.resolve();
-          updateHeader(container.querySelector('.st-table-wrap'));
         }
+
+        if(previousElement){
+
+          doPreviousPage();
+
+          prevOldElement = previousElement.previousElementSibling;
+
+          if(prevOldElement){
+            prevOldElement.setAttribute('data-active', 'false');
+          }
+        }
+
+        if(!nextElement || !previousElement){
+          doPushDeferred(currentIndex).then(
+            function(value){
+              doUpdate(value[0],value[1]);
+            }
+          );
+        }
+
+        doUpdateHeader(element);
+      },
+      transitionEnd: function(currentIndex, element){
+        doResolveTheResolver(currentIndex, element);
       }
-
-    }
+    });
   };
 
-  var resolveTheResolver = function(value){
-    deferredContainer.deferred.resolver.resolve(value);
+  var resolveTheResolver = function(theIndex, theValue){
+    deferredContainer.forEach(function(value, index){
+      deferredContainer[index].resolver.resolve([theIndex, theValue]);
+    });
   };
+
+  var pushDeferred = function(index){
+    deferredContainer[index] = when.defer();
+    return deferredContainer[index].promise;
+  };
+
+  /*-------------- Navigate --------------*\
+  \*--------------          --------------*/
 
   var nextPage = function(){
     var index = swipeReference.getPos();
 
-    deferredContainer.deferred = when.defer();
+    deferredContainer[index + 1] = when.defer();
 
-    var pagePromise = getPageFromIndex(index + 1);
+    if (stWrap.children.item(index + 1).getAttribute('data-timestamp') == timestamp){
 
-    when.all([pagePromise, deferredContainer.deferred.promise])
-    .then(
-      function(values){
-        stWrap.children.item(index + 1).innerHTML = values[0].innerHTML;
-        stWrap.children.item(index + 1).setAttribute('data-active', 'true');
-        update(values[1][0],values[1][1]);
-        tableDone();
-      }
-    );
+      deferredContainer[index + 1].promise.then(
+          function(value){
+          stWrap.children.item(index + 1).setAttribute('data-active', 'true');
+          update(value[0],value[1]);
+          }
+        );
+    }
+    else{
 
+      var pagePromise = getPageFromIndex(index + 1);
+
+      when.all([pagePromise, deferredContainer[index + 1].promise])
+      .then(
+        function(values){
+          stWrap.children.item(index + 1).innerHTML = values[0].innerHTML;
+          stWrap.children.item(index + 1).setAttribute('data-active', 'true');
+          stWrap.children.item(index + 1).setAttribute('data-timestamp', timestamp);
+          update(values[1][0],values[1][1]);
+        }
+      );
+    }
   };
 
   var previousPage = function(){
     var index = swipeReference.getPos();
 
-    deferredContainer.deferred = when.defer();
+    deferredContainer[index - 1] = when.defer();
 
-    var pagePromise = getPageFromIndex(index - 1);
+    if (stWrap.children.item(index - 1).getAttribute('data-timestamp') == timestamp){
 
-    when.all([pagePromise, deferredContainer.deferred.promise])
-    .then(
-      function(values){
-        stWrap.children.item(index - 1).innerHTML = values[0].innerHTML;
-        stWrap.children.item(index - 1).setAttribute('data-active', 'true');
-        update(values[1][0],values[1][1]);
-        tableDone();
-      }
-    );
+      deferredContainer[index - 1].promise.then(
+          function(value){
+          stWrap.children.item(index - 1).setAttribute('data-active', 'true');
+          update(value[0],value[1]);
+          }
+        );
+    }
+    else{
 
+      var pagePromise = getPageFromIndex(index - 1);
+
+      when.all([pagePromise, deferredContainer[index - 1].promise])
+      .then(
+        function(values){
+          stWrap.children.item(index - 1).innerHTML = values[0].innerHTML;
+          stWrap.children.item(index - 1).setAttribute('data-active', 'true');
+          stWrap.children.item(index - 1).setAttribute('data-timestamp', timestamp);
+          update(values[1][0],values[1][1]);
+        }
+      );
+    }
   };
 
   var goToPage = function(page){
 
-    getPageFromIndex(page-1).then(
-      function(value){
-        stWrap.children.item(page-1).innerHTML = value.innerHTML;
-        stWrap.children.item(page-1).setAttribute('data-active', 'true');
-        return when.resolve();
-      }
-    ).then(
-      function(){
-        swipeReference.slide(page-1);
-        deferredContainer.deferred.promise.then(
-          function(value){
-            update(value[0],value[1]);
-          });
-      }
-    );
+    deferredContainer[page - 1] = when.defer();
 
+    if (stWrap.children.item(page - 1).getAttribute('data-timestamp') == timestamp){
+
+      swipeReference.slide(page-1);
+      deferredContainer[page - 1].promise.then(
+          function(value){
+            stWrap.children.item(page - 1).setAttribute('data-active', 'true');
+            update(value[0],value[1]);
+          }
+        );
+    }
+    else{
+
+      getPageFromIndex(page-1).then(
+        function(value){
+          stWrap.children.item(page-1).innerHTML = value.innerHTML;
+          stWrap.children.item(page-1).setAttribute('data-active', 'true');
+          stWrap.children.item(page-1).setAttribute('data-timestamp', timestamp);
+          return when.resolve();
+        }
+      ).then(
+        function(){
+          swipeReference.slide(page-1);
+          deferredContainer[page - 1].promise.then(
+            function(value){
+              update(value[0],value[1]);
+            });
+        }
+      );
+    }
   };
 
   var getPageFromIndex = function(index){
@@ -2325,12 +3422,21 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     return tablePromise;
   };
 
+  /*--------------- Update ---------------*\
+  \*---------------        ---------------*/
+
+  var update = function(index, element){
+    updateHeader(element);
+    updateHeaderScrollbar();
+    updateScroll.updateScrollables();
+  };
+
   /**
    * Read widths of given element and adjust header spacing
    * @param  {Object} element Element to read from
    */
   var updateHeader = function(element){
-    var i;
+    var i, l;
 
     if (element){
       // Store element so we can reference on window.resize
@@ -2339,21 +3445,21 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     // Select the first row of the element
     var tableRow = currentIndexElement.querySelector(".st-scrollable tr");
-    var l = tableRow.children.length;
+    l = tableRow.children.length;
     var cellWidths = [];
 
-    for (i=1; i < l; i+=1){
+    for (i=0; i < l; i+=1){
       var w = tableRow.children[i].getBoundingClientRect().width;
       w = parseInt(w, 10);
+      w -= rowSizes.bodyCellPadding;
       cellWidths.push(w);
     }
 
-    var scrollContainer = container.querySelector('.st-header .st-scrollable');
+    var scrollContainer = container.querySelector('.st-header .st-scrollable tr');
 
     cellWidths.forEach(function(value, index){
       scrollContainer.children[index].style.width = value + 'px';
     });
-
   };
 
   var updateMainScrollbar = function(index, dist, speed){
@@ -2370,7 +3476,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     }
 
     style.width = ( 100 / pageAmount) + '%';
-
   };
 
   var updateHeaderScrollbar = function(){
@@ -2381,6 +3486,19 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var ratio = parent.getBoundingClientRect().width / parent.scrollWidth;
     var position = updateScroll.getPosition();
 
+    var stScrollableWrap = container.querySelector('.st-header .st-scrollable-wrap');
+
+    if (ratio > 0.99){
+      scrollbar.style.visibility =
+      indicator.style.visibility = 'hidden';
+      stScrollableWrap.className = 'st-scrollable-wrap';
+    }
+    else{
+      scrollbar.style.visibility =
+      indicator.style.visibility = 'visible';
+      stScrollableWrap.className = 'st-scrollable-wrap st-shadow';
+    }
+
     indicator.style.width = ratio * 100 + '%';
 
     translate(null, position, 0, scrollbar);
@@ -2390,16 +3508,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     translate(null, position, 0, indicator);
   };
 
-  var update = function(index, element){
-    updateHeader(element);
-    updateHeaderScrollbar();
-    updateScroll.updateScrollables();
-  };
-
-  /**
-   * Exposes scroll positions to the outside
-   * and function to update all scrollables.
-   */
   var updateScroll = (function(){
     var position;
     var frameRequested = false;
@@ -2457,36 +3565,10 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     }
   };
 
-  //=== Logic ===
   init();
-
-  var methods = {
-    // Expose test object to test inner functions
-    test : {
-      init : init,
-      makeRequest : makeRequest,
-      executeRequest :executeRequest,
-      parseResponse : parseResponse,
-      createTable : createTable,
-      fillTable : fillTable,
-      tableDone : tableDone,
-      updateHeader : updateHeader,
-      updateScroll: updateScroll
-    },
-    nextPage : nextPage,
-    updateHeader : updateHeader,
-    getScrollPosition : updateScroll.getPosition,
-    setScrollPosition : updateScroll.setPosition,
-    updateScrollables : updateScroll.updateScrollables,
-    next : swipeFunc.next,
-    prev : swipeFunc.prev
-  };
-
-  return methods;
 };
-/* exported SwipeTable */
 
-},{"./..\\..\\bower_components\\when\\when.js":1}]},{},[3])
-(3)
+},{"./../../bower_components/bouncefix.js/lib/bouncefix.js":1,"./..\\..\\bower_components\\fastclick\\lib\\fastclick.js":2,"./..\\..\\bower_components\\when\\when.js":3}]},{},[5])
+(5)
 });
 ;
