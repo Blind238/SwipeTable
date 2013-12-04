@@ -23,7 +23,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       headerHeight    = 50,
       scrollbarHeight =  5,
       controlHeight   = 50,
-      sortAscending   = true,
+      rowSizes;
+
+  var sortAscending   = true,
       sortColumn,
       timestamp,
       newItems;
@@ -60,7 +62,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   var init = function(){
     var tableHeight;
-    var rowHeights;
     var requestDeferred = when.defer();
     var dataTable = createTable();
 
@@ -78,17 +79,17 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       tableHeight = parseInt(container.getBoundingClientRect().height, 10);
     }
 
-    rowHeights = testRowHeights();
+    rowSizes = testSizes();
 
     // Add margin for proper spacing of elements
-    stWrap.style.marginTop = headerHeight - rowHeights.header + 'px';
+    stWrap.style.marginTop = headerHeight - rowSizes.headerHeight + 'px';
 
     // Remove height for other elements
     tableHeight -= headerHeight;
     tableHeight -= scrollbarHeight;
     tableHeight -= controlHeight;
 
-    pageSize = Math.floor(tableHeight / rowHeights.body);
+    pageSize = Math.floor(tableHeight / rowSizes.bodyHeight);
 
     // Make the request for the first page
     if (options.demo){
@@ -205,10 +206,15 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     return viewportH;
   };
 
-  var testRowHeights = function(){
-    var headHeight;
-    var bodyHeight;
-    var totalHeight;
+  var testSizes = function(){
+    var headerHeight,
+        headerCellWidth,
+        headerCellPadding,
+        bodyHeight,
+        bodyCellWidth,
+        bodyCellPadding,
+        totalHeight;
+
     var table = document.createElement('table');
     var tHead = document.createElement('thead');
     var tBody = document.createElement('tbody');
@@ -221,32 +227,49 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     table.className = tableClass;
     table.style.visibility = 'hidden';
+    table.style.width = '40px';
+    table.style.tableLayout = 'fixed';
 
     head.appendChild(text);
+    head.style.width = '80px';
     row.appendChild(head);
     tHead.appendChild(row);
     table.appendChild(tHead);
 
     data.appendChild(text2);
+    data.style.width = '80px';
     row2.appendChild(data);
     tBody.appendChild(row2);
     table.appendChild(tBody);
 
     stWrap.appendChild(table);
 
-    headHeight = row.getBoundingClientRect().height;
+    headerHeight = row.getBoundingClientRect().height;
+    headerCellWidth = head.getBoundingClientRect().width;
 
     bodyHeight = row2.getBoundingClientRect().height;
+    bodyCellWidth = data.getBoundingClientRect().width;
 
     totalHeight = table.getBoundingClientRect().height;
+
+    head.style.padding = '0';
+    data.style.padding = '0';
+    headerCellPadding = headerCellWidth - head.getBoundingClientRect().width;
+    bodyCellPadding = bodyCellWidth - data.getBoundingClientRect().width;
+
     //TODO: Determine effects of borders on table size
     //
     stWrap.innerHTML = '';
 
     return {
-      header : headHeight,
-      body: bodyHeight,
-      total: totalHeight
+      headerHeight      : headerHeight,
+      headerCellWidth   : headerCellWidth,
+      headerCellPadding : headerCellPadding,
+      bodyHeight        : bodyHeight,
+      bodyCellWidth     : bodyCellWidth,
+      bodyCellPadding   : bodyCellPadding,
+      totalHeight       : totalHeight,
+
     };
   };
 
@@ -260,25 +283,50 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var header = document.createElement('div');
     header.className = 'st-header';
 
+    var table = document.createElement('table');
+    var tHead = document.createElement('thead');
+    var row   = document.createElement('tr');
+
+    var tableClone = table.cloneNode(true);
+    var tHeadClone = tHead.cloneNode(true);
+    var rowClone = row.cloneNode(true);
+
+    var pinnedClone;
+
     var stScrollable = document.createElement("div");
     stScrollable.className = 'st-scrollable';
     var stScrollableWrap = stScrollable.cloneNode(true);
     stScrollableWrap.className += '-wrap';
 
-    for (i = 1, l = keys.length; i < l; i+=1){
-      var headerDiv = document.createElement("div");
-      headerDiv.appendChild(document.createTextNode(keys[i]));
-      stScrollable.appendChild(headerDiv);
+    for (i = 0, l = keys.length; i < l; i+=1){
+      var head = document.createElement("th");
+      head.appendChild(document.createTextNode(keys[i]));
+
+      if(i === 0){
+        pinnedClone = head.cloneNode(true);
+      }
+
+      row.appendChild(head);
     }
 
-    var headerPinned = document.createElement("div");
-    headerPinned.appendChild(document.createTextNode(keys[0]));
-    headerPinned.className = 'st-pinned';
+    tHead.appendChild(row);
+    table.appendChild(tHead);
+    table.className = tableClass;
 
+    rowClone.appendChild(pinnedClone);
+    tHeadClone.appendChild(rowClone);
+    tableClone.appendChild(tHeadClone);
+    tableClone.className = tableClass;
+
+    var stPinned = document.createElement("div");
+    stPinned.appendChild(tableClone);
+    stPinned.className = 'st-pinned';
+
+    stScrollable.appendChild(table);
     stScrollableWrap.appendChild(stScrollable);
 
     header.appendChild(stScrollableWrap);
-    header.appendChild(headerPinned);
+    header.appendChild(stPinned);
     container.appendChild(header);
 
     updateScroll.setPosition(0);
@@ -843,8 +891,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       },
       move: function(event) {
 
-        console.log(event.touches);
-
         // ensure swiping with one touch and not pinching
         if ( event.touches.length > 2){
           return;
@@ -1397,13 +1443,14 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     l = tableRow.children.length;
     var cellWidths = [];
 
-    for (i=1; i < l; i+=1){
+    for (i=0; i < l; i+=1){
       var w = tableRow.children[i].getBoundingClientRect().width;
       w = parseInt(w, 10);
+      w -= rowSizes.bodyCellPadding;
       cellWidths.push(w);
     }
 
-    var scrollContainer = container.querySelector('.st-header .st-scrollable');
+    var scrollContainer = container.querySelector('.st-header .st-scrollable tr');
 
     cellWidths.forEach(function(value, index){
       scrollContainer.children[index].style.width = value + 'px';
@@ -1434,13 +1481,17 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var ratio = parent.getBoundingClientRect().width / parent.scrollWidth;
     var position = updateScroll.getPosition();
 
+    var stScrollableWrap = container.querySelector('.st-header .st-scrollable-wrap');
+
     if (ratio > 0.99){
       scrollbar.style.visibility =
       indicator.style.visibility = 'hidden';
+      stScrollableWrap.className = 'st-scrollable-wrap';
     }
     else{
       scrollbar.style.visibility =
       indicator.style.visibility = 'visible';
+      stScrollableWrap.className = 'st-scrollable-wrap st-shadow';
     }
 
     indicator.style.width = ratio * 100 + '%';

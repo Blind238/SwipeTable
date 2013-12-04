@@ -24,7 +24,6 @@ body{
 }
 
 .st-header {
-  line-height: 50px;
   position: absolute;
   top: 0;
   left: 0;
@@ -36,21 +35,25 @@ body{
   visibility: visible;
   .st-pinned, .st-scrollable{
     height: 50px;
+    table{
+      table-layout: fixed;
+      th {
+        line-height: 50px;
+        padding-top: 0;
+        border-bottom: 0; //Remove divider
+      }
+    }
   }
 
-  .st-scrollable-wrap{
-    border-radius: 6px;
-    box-shadow: inset 0 0 9px -1px ;
+  .st-pinned{
+    th{
+      color: dimGray;
+    }
   }
 
   .st-scrollable {
-    white-space: nowrap;
     position: relative;
-    > div {
-      height: 50px;
-      position: relative;
-      display: inline-block;
-    }
+
     .st-scrollbar{
       position:absolute;
       display: block;
@@ -58,6 +61,11 @@ body{
       bottom: 0;
     }
   }
+}
+
+.st-shadow{
+  border-radius: 6px;
+  box-shadow: inset 0 0 9px -1px ;
 }
 
 .st-scrollbar {
