@@ -4,7 +4,16 @@
   top: 0;
   overflow: hidden;
   overflow-x: auto;
-  box-shadow: inset -2px 0 3px -2px;
+}
+
+.st-pinned:before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: black;
 }
 
 .st-pinned table {
@@ -105,6 +114,8 @@
 
 .swipe-table table {
   width: 100%;
+  margin-bottom: 0;
+  border: none;
 }
 
 .st-wrap {
@@ -125,7 +136,7 @@
   min-width: 100%;
   width: 100%;
   height: 50px;
-  background-color: #828dff;
+  background-color: lightgrey;
   overflow: hidden;
   visibility: visible;
 }
@@ -144,6 +155,7 @@
 .st-header .st-scrollable table th {
   line-height: 50px;
   padding-top: 0;
+  padding-bottom: 0;
   border-bottom: 0;
 }
 
@@ -163,7 +175,6 @@
 }
 
 .st-shadow {
-  border-radius: 6px;
   box-shadow: inset 0 0 9px -1px;
 }
 
@@ -171,13 +182,13 @@
   box-shadow: inset 0 0 1px;
   height: 5px;
   width: 100%;
-  background-color: #c2c7fc;
+  background-color: #f2f2f2;
   position: absolute;
   bottom: 50px;
 }
 
 .st-scrollbar div {
-  background-color: #3542cd;
+  background-color: #939393;
   height: 5px;
 }
 
@@ -196,8 +207,8 @@
 
 .st-controls div {
   border-radius: 0 0 6px 6px;
-  border: 1px solid #3542cd;
-  background-color: #828dff;
+  border: 1px solid #939393;
+  background-color: lightgrey;
 }
 
 .st-fullscreen .st-controls div {
