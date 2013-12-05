@@ -24,7 +24,8 @@ module.exports = function(grunt) {
 
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name.replace(".js", "") %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+        banner: '/*! <%= pkg.name.replace(".js", "") %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
+        report: 'gzip'
       },
       dist: {
         files: {
@@ -57,14 +58,6 @@ module.exports = function(grunt) {
         files: {
           'dist/swipetable.css': 'src/scss/style.scss'
         }
-      },
-      comp: {
-        options: {
-          style: 'compressed'
-        },
-        files: {
-          'dist/swipetable.min.css': 'src/scss/style.scss'
-        }
       }
     },
 
@@ -74,7 +67,18 @@ module.exports = function(grunt) {
       },
       dist: {
         src: 'dist/swipetable.css'
+      }
+    },
+
+    cssmin: {
+      options: {
+        report: 'gzip'
       },
+      dist: {
+        files: {
+          'dist/swipetable.min.css': 'dist/swipetable.css'
+        }
+      }
     },
 
     watch: {
@@ -136,7 +140,7 @@ module.exports = function(grunt) {
                                     ['jshint', 'browserify', 'qunit']);
 
   grunt.registerTask('build',   'Compiles and minifies scss and javascript.',
-                                    ['sass', 'autoprefixer', 'jshint', 'browserify', 'qunit', 'uglify']);
+                                    ['sass', 'autoprefixer', 'cssmin', 'jshint', 'browserify', 'qunit', 'uglify']);
   
   grunt.registerTask('default', 'Compiles and minifies javascript',
                                     ['jshint', 'browserify', 'qunit', 'uglify']);
