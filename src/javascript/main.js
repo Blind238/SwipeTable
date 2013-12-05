@@ -53,7 +53,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
   options.demo == options.demo || false;
 
-  var tableClass = options.tableClass || 'table table-condensed';
+  var tableClass = options.tableClass || '';
 
   var slides, slidePos, width, length;
 

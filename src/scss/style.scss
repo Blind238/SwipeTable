@@ -1,17 +1,14 @@
-@import "bootstrap-table";
 @import "responsive-tables";
 
 $color: #828dff;
-
-body{
-  padding: 0;
-  margin: 0;
-}
 
 .swipe-table {
   overflow: hidden;
   visibility: hidden;
   position: relative;
+  table {
+    width: 100%;
+  }
 }
 .st-wrap {
   overflow: hidden;
