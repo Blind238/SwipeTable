@@ -4,7 +4,16 @@
   top: 0;
   overflow: hidden;
   overflow-x: auto;
-  box-shadow: inset -2px 0 3px -2px;
+  &:before{
+    content: "";
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: black;
+  }
+
 }
 .st-pinned table {
   border-right: none;
