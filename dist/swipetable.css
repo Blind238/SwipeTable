@@ -52,9 +52,8 @@
   overflow: hidden;
 }
 
-.st-scrollable th:first-child,
 .st-scrollable td:first-child,
-.st-scrollable td:first-child {
+.st-scrollable th:first-child {
   display: none;
 }
 
