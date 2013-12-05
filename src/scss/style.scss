@@ -1,6 +1,6 @@
 @import "responsive-tables";
 
-$color: #828dff;
+$color: lightGray;
 
 .swipe-table {
   overflow: hidden;
@@ -8,6 +8,8 @@ $color: #828dff;
   position: relative;
   table {
     width: 100%;
+    margin-bottom: 0;
+    border: none;
   }
 }
 .st-wrap {
@@ -37,6 +39,7 @@ $color: #828dff;
       th {
         line-height: 50px;
         padding-top: 0;
+        padding-bottom: 0;
         border-bottom: 0; //Remove divider
       }
     }
@@ -61,7 +64,6 @@ $color: #828dff;
 }
 
 .st-shadow{
-  border-radius: 6px;
   box-shadow: inset 0 0 9px -1px ;
 }
 
