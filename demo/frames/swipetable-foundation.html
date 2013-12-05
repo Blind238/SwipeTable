@@ -2,12 +2,17 @@
 <html>
   <head>
     <title>SwipeTable demo</title>
-    <link rel="stylesheet" href="./assets/normalize.css" />
-    <link rel="stylesheet" href="./assets/main.css" />
-    <link rel="stylesheet" href="./../dist/swipetable.css"/>
-    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="stylesheet" href="./../assets/normalize.css" />
+    <link rel="stylesheet" href="./../assets/main.css" />
+    <link rel="stylesheet" href="./../assets/foundation.min.css" />
+    <link rel="stylesheet" href="./../../dist/swipetable.css"/>
     <style>
       /* begin demo embedded styles */
+      
+      .swipe-table, .plain-table {
+        width:300px;
+        height:400px;
+      }
 
       /* end demo embedded styles */
     </style>
@@ -17,11 +22,11 @@
 
     <!-- begin demo markup -->
 
-    <div class="swipe-table st-30">
+    <div class="swipe-table st-20">
     </div>
 
-    <script src="./../dist/SwipeTable.js"></script>
-
+    <script src="./../../dist/SwipeTable.js"></script>
+    
     <!-- end demo markup -->
 
     <script>
@@ -38,6 +43,8 @@
           "data"
         ];
         var options = {
+          // tableClass : 'table table-condensed',
+          fullscreen : false,
           demo:true
         };
         var stElem = document.getElementsByClassName('swipe-table')[0];
