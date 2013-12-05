@@ -57,6 +57,14 @@ module.exports = function(grunt) {
         files: {
           'dist/swipetable.css': 'src/scss/style.scss'
         }
+      },
+      comp: {
+        options: {
+          style: 'compressed'
+        },
+        files: {
+          'dist/swipetable.min.css': 'src/scss/style.scss'
+        }
       }
     },
 
