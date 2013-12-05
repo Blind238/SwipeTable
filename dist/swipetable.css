@@ -164,6 +164,7 @@
 }
 
 .st-header .st-scrollable {
+  cursor: ew-resize;
   position: relative;
 }
 

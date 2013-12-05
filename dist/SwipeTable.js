@@ -3002,8 +3002,11 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         switch (event.type) {
           case 'touchstart': this.start(event); break;
+          case 'mousedown': this.start(event); break;
           case 'touchmove': this.move(event); break;
+          case 'mousemove': this.move(event); break;
           case 'touchend': offloadFn(this.end(event)); break;
+          case 'mouseup': offloadFn(this.end(event)); break;
         }
 
         if (options.stopPropagation){
@@ -3012,10 +3015,19 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
       },
       start: function(event) {
+        var touches;
 
         event.preventDefault();
 
-        var touches = event.touches[0];
+        if(browser.touch){
+          touches = event.touches[0];
+        }
+        else {
+          if(event.button !== 0){
+            return;
+          }
+          touches = event;
+        }
 
         // measure start values
         scrollStart = {
@@ -3037,24 +3049,38 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         scrollOffset = updateScroll.getPosition();
 
-        // attach touchmove and touchend listeners
-        headerScroll.addEventListener('touchmove', this, false);
-        headerScroll.addEventListener('touchend', this, false);
+        if(browser.touch){
+          // attach touchmove and touchend listeners
+          headerScroll.addEventListener('touchmove', this, false);
+          headerScroll.addEventListener('touchend', this, false);
+        }
+        else{
+          headerScroll.addEventListener('mousemove', this, false);
+          headerScroll.addEventListener('mouseup', this, false);
+        }
+
 
       },
       move: function(event) {
-
+        var touches;
         var scrollTotal;
 
-        // ensure swiping with one touch and not pinching
-        if ( event.touches.length > 1 || event.scale && event.scale !== 1){
-          return;
+        if(browser.touch){
+          // ensure swiping with one touch and not pinching
+          if ( event.touches.length > 1 || event.scale && event.scale !== 1){
+            return;
+          }
         }
 
         // prevent native scrolling
         event.preventDefault();
 
-        var touches = event.touches[0];
+        if(browser.touch){
+          touches = event.touches[0];
+        }
+        else {
+          touches = event;
+        }
 
         // measure change in x and y
         scrollDelta = {
@@ -3092,9 +3118,15 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         event.preventDefault();
 
-        // kill touchmove and touchend event listeners until touchstart called again
-        headerScroll.removeEventListener('touchmove', scrollEvents, false);
-        headerScroll.removeEventListener('touchend', scrollEvents, false);
+        if(browser.touch){
+          // kill touchmove and touchend event listeners until touchstart called again
+          headerScroll.removeEventListener('touchmove', scrollEvents, false);
+          headerScroll.removeEventListener('touchend', scrollEvents, false);
+        }
+        else{
+          headerScroll.removeEventListener('mousemove', scrollEvents, false);
+          headerScroll.removeEventListener('mouseup', scrollEvents, false);
+        }
 
       }
 
@@ -3111,6 +3143,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       if (browser.touch){
         stWrap.addEventListener('touchstart', events, false);
         headerScroll.addEventListener('touchstart', scrollEvents, false);
+      }
+      else{
+        headerScroll.addEventListener('mousedown', scrollEvents, false);
       }
 
       if (browser.transitions) {
