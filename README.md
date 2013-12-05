@@ -119,5 +119,5 @@ Additional labels for pre-release and build metadata are available as extensions
 
 ## License
 
-Copyright © 2013, Jeremy Granadillo. Undecided open source license(MIT, GPL), for now: All rights reserved.  
+Copyright © 2013, Jeremy Granadillo. MIT License.  
 Uses parts of Swipe: Copyright © 2013, Brad Birdsall. MIT License.
