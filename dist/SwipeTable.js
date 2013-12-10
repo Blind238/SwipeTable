@@ -1954,7 +1954,7 @@ var attachFastClick = require("./..\\..\\bower_components\\fastclick\\lib\\fastc
 var bouncefix = require('./../../bower_components/bouncefix.js/lib/bouncefix.js');
 
 module.exports = function(dataProviderUrl, tableKeys, elem, options){
-  "use strict";
+  'use strict';
 
   /*---------------- Vars ----------------*\
   \*----------------      ----------------*/
@@ -2025,8 +2025,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     var requestDeferred = when.defer();
     var dataTable = createTable();
 
-    stWrap = document.createElement("div");
-    stWrap.className = "st-wrap";
+    stWrap = document.createElement('div');
+    stWrap.className = 'st-wrap';
     container.appendChild(stWrap);
 
     if(options.fullscreen){
@@ -2259,13 +2259,13 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     var pinnedClone;
 
-    var stScrollable = document.createElement("div");
+    var stScrollable = document.createElement('div');
     stScrollable.className = 'st-scrollable';
     var stScrollableWrap = stScrollable.cloneNode(true);
     stScrollableWrap.className += '-wrap';
 
     for (i = 0, l = keys.length; i < l; i+=1){
-      var head = document.createElement("th");
+      var head = document.createElement('th');
       head.appendChild(document.createTextNode(keys[i]));
 
       if(i === 0){
@@ -2284,7 +2284,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     tableClone.appendChild(tHeadClone);
     tableClone.className = tableClass;
 
-    var stPinned = document.createElement("div");
+    var stPinned = document.createElement('div');
     stPinned.appendChild(tableClone);
     stPinned.className = 'st-pinned';
 
@@ -2426,23 +2426,23 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
         // If there's a page given, it's a sorted page request
         if(queries.page){
-          executeRequest("GET",
+          executeRequest('GET',
                           server +
-                            "?p=" + queries.page +
-                            "&ps=" + pageSize +
-                            "&ts=" + queries.timestamp +
-                            "&sort[field]=" + queries.sortField +
-                            "&sort[asc]=" + queries.sortAsc,
+                            '?p=' + queries.page +
+                            '&ps=' + pageSize +
+                            '&ts=' + queries.timestamp +
+                            '&sort[field]=' + queries.sortField +
+                            '&sort[asc]=' + queries.sortAsc,
                           resolver);
         }
         // Else, it's a sorted and timestamped first page equest
         else{
-          executeRequest("GET",
+          executeRequest('GET',
                           server +
-                            "?ps=" + pageSize +
-                            "&ts=" + queries.timestamp +
-                            "&sort[field]=" + queries.sortField +
-                            "&sort[asc]=" + queries.sortAsc,
+                            '?ps=' + pageSize +
+                            '&ts=' + queries.timestamp +
+                            '&sort[field]=' + queries.sortField +
+                            '&sort[asc]=' + queries.sortAsc,
                           resolver);
         }
       }
@@ -2454,27 +2454,27 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
           return;
         }
         // Make a page request
-        executeRequest("GET",
+        executeRequest('GET',
                         server +
-                          "?p=" + queries.page +
-                          "&ps=" + pageSize +
-                          "&ts=" + queries.timestamp,
+                          '?p=' + queries.page +
+                          '&ps=' + pageSize +
+                          '&ts=' + queries.timestamp,
                         resolver);
       }
     }
     else{
       // No timestamp given, it's a fresh page request
       if (queries.demo){
-        executeRequest("GET",
+        executeRequest('GET',
                         server +
-                          "?ps=" + pageSize +
-                          "&demo=true",
+                          '?ps=' + pageSize +
+                          '&demo=true',
                         resolver);
       }
       else{
-        executeRequest("GET",
+        executeRequest('GET',
                         server +
-                          "?ps=" + pageSize,
+                          '?ps=' + pageSize,
                         resolver);
       }
     }
@@ -2525,13 +2525,13 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       else{
         var i, l;
 
-        var table = document.createElement("table");
+        var table = document.createElement('table');
         table.className = tableClass;
-        var thead = document.createElement("thead");
-        var tr = document.createElement("tr");
+        var thead = document.createElement('thead');
+        var tr = document.createElement('tr');
 
         for (i = 0, l = keys.length; i < l; i+=1){
-          var th = document.createElement("th");
+          var th = document.createElement('th');
           th.appendChild(document.createTextNode(keys[i]));
           tr.appendChild(th);
         }
@@ -2555,18 +2555,18 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       return;
     }
 
-    var tbody = document.createElement("tbody");
+    var tbody = document.createElement('tbody');
     table.appendChild(tbody);
 
     i = 0;
     while (i < numRows){
       var col = dataSet.data[i];
-      var tr = document.createElement("tr");
+      var tr = document.createElement('tr');
       var colCells = Object.keys(col).length;
 
       j = 0;
       while (j < colCells){
-        var td = document.createElement("td");
+        var td = document.createElement('td');
         td.appendChild(document.createTextNode(col[keys[j]]));
         tr.appendChild(td);
         j+=1;
@@ -3280,6 +3280,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
           if(nextOldElement){
             nextOldElement.setAttribute('data-active', 'false');
+            nextOldElement.setAttribute('data-timestamp', '');
+            nextOldElement.innerHTML = 'placeholder';
           }
         }
 
@@ -3291,6 +3293,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
           if(prevOldElement){
             prevOldElement.setAttribute('data-active', 'false');
+            prevOldElement.setAttribute('data-timestamp', '');
+            prevOldElement.innerHTML = 'placeholder';
           }
         }
 
@@ -3393,6 +3397,12 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       swipeReference.slide(page-1);
       deferredContainer[page - 1].promise.then(
           function(value){
+            var oldElements = stWrap.querySelectorAll('.st-table-wrap[data-active="true"]');
+            [].forEach.call(oldElements, function(value){
+              value.setAttribute('data-active', 'false');
+              value.setAttribute('data-timestamp', '');
+              value.innerHTML = 'placeholder';
+            });
             stWrap.children.item(page - 1).setAttribute('data-active', 'true');
             update(value[0],value[1]);
           }
@@ -3402,6 +3412,12 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
       getPageFromIndex(page-1).then(
         function(value){
+          var oldElements = stWrap.querySelectorAll('.st-table-wrap[data-active="true"]');
+            [].forEach.call(oldElements, function(value){
+              value.setAttribute('data-active', 'false');
+              value.setAttribute('data-timestamp', '');
+              value.innerHTML = 'placeholder';
+            });
           stWrap.children.item(page-1).innerHTML = value.innerHTML;
           stWrap.children.item(page-1).setAttribute('data-active', 'true');
           stWrap.children.item(page-1).setAttribute('data-timestamp', timestamp);
@@ -3479,7 +3495,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     }
 
     // Select the first row of the element
-    var tableRow = currentIndexElement.querySelector(".st-scrollable tr");
+    var tableRow = currentIndexElement.querySelector('.st-scrollable tr');
     l = tableRow.children.length;
     var cellWidths = [];
 
