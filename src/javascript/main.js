@@ -1330,6 +1330,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
           if(nextOldElement){
             nextOldElement.setAttribute('data-active', 'false');
+            nextOldElement.setAttribute('data-timestamp', '');
+            nextOldElement.innerHTML = 'placeholder';
           }
         }
 
@@ -1341,6 +1343,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
           if(prevOldElement){
             prevOldElement.setAttribute('data-active', 'false');
+            prevOldElement.setAttribute('data-timestamp', '');
+            prevOldElement.innerHTML = 'placeholder';
           }
         }
 
@@ -1443,6 +1447,12 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       swipeReference.slide(page-1);
       deferredContainer[page - 1].promise.then(
           function(value){
+            var oldElements = stWrap.querySelectorAll('.st-table-wrap[data-active="true"]');
+            [].forEach.call(oldElements, function(value){
+              value.setAttribute('data-active', 'false');
+              value.setAttribute('data-timestamp', '');
+              value.innerHTML = 'placeholder';
+            });
             stWrap.children.item(page - 1).setAttribute('data-active', 'true');
             update(value[0],value[1]);
           }
@@ -1452,6 +1462,12 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
       getPageFromIndex(page-1).then(
         function(value){
+          var oldElements = stWrap.querySelectorAll('.st-table-wrap[data-active="true"]');
+            [].forEach.call(oldElements, function(value){
+              value.setAttribute('data-active', 'false');
+              value.setAttribute('data-timestamp', '');
+              value.innerHTML = 'placeholder';
+            });
           stWrap.children.item(page-1).innerHTML = value.innerHTML;
           stWrap.children.item(page-1).setAttribute('data-active', 'true');
           stWrap.children.item(page-1).setAttribute('data-timestamp', timestamp);
