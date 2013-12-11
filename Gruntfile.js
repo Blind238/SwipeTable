@@ -12,13 +12,23 @@ module.exports = function(grunt) {
 
     concat: {
       options: {
-        separator: "\n\n"
+        separator: "\n"
       },
       dist: {
         src: [
-          'src/javascript/main.js'
+          'src/javascript/_intro.js',
+          'src/javascript/00-vars.js',
+          'src/javascript/01-init.js',
+          'src/javascript/02-test.js',
+          'src/javascript/03-create.js',
+          'src/javascript/04-request.js',
+          'src/javascript/05-tables.js',
+          'src/javascript/06-swipe.js',
+          'src/javascript/07-navigate.js',
+          'src/javascript/08-update.js',
+          'src/javascript/_outro.js'
         ],
-        dest: 'dist/<%= pkg.name.replace(".js", "") %>.js'
+        dest: 'tmp/javascript/<%= pkg.name.replace(".js", "") %>.js'
       }
     },
 
@@ -29,7 +39,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/<%= pkg.name.replace(".js", "") %>.min.js': ['<%= concat.dist.dest %>']
+          'dist/<%= pkg.name.replace(".js", "") %>.min.js': ['<%= browserify.dist.dest %>']
         }
       }
     },
@@ -39,7 +49,7 @@ module.exports = function(grunt) {
     },
 
     jshint: {
-      files: ['src/javascript/main.js'],
+      files: ['<%= concat.dist.dest  %>'],
       options: {
         globals: {
           console: true,
@@ -91,7 +101,7 @@ module.exports = function(grunt) {
       },
       javascript: {
         files: 'src/javascript/*.js',
-        tasks: ['jshint', 'browserify'],
+        tasks: ['concat', 'jshint', 'browserify'],
         options: {
           livereload: LIVERELOAD_PORT
         }
@@ -117,8 +127,8 @@ module.exports = function(grunt) {
     },
 
     browserify: {
-      all: {
-        src: 'src/javascript/main.js',
+      dist: {
+        src: '<%= concat.dist.dest  %>',
         dest: 'dist/<%= pkg.name.replace(".js", "") %>.js',
         options: {
           transform: ['debowerify','deamdify'],
@@ -137,12 +147,12 @@ module.exports = function(grunt) {
                                     ['connect:livereload','watch']);
 
   grunt.registerTask('test',    'Run jshint and qunit tests.',
-                                    ['jshint', 'browserify', 'qunit']);
+                                    ['concat', 'jshint', 'browserify', 'qunit']);
 
   grunt.registerTask('build',   'Compiles and minifies scss and javascript.',
-                                    ['sass', 'autoprefixer', 'cssmin', 'jshint', 'browserify', 'qunit', 'uglify']);
+                                    ['sass', 'autoprefixer', 'cssmin', 'concat', 'jshint', 'browserify', 'qunit', 'uglify']);
   
   grunt.registerTask('default', 'Compiles and minifies javascript',
-                                    ['jshint', 'browserify', 'qunit', 'uglify']);
+                                    ['concat', 'jshint', 'browserify', 'qunit', 'uglify']);
 
 };

@@ -1956,9 +1956,6 @@ var bouncefix = require('./../../bower_components/bouncefix.js/lib/bouncefix.js'
 module.exports = function(dataProviderUrl, tableKeys, elem, options){
   'use strict';
 
-  /*---------------- Vars ----------------*\
-  \*----------------      ----------------*/
-
   var dataProvider = dataProviderUrl,
       keys         = tableKeys,
       container    = elem;
@@ -2164,9 +2161,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     }
   };
 
-  /*---------------- Test ----------------*\
-  \*----------------      ----------------*/
-
   var viewportHeight = function(){
     // responsejs.com/labs/dimensions/
     var matchMedia = window.matchMedia || window.msMatchMedia;
@@ -2250,9 +2244,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     };
   };
-
-  /*--------------- Create ---------------*\
-  \*---------------        ---------------*/
 
   var createHeader = function(){
     var i;
@@ -2433,9 +2424,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     }
   };
 
-  /*--------------- Request ---------------*\
-  \*---------------         ---------------*/
-
   /**
    * Figures out the request based on parameters given in the queries object.
    *
@@ -2543,9 +2531,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     resolver.resolve(JSON.parse(response));
   };
 
-  /*--------------- Tables ---------------*\
-  \*---------------        ---------------*/
-
   /**
    * Creates a table with appropriate headers(thead).
    *
@@ -2639,9 +2624,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     return when.resolve(stTableWrap);
   };
-
-  /*--------------- Swipe ---------------*\
-  \*---------------       ---------------*/
 
   function translate(index, dist, speed, direct) {
     var slide;
@@ -3388,9 +3370,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     return deferredContainer[index].promise;
   };
 
-  /*-------------- Navigate --------------*\
-  \*--------------          --------------*/
-
   var nextPage = function(){
     var index = swipeReference.getPos();
 
@@ -3535,9 +3514,6 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     return tablePromise;
   };
-
-  /*--------------- Update ---------------*\
-  \*---------------        ---------------*/
 
   var update = function(index, element){
     // Update notification

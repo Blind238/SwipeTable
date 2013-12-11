@@ -1,0 +1,101 @@
+{
+    // This .jshintrc is strictly for editing
+    // Ignore any errors in _intro.js and _outro.js
+    "node": true,
+    "browser": true,
+    "devel": true,
+    "camelcase": true,
+    "curly": true,
+    "immed": true,
+    "newcap": true,
+    "noarg": true,
+    "quotmark" : "single",
+    "undef": true,
+    "trailing": true,
+    "smarttabs": true,
+    "expr": true,
+    "globals":{
+        // Required libs
+        "when": true,
+        "attachFastClick": true,
+        "bouncefix": true,
+
+        // Parameters
+        "dataProviderUrl": true,
+        "tableKeys": true,
+        "elem": true,
+        "options": true,
+
+        // Variables
+        "dataProvider": true,
+        "keys": true,
+        "container": true,
+
+        "stWrap": true,
+        "currentIndexElement": true,
+        "swipeReference": true,
+        "deferredContainer": true,
+
+        "pageSize": true,
+        "pageAmount": true,
+        "headerHeight": true,
+        "scrollbarHeight": true,
+        "controlHeight": true,
+        "rowSizes": true,
+
+        "sortAscending": true,
+        "sortColumn": true,
+        "timestamp": true,
+        "newItems": true,
+
+        "headerScrollbar": true,
+        "mainScrollbar": true,
+
+        "controls": true,
+
+        "boundEvents": true,
+
+        "tableClass": true,
+
+        "slides": true,
+        "slidePos": true,
+        "width": true,
+        "length": true,
+
+        // Functions
+        "init": true,
+
+        "viewportHeight": true,
+        "testSizes": true,
+
+        "createHeader":true,
+        "createScrollbar": true,
+        "createControls": true,
+
+        "makeRequest": true,
+        "executeRequest": true,
+        "parseResponse": true,
+
+        "createTable": true,
+        "fillTable": true,
+
+        "translate": true,
+        "Swipe": true,
+        "createSwipe": true,
+        "resolveTheResolver": true,
+        "pushDeferred": true,
+
+        "nextPage": true,
+        "previousPage": true,
+        "goToPage": true,
+        "getPageFromIndex": true,
+
+        "update": true,
+        "updateHeader": true,
+        "updateMainScrollbar": true,
+        "updateHeaderScrollbar": true,
+        "updateScroll": true,
+
+        "swipeFunc": true
+    }
+}
