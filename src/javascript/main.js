@@ -63,6 +63,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   \*----------------      ----------------*/
 
   var init = function(){
+    //Cleanup old events if any
     if(swipeReference){
       swipeReference.kill();
       window.removeEventListener('orientationchange', boundEvents.init);
@@ -110,10 +111,21 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       options.demo = false;
     }
     else{
-      makeRequest(
+      if(timestamp){
+        makeRequest(
+        dataProvider,
+        {
+          timestamp:timestamp,
+          page:1
+        },
+        requestDeferred.resolver);
+      }
+      else {
+        makeRequest(
         dataProvider,
         {},
         requestDeferred.resolver);
+      }
     }
 
     createHeader();
@@ -389,6 +401,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         var clickEvent = function(){
           if (newItems > 0){
             //TODO: Proper refresh
+            // Reset timestamp
+            timestamp = Date.now();
             init();
           }
         };
@@ -1550,16 +1564,12 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   var update = function(index, element){
     // Update notification
     if(newItems > 0){
-      if (container.getAttribute('data-new') !== ('' + newItems)){
-        container.setAttribute('data-new', '' + newItems);
-        container.querySelector('.st-reload-text').innerHTML = '' + newItems;
-      }
+      container.setAttribute('data-new', '' + newItems);
+      container.querySelector('.st-reload-text').innerHTML = '' + newItems;
     }
     else{
-       if (container.getAttribute('data-new') !== '0'){
-        container.setAttribute('data-new', '0');
-        container.querySelector('.st-reload-text').innerHTML = '0';
-      }
+      container.setAttribute('data-new', '0');
+      container.querySelector('.st-reload-text').innerHTML = '0';
     }
 
     // Update page indicator
