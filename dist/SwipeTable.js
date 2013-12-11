@@ -2013,6 +2013,7 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   \*----------------      ----------------*/
 
   var init = function(){
+    //Cleanup old events if any
     if(swipeReference){
       swipeReference.kill();
       window.removeEventListener('orientationchange', boundEvents.init);
@@ -2060,10 +2061,21 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
       options.demo = false;
     }
     else{
-      makeRequest(
+      if(timestamp){
+        makeRequest(
+        dataProvider,
+        {
+          timestamp:timestamp,
+          page:1
+        },
+        requestDeferred.resolver);
+      }
+      else {
+        makeRequest(
         dataProvider,
         {},
         requestDeferred.resolver);
+      }
     }
 
     createHeader();
@@ -2295,6 +2307,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     header.appendChild(stPinned);
     container.appendChild(header);
 
+    // Fixes table borders not updating on width changes
+    translate(null, 0, 0, stScrollable);
+
     updateScroll.setPosition(0);
   };
 
@@ -2339,6 +2354,8 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
         var clickEvent = function(){
           if (newItems > 0){
             //TODO: Proper refresh
+            // Reset timestamp
+            timestamp = Date.now();
             init();
           }
         };
@@ -2371,7 +2388,28 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     var createButton = function(glyph){
       var button = document.createElement('div');
-      button.appendChild(document.createTextNode(glyph));
+      // If it's supposed to be the refresh button,
+      // add the page and reload indicators.
+      if(glyph === 'R'){
+        var pageText = document.createElement('span');
+        var reloadText = pageText.cloneNode(true);
+        pageText.className = 'st-page-number';
+        reloadText.className = 'st-reload-text';
+        button.appendChild(pageText);
+        button.appendChild(reloadText);
+        // SVG from icomoon.io, "IcoMoon - Free" font, GPL
+        // Only modification was adding a couple of classes.
+        button.insertAdjacentHTML('beforeend', '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+          'class="st-reload-svg" width="32" height="32" viewBox="0 0 32 32">' +
+            '<path class="st-reload-path" d="M27.313 4.687c-2.895-2.896-6.895-4.687-11.313-4.687-6.859 0-12.709 4.316-14.984 ' +
+            '10.381l3.746 1.405c1.706-4.548 6.094-7.786 11.238-7.786 3.314 0 6.313 1.344 8.485 3.515l-4.485 4.485h12v-12l-4.687 ' +
+            '4.687zM16 28c-3.314 0-6.313-1.343-8.485-3.515l4.485-4.485h-12v12l4.687-4.687c2.895 2.896 6.894 4.687 11.313 4.687 ' +
+            '6.859 0 12.709-4.316 14.984-10.381l-3.746-1.405c-1.706 4.548-6.094 7.786-11.238 7.786z" fill="#000000" />' +
+          '</svg>');
+      }
+      else{
+        button.appendChild(document.createTextNode(glyph));
+      }
       buttons.push(button);
     };
 
@@ -2905,6 +2943,22 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
             updateMainScrollbar(index, delta.x + slidePos[index], 0);
 
         }
+        else{
+          // Tests so far show that users expect the table
+          // to move vertically so that's one of the first actions they take.
+          // To encourage them to move the element in a horizontal direction,
+          // we'll give horizontal feedback to the vertical movement.
+          event.preventDefault();
+
+          // Always increase resistance
+          delta.y = delta.y / ( Math.abs(delta.y) / width*2 + 1 );
+
+          // translate 1:1
+          translate(index-1, delta.y + slidePos[index-1], 0);
+          translate(index, delta.y + slidePos[index], 0);
+          translate(index+1, delta.y + slidePos[index+1], 0);
+          updateMainScrollbar(index, delta.y + slidePos[index], 0);
+        }
 
       },
       end: function() {
@@ -2971,6 +3025,15 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
           }
 
+        }
+        else{
+          // If vertical swiping, always bounce back.
+          // We don't want vertical swiping to be the
+          // default behavior for navigation.
+          move(index-1, -width, speed);
+          move(index, 0, speed);
+          updateMainScrollbar(index, 0, speed);
+          move(index+1, width, speed);
         }
 
         // kill touchmove and touchend event listeners until touchstart called again
@@ -3477,6 +3540,19 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   \*---------------        ---------------*/
 
   var update = function(index, element){
+    // Update notification
+    if(newItems > 0){
+      container.setAttribute('data-new', '' + newItems);
+      container.querySelector('.st-reload-text').innerHTML = '' + newItems;
+    }
+    else{
+      container.setAttribute('data-new', '0');
+      container.querySelector('.st-reload-text').innerHTML = '0';
+    }
+
+    // Update page indicator
+    container.querySelector('.st-page-number').innerHTML = (swipeReference.getPos() + 1) + '/' + pageAmount;
+
     updateHeader(element);
     updateHeaderScrollbar();
     updateScroll.updateScrollables();

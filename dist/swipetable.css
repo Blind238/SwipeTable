@@ -117,6 +117,24 @@
   border: none;
 }
 
+.swipe-table[data-new='0'] .st-reload-text {
+  color: #A9A9A9;
+  border: none;
+}
+
+.swipe-table[data-new='0'] .st-reload-path {
+  fill: #A9A9A9;
+}
+
+.swipe-table:not([data-new='0']) .st-reload-text {
+  color: #696969;
+  border: 1px solid #696969;
+}
+
+.swipe-table:not([data-new='0']) .st-reload-path {
+  fill: #000;
+}
+
 .st-wrap {
   overflow: hidden;
   position: relative;
@@ -159,7 +177,7 @@
 }
 
 .st-header .st-pinned th {
-  color: dimGray;
+  color: #696969;
 }
 
 .st-header .st-scrollable {
@@ -205,10 +223,39 @@
   text-align: center;
 }
 
-.st-controls div {
+.st-controls > div {
+  font-size: 2em;
+  font-weight: bold;
   border-radius: 0 0 6px 6px;
   border: 1px solid #939393;
   background-color: lightgrey;
+}
+
+.st-controls > div:nth-child(3) {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-align-items: center;
+  align-items: center;
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+}
+
+.st-controls > div .st-page-number {
+  font-size: 0.6em;
+}
+
+.st-controls > div .st-reload-text {
+  font-size: 0.5em;
+  width: 2em;
+  height: 2em;
+  border-radius: 1em;
+  line-height: 2em;
+  text-align: center;
+}
+
+.st-controls > div .st-reload-svg {
+  height: 0.8em;
+  width: 0.8em;
 }
 
 .st-fullscreen .st-controls div {
