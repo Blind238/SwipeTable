@@ -357,6 +357,9 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
     header.appendChild(stPinned);
     container.appendChild(header);
 
+    // Fixes table borders not updating on width changes
+    translate(null, 0, 0, stScrollable);
+
     updateScroll.setPosition(0);
   };
 
