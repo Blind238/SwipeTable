@@ -421,7 +421,28 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
     var createButton = function(glyph){
       var button = document.createElement('div');
-      button.appendChild(document.createTextNode(glyph));
+      // If it's supposed to be the refresh button,
+      // add the page and reload indicators.
+      if(glyph === 'R'){
+        var pageText = document.createElement('span');
+        var reloadText = pageText.cloneNode(true);
+        pageText.className = 'st-page-number';
+        reloadText.className = 'st-reload-text';
+        button.appendChild(pageText);
+        button.appendChild(reloadText);
+        // SVG from icomoon.io, "IcoMoon - Free" font, GPL
+        // Only modification was adding a couple of classes.
+        button.insertAdjacentHTML('beforeend', '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
+          'class="st-reload-svg" width="32" height="32" viewBox="0 0 32 32">' +
+            '<path class="st-reload-path" d="M27.313 4.687c-2.895-2.896-6.895-4.687-11.313-4.687-6.859 0-12.709 4.316-14.984 ' +
+            '10.381l3.746 1.405c1.706-4.548 6.094-7.786 11.238-7.786 3.314 0 6.313 1.344 8.485 3.515l-4.485 4.485h12v-12l-4.687 ' +
+            '4.687zM16 28c-3.314 0-6.313-1.343-8.485-3.515l4.485-4.485h-12v12l4.687-4.687c2.895 2.896 6.894 4.687 11.313 4.687 ' +
+            '6.859 0 12.709-4.316 14.984-10.381l-3.746-1.405c-1.706 4.548-6.094 7.786-11.238 7.786z" fill="#000000" />' +
+          '</svg>');
+      }
+      else{
+        button.appendChild(document.createTextNode(glyph));
+      }
       buttons.push(button);
     };
 
@@ -1527,6 +1548,23 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
   \*---------------        ---------------*/
 
   var update = function(index, element){
+    // Update notification
+    if(newItems > 0){
+      if (container.getAttribute('data-new') !== ('' + newItems)){
+        container.setAttribute('data-new', '' + newItems);
+        container.querySelector('.st-reload-text').innerHTML = '' + newItems;
+      }
+    }
+    else{
+       if (container.getAttribute('data-new') !== '0'){
+        container.setAttribute('data-new', '0');
+        container.querySelector('.st-reload-text').innerHTML = '0';
+      }
+    }
+
+    // Update page indicator
+    container.querySelector('.st-page-number').innerHTML = (swipeReference.getPos() + 1) + '/' + pageAmount;
+
     updateHeader(element);
     updateHeaderScrollbar();
     updateScroll.updateScrollables();

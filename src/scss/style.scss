@@ -11,6 +11,24 @@ $color: lightGray;
     margin-bottom: 0;
     border: none;
   }
+
+  &[data-new='0']{
+    .st-reload-text{
+      border: none;
+    }
+    .st-reload-path{
+      fill: dimGray;
+    }
+  }
+
+  &:not([data-new='0']){
+    .st-reload-text{
+      border: 1px solid dimGray;
+    }
+    .st-reload-path{
+      fill: black;
+    }
+  }
 }
 .st-wrap {
   overflow: hidden;
@@ -91,10 +109,34 @@ $color: lightGray;
   height: 50px;
   text-align: center;
 
-  div {
+  > div {
+    font-size: 2em;
+    font-weight: bold;
     border-radius: 0 0 6px 6px;
     border: 1px solid desaturate(darken($color, 25%), 40%);
     background-color: $color;
+    &:nth-child(3){
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+    .st-page-number{
+      font-size: 0.6em;
+    }
+    .st-reload-text{
+      font-size: 0.5em;
+      color: dimGray;
+
+      width:2em;
+      height:2em;
+      border-radius:1em;
+      line-height:2em;
+      text-align:center;
+    }
+    .st-reload-svg{
+      height: 0.8em;
+      width: 0.8em;
+    }
   }
 }
 
