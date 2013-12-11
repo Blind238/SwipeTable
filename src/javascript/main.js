@@ -993,6 +993,22 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
             updateMainScrollbar(index, delta.x + slidePos[index], 0);
 
         }
+        else{
+          // Tests so far show that users expect the table
+          // to move vertically so that's one of the first actions they take.
+          // To encourage them to move the element in a horizontal direction,
+          // we'll give horizontal feedback to the vertical movement.
+          event.preventDefault();
+
+          // Always increase resistance
+          delta.y = delta.y / ( Math.abs(delta.y) / width*2 + 1 );
+
+          // translate 1:1
+          translate(index-1, delta.y + slidePos[index-1], 0);
+          translate(index, delta.y + slidePos[index], 0);
+          translate(index+1, delta.y + slidePos[index+1], 0);
+          updateMainScrollbar(index, delta.y + slidePos[index], 0);
+        }
 
       },
       end: function() {
@@ -1059,6 +1075,15 @@ module.exports = function(dataProviderUrl, tableKeys, elem, options){
 
           }
 
+        }
+        else{
+          // If vertical swiping, always bounce back.
+          // We don't want vertical swiping to be the
+          // default behavior for navigation.
+          move(index-1, -width, speed);
+          move(index, 0, speed);
+          updateMainScrollbar(index, 0, speed);
+          move(index+1, width, speed);
         }
 
         // kill touchmove and touchend event listeners until touchstart called again
