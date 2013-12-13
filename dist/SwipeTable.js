@@ -1,6 +1,6 @@
 !function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.SwipeTable=e():"undefined"!=typeof global?global.SwipeTable=e():"undefined"!=typeof self&&(self.SwipeTable=e())}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*!
- * v0.2.0
+ * v0.2.1
  * Copyright (c) 2013 Jarid Margolin
  * bouncefix.js is open sourced under the MIT license.
  */ 
@@ -66,13 +66,17 @@ Fix.prototype.touchStart = function (evt) {
   this.target = utils.getTargetedEl(evt.target, this.className);
   if (this.target) {
     // If scrollable, adjust
-    if (utils.isScrollable(this.target)) { return utils.scrollToEnd(this.target); }
+    if (utils.isScrollable(this.target)) {
+      return utils.scrollToEnd(this.target);
+    }
     // Else block touchmove
-    this.endListener = new EventListener(this.target, {
-      evt: 'touchmove',
-      handler: this.touchMove,
-      context: this
-    }).add();
+    if (!this.moveListener) {
+      this.moveListener = new EventListener(this.target, {
+        evt: 'touchmove',
+        handler: this.touchMove,
+        context: this
+      }).add();
+    }
   }
 };
 
@@ -91,6 +95,7 @@ Fix.prototype.touchMove = function (evt) {
 Fix.prototype.touchEnd = function (evt) {
   if (this.moveListener) {
     this.moveListener.remove();
+    this.moveListener = null;
   }
 };
 
@@ -164,6 +169,7 @@ function EventListener(el, opts) {
 //
 EventListener.prototype.add = function () {
   this.el.addEventListener(this.evt, this.handler, false);
+  return this;
 };
 
 //
@@ -171,6 +177,7 @@ EventListener.prototype.add = function () {
 //
 EventListener.prototype.remove = function () {
   this.el.removeEventListener(this.evt, this.handler);
+  return this;
 };
 
 return bouncefix;
