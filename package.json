@@ -17,7 +17,6 @@
     "grunt-autoprefixer": "~0.4.1",
     "grunt-contrib-cssmin": "~0.7.0",
     "load-grunt-tasks": "~0.2.0",
-    "assemble-contrib-anchors": "*",
     "assemble-contrib-permalinks": "*",
     "assemble-contrib-sitemap": "*",
     "assemble-contrib-toc": "*",
