@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{title}} | {{site.title}}</title>
+    <link rel="stylesheet" href="{{assets}}/devlog.min.css">
+  </head>
+  <body>
+
+    <!-- Page content
+    ================================================== -->
+    <div>
+      {{#markdown}}{{> body}}{{/markdown}}
+    </div>
+
+    <script src="{{assets}}/js/highlight.js"></script>
+    {{> analytics }}
+  </body>
+</html>
