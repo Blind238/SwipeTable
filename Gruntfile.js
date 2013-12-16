@@ -55,9 +55,13 @@ module.exports = function(grunt) {
         options: {
           style: 'nested'
         },
-        files: {
-          '<%= config.dist %>/assets/style.css': '<%= config.src %>/scss/style.scss'
-        }
+        files: [{
+                expand: true,
+                cwd: '<%= config.src %>/scss',
+                src: ['*.scss'],
+                dest: '<%= config.dist %>/assets',
+                ext: '.css'
+              }]
       }
     },
 
@@ -66,23 +70,31 @@ module.exports = function(grunt) {
         browsers: ['last 1 version', 'android 4']
       },
       dist: {
-        src: '<%= config.dist %>/assets/style.css'
+        src: '<%= config.dist %>/assets/*.css'
       }
     },
 
     cssmin: {
       dev: {
-        files: {
-          '<%= config.dist %>/assets/style.min.css': '<%= config.dist %>/assets/style.css'
-        }
+        files: [{
+                expand: true,
+                cwd: '<%= config.dist %>/assets',
+                src: ['*.css', '!*.min.css'],
+                dest: '<%= config.dist %>/assets',
+                ext: '.min.css'
+        }]
       },
       dist: {
         options: {
           report: 'gzip'
         },
-        files: {
-          '<%= config.dist %>/assets/style.min.css': '<%= config.dist %>/assets/style.css'
-        }
+        files: [{
+                expand: true,
+                cwd: '<%= config.dist %>/assets',
+                src: ['*.css', '!*.min.css'],
+                dest: '<%= config.dist %>/assets',
+                ext: '.min.css'
+        }]
       }
     },
 
@@ -134,7 +146,7 @@ module.exports = function(grunt) {
 
     // Before generating any new files,
     // remove any previously-created files.
-    clean: ['<%= config.dist %>/**/*.{html,xml}'],
+    clean: ['<%= config.dist %>/**/*.{html,xml,css}'],
 
     // Push dist files to gh-pages branch of the current repo
     'gh-pages': {
