@@ -114,7 +114,8 @@ module.exports = function(grunt) {
       },
       main: {
         options:{
-          layout: 'main.hbs'
+          layout: 'main.hbs',
+          partials: '<%= config.src %>/pages/main/*.hbs'
         },
         files: {
           '<%= config.dist %>/': ['<%= config.src %>/pages/index.hbs']
