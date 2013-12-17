@@ -61,28 +61,58 @@ SOON.
 
 ### Requirements:
 
-* JavaScript development
-    * Node
-    * npm
-* SASS development
+
+* General
+    * node.js
+    * grunt 
+* JavaScript specific
+    * bower
+* SASS specific
     *  Ruby
     *  Bundler gem
 
 ### Setup:
-Clone the repo, navigate to the directory, then `npm install` to install dependencies. After the installation is done you can use grunt for development, testing and minification.
+Make sure you have a recent version of node.js installed.
+
+To install grunt:
+
+    npm install -g grunt
+
+
+#### Javascript
+
+If you don't already have bower installed:
+
+    npm install -g bower
+
+Clone the repo, navigate to the directory, then `npm install` to install dependencies. Fetch remaining packages with `bower install`. After the installation is done you can use grunt for development, testing and minification.
+
+#### SASS
+
+If you don't already have Bundler installed:
+
+    gem install bundler
+
+Clone the repo, navigate to the directory, then `npm install` to install dependencies. Install SASS with `bundle install` After the installation is done you can use grunt for development, testing and minification.
+
+#### Grunt
 
     $ grunt -h
     Options marked with * have methods exposed via the grunt API and should instead
     be specified inside the Gruntfile wherever possible.
 
     Available tasks
-            uglify  Minify files with UglifyJS. *
-            jshint  Validate files with JSHint. *
-             qunit  Run QUnit unit tests in a headless PhantomJS instance. *
-             watch  Run predefined tasks whenever watched files change.
             concat  Concatenate files. *
+            jshint  Validate files with JSHint. *
+            uglify  Minify files with UglifyJS. *
+             watch  Run predefined tasks whenever watched files change.
+             qunit  Run QUnit unit tests in a headless PhantomJS instance. *
               sass  Compile Sass to CSS *
-        nodestatic  Start a static web server. *
+        browserify  Grunt task for browserify. *
+           connect  Start a connect web server. *
+      autoprefixer  Parse CSS and add vendor prefixes to CSS rules using values
+                    from the Can I Use website. *
+            cssmin  Minify CSS files *
             server  Hosts project on port 8080,
                     watches /src files and concats, lints
                     and triggers LiveReload if enabled in your browser.
