@@ -122,7 +122,7 @@ module.exports = function(grunt) {
         layoutdir: '<%= config.src %>/templates/layouts',
         data: '<%= config.src %>/data/*.{json,yml}',
         partials: '<%= config.src %>/templates/partials/*.hbs',
-        plugins: ['assemble-contrib-anchors','assemble-contrib-permalinks','assemble-contrib-sitemap','assemble-contrib-toc','assemble-markdown-data','assemble-related-pages'],
+        plugins: ['assemble-contrib-permalinks','assemble-contrib-sitemap','assemble-contrib-toc','assemble-markdown-data','assemble-related-pages'],
       },
       main: {
         options:{
