@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title> | SwipeTable</title>
+    <link rel="stylesheet" href="assets/main.min.css">
+  </head>
+  <body>
+
+    <!-- Page content
+    ================================================== -->
+    <div>
+      <div class="heading">  <div class="heading__img">
+    <img class="palm-one-third" src="assets/swipetable-grayscale.gif" alt="">
+  </div>
+  <div class="heading__text">
+    <h1>SwipeTable</h1>
+    <p>Mobile focused opinionated ajax table</p>
+  </div>
+</div>
+<div class="features"><div>
+<h2 id="features">Features</h2>
+<ul>
+<li>Intuitive navigation</li>
+<li>Most actions available through 1 or 2 finger swiping</li>
+<li>Standalone, no external libraries required</li>
+<li>Built on Swipe,</li>
+</ul>
+
+</div>
+</div>
+<div class="usage grid"><div class="grid__item desk-one-half">
+<h2 id="usage">Usage</h2>
+<p>SwipeTable consists of 3 parts:</p>
+<ul>
+<li>HTML snippet</li>
+<li>CSS</li>
+<li>JavaScript</li>
+</ul>
+<p>Place this HTML snippet where you want the table:</p>
+<pre><code>&lt;div class=&quot;swipe-table  st-##&quot;&gt;
+&lt;/div&gt;</code></pre>
+<p><code>st-##</code> sets the size of the pinned column as a percentage of the table.
+Replace <code>##</code> with a number between 10 and 35 in 5 increments.</p>
+
+</div><!--
+--><div class="grid__item desk-one-half">
+<div>
+<p>Load the script just before the <code>&lt;/body&gt;</code> closing tag,
+then use the following to config and start the table:</p>
+<pre><code>&lt;script&gt;
+  window.SwipeTable = new SwipeTable(
+    &quot;http://swipetable.blind238.com/api&quot;, // Your API&#39;s url
+    [&quot;id&quot;, &quot;some&quot;, &quot;demo&quot;, &quot;dummy&quot;, &quot;data&quot;], //Table keys/headers
+    document.getElementsByClassName(&#39;swipe-table&#39;)[0],
+    { // Options object
+      fullscreen: true
+      tableClass: &#39;table table-bordered&#39; // optional
+    }
+  );
+&lt;/script&gt;</code></pre>
+
+</div>
+</div>
+<div class="examples"><h2>Examples</h2>
+</div>
+
+    </div>
+
+    <script src="assets/js/highlight.js"></script>
+    <!-- Analytics component
+================================================== -->
+
+  </div></body>
+</html>
