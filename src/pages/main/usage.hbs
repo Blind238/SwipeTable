@@ -1,1 +1,42 @@
-<h2>Usage</h2>
+<div class ="grid__item desk-one-half">
+{{#markdown }}
+
+##Usage
+
+SwipeTable consists of 3 parts:
+
+* HTML snippet
+* CSS
+* JavaScript
+
+Place this HTML snippet where you want the table:
+
+    <div class="swipe-table  st-##">
+    </div>
+
+`st-##` sets the size of the pinned column as a percentage of the table.
+Replace `##` with a number between 10 and 35 in 5 increments.
+
+{{/markdown }}
+</div><!--
+--><div class ="grid__item desk-one-half">
+<div>
+{{#markdown }}
+
+Load the script just before the `</body>` closing tag,
+then use the following to config and start the table:
+
+    <script>
+      window.SwipeTable = new SwipeTable(
+        "http://swipetable.blind238.com/api", // Your API's url
+        ["id", "some", "demo", "dummy", "data"], //Table keys/headers
+        document.getElementsByClassName('swipe-table')[0],
+        { // Options object
+          fullscreen: true
+          tableClass: 'table table-bordered' // optional
+        }
+      );
+    </script>
+
+{{/markdown }}
+</div>

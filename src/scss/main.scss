@@ -25,3 +25,55 @@
  * She’s all yours, cap’n... Begin importing your stuff here.
  */
 //@import "ui/example";
+
+.heading .media,
+.features {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@include media-query("lap-and-up") {
+  .heading,
+  .features {
+    display: flex;
+  }
+
+  .heading,
+  .features {
+    justify-content: center;
+  }
+
+  .heading {
+    align-items: center;
+    height: 700px;
+  }
+
+  .heading__text {
+    flex-shrink: 0;
+    margin-left: $base-spacing-unit;
+  }
+
+  .usage {
+    margin: auto $base-spacing-unit;
+  }
+}
+
+@include media-query("desk") {
+  .usage {
+    max-width: $desk-wide-start;
+    .grid__item:not(:first-child) {
+      margin-top: ($base-spacing-unit + $h2-size);
+    }
+  }
+}
+
+@include media-query("desk-wide") {
+  .usage {
+    margin: auto;
+  }
+}
+
+
+pre{
+  background-color: lightgray;
+}
