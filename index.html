@@ -30,6 +30,10 @@
 </ul>
 
 </div>
+<ul class="features__links nav nav--stacked">
+  <li><a href="https://twitter.com/blind238">Twitter</a></li>
+  <li><a href="">DevLog</a></li>
+</ul>
 </div>
 <hr>
 <div class="usage grid"><div class="grid__item desk-one-half">
@@ -41,8 +45,8 @@
 <li>JavaScript</li>
 </ul>
 <p>Place this HTML snippet where you want the table:</p>
-<pre><code>&lt;div class=&quot;swipe-table  st-##&quot;&gt;
-&lt;/div&gt;</code></pre>
+<script src="https://gist.github.com/Blind238/8040727.js"></script>
+
 <p><code>st-##</code> sets the size of the pinned column as a percentage of the table.
 Replace <code>##</code> with a number between 10 and 35 in 5 increments.</p>
 
@@ -50,17 +54,8 @@ Replace <code>##</code> with a number between 10 and 35 in 5 increments.</p>
 --><div class="grid__item desk-one-half">
 <p>Load the script just before the <code>&lt;/body&gt;</code> closing tag,
 then use the following to config and start the table:</p>
-<pre><code>&lt;script&gt;
-  window.SwipeTable = new SwipeTable(
-    &quot;http://swipetable.blind238.com/api&quot;, // Your API&#39;s url
-    [&quot;id&quot;, &quot;some&quot;, &quot;demo&quot;, &quot;dummy&quot;, &quot;data&quot;], //Table keys/headers
-    document.getElementsByClassName(&#39;swipe-table&#39;)[0],
-    { // Options object
-      fullscreen: true
-      tableClass: &#39;table table-bordered&#39; // optional
-    }
-  );
-&lt;/script&gt;</code></pre>
+<script src="https://gist.github.com/Blind238/8040555.js"></script>
+
 
 </div>
 </div>
