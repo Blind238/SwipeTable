@@ -21,5 +21,12 @@ results/
 
 npm-debug.log
 
-dist/
+// Don't ignore dotfiles
+dist/*
+!dist/.*
+
+// Only ignore css
+!dist/assets/
+dist/assets/*.css
+
 .grunt/
