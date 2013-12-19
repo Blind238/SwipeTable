@@ -32,25 +32,30 @@
   margin-right: auto;
 }
 
+.heading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heading__text {
+  flex-shrink: 0;
+  margin-left: $base-spacing-unit;
+}
+
+@include media-query("lap") {
+  .heading {
+    height: $lap-start;
+  }
+}
+
 @include media-query("lap-and-up") {
-  .heading,
   .features {
     display: flex;
   }
 
-  .heading,
   .features {
     justify-content: center;
-  }
-
-  .heading {
-    align-items: center;
-    height: 700px;
-  }
-
-  .heading__text {
-    flex-shrink: 0;
-    margin-left: $base-spacing-unit;
   }
 
   .usage {
@@ -59,6 +64,10 @@
 }
 
 @include media-query("desk") {
+  .heading {
+    height: 700px;
+  }
+
   .usage {
     max-width: $desk-wide-start;
     .grid__item:not(:first-child) {
