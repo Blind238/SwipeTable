@@ -1,0 +1,14 @@
+code {
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+  border: 1px solid #ddd;
+  background-color: #f8f8ff;
+  @extend .zeta;
+}
+
+.gist{
+  @extend .zeta;
+  table{
+    width: auto;
+    margin-bottom: 0;
+  }
+}

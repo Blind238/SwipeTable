@@ -11,8 +11,7 @@ SwipeTable consists of 3 parts:
 
 Place this HTML snippet where you want the table:
 
-    <div class="swipe-table  st-##">
-    </div>
+<script src="https://gist.github.com/Blind238/8040727.js"></script>
 
 `st-##` sets the size of the pinned column as a percentage of the table.
 Replace `##` with a number between 10 and 35 in 5 increments.
@@ -25,17 +24,7 @@ Replace `##` with a number between 10 and 35 in 5 increments.
 Load the script just before the `</body>` closing tag,
 then use the following to config and start the table:
 
-    <script>
-      window.SwipeTable = new SwipeTable(
-        "http://swipetable.blind238.com/api", // Your API's url
-        ["id", "some", "demo", "dummy", "data"], //Table keys/headers
-        document.getElementsByClassName('swipe-table')[0],
-        { // Options object
-          fullscreen: true
-          tableClass: 'table table-bordered' // optional
-        }
-      );
-    </script>
+<script src="https://gist.github.com/Blind238/8040555.js"></script>
 
 {{/markdown }}
 </div>
