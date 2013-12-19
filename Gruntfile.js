@@ -151,7 +151,8 @@ module.exports = function(grunt) {
     // Push dist files to gh-pages branch of the current repo
     'gh-pages': {
       options: {
-        base: '<%= config.dist %>'
+        base: '<%= config.dist %>',
+        dotfiles: true
       },
       src: ['**']
     }
