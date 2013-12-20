@@ -6,7 +6,7 @@ Mobile oriented AJAX table
 
 A JavaScript library by Jeremy Granadillo.
 
-See the [project homepage](http://swipetable.blind238.com).
+See the [project homepage](http://blind238.github.io/SwipeTable).
 
 ## Installation
 
