@@ -425,6 +425,7 @@
           case 'mousemove': this.move(event); break;
           case 'touchend': offloadFn(this.end(event)); break;
           case 'mouseup': offloadFn(this.end(event)); break;
+          case 'wheel': this.wheel(event); break;
         }
 
         if (options.stopPropagation){
@@ -532,7 +533,7 @@
         }
 
       },
-      end: function() {
+      end: function(event) {
 
         event.preventDefault();
 
@@ -546,6 +547,25 @@
           headerScroll.removeEventListener('mouseup', scrollEvents, false);
         }
 
+      },
+      wheel: function(event){
+
+        event.preventDefault();
+
+        var position = updateScroll.getPosition() + event.deltaX;
+
+        if (position < 0){
+          position = 0;
+        }
+        else if (position > headerScroll.scrollWidth - headerScroll.getBoundingClientRect().width){
+          position = headerScroll.scrollWidth - headerScroll.getBoundingClientRect().width;
+        }
+
+        updateScroll.setPosition(position);
+        translate(null, -position, 0, headerScroll);
+        updateScroll.update();
+
+        // console.log(event);
       }
 
     };
@@ -564,6 +584,7 @@
       }
       else{
         headerScroll.addEventListener('mousedown', scrollEvents, false);
+        headerScroll.addEventListener('wheel', scrollEvents, false);
       }
 
       if (browser.transitions) {
@@ -655,6 +676,8 @@
           // remove current event listeners
           stWrap.removeEventListener('touchstart', events, false);
           headerScroll.removeEventListener('touchstart', scrollEvents, false);
+          headerScroll.removeEventListener('mousedown', scrollEvents, false);
+          headerScroll.removeEventListener('wheel', scrollEvents, false);
           stWrap.removeEventListener('webkitTransitionEnd', events, false);
           stWrap.removeEventListener('msTransitionEnd', events, false);
           stWrap.removeEventListener('oTransitionEnd', events, false);
