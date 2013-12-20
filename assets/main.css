@@ -1144,8 +1144,7 @@ h5,
 
 h6,
 .zeta,
-code,
-.gist {
+code {
   font-size: 14px;
   font-size: 0.875rem;
   line-height: 1.71429;
@@ -1214,7 +1213,8 @@ hgroup .hN {
  */
 
 .smallprint,
-.milli {
+.milli,
+.gist {
   font-size: 12px;
   font-size: 0.75rem;
   line-height: 2;
@@ -3553,7 +3553,7 @@ label,
   }
 }
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1400px) {
   .accessibility--desk-wide,
   .visuallyhidden--desk-wide {
     border: 0 !important;
@@ -3584,15 +3584,29 @@ code {
   margin-bottom: 0;
 }
 
+.top-half,
+.usage {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.top-half {
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
 .heading,
 .features {
-  margin-left: auto;
-  margin-right: auto;
+  display: -webkit-flex;
+  display: flex;
+  position: relative;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
 }
 
 .heading {
-  display: -webkit-flex;
-  display: flex;
   -webkit-justify-content: center;
   justify-content: center;
   -webkit-align-items: center;
@@ -3605,53 +3619,43 @@ code {
   margin-left: 24px;
 }
 
-@media only screen and (min-width: 481px) and (max-width: 1023px) {
-  .heading {
-    height: 481px;
+.features__content {
+  -webkit-align-self: center;
+  align-self: center;
+}
+
+.usage {
+  -webkit-justify-content: space-around;
+  justify-content: space-around;
+}
+
+.usage__container {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-grow: 1;
+  flex-grow: 1;
+}
+
+.usage__javascript {
+  -webkit-align-self: flex-end;
+  align-self: flex-end;
+}
+
+@media only screen and (min-width: 1024px) {
+  .usage__container {
+    -webkit-flex-grow: 0;
+    flex-grow: 0;
   }
 }
 
-@media only screen and (min-width: 481px) {
-  .features {
-    display: -webkit-flex;
-    display: flex;
-  }
-
-  .features {
-    position: relative;
+@media only screen and (min-width: 1400px) {
+  .usage {
     -webkit-justify-content: center;
     justify-content: center;
   }
 
-  .features__links {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin-right: 24px;
-  }
-
-  .usage {
-    margin: auto 24px;
-  }
-}
-
-@media only screen and (min-width: 1024px) {
-  .heading {
-    height: 700px;
-  }
-
-  .usage {
-    max-width: 1200px;
-  }
-
-  .usage .grid__item:not(:first-child) {
-    margin-top: 54px;
-  }
-}
-
-@media only screen and (min-width: 1200px) {
-  .usage {
-    margin: auto;
+  .usage__javascript {
+    margin-left: 24px;
   }
 }
 

@@ -3551,7 +3551,7 @@ label,
   }
 }
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1400px) {
   .accessibility--desk-wide,
   .visuallyhidden--desk-wide {
     border: 0 !important;
