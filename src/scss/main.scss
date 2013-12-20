@@ -28,14 +28,24 @@
 
 @import "ui/code";
 
+.top-half,
+.usage {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.top-half {
+  justify-content: center;
+}
+
 .heading,
 .features {
-  margin-left: auto;
-  margin-right: auto;
+  display: flex;
+  position: relative;
+  flex-grow: 1;
 }
 
 .heading {
-  display: flex;
   justify-content: center;
   align-items: center;
 }
@@ -45,50 +55,51 @@
   margin-left: $base-spacing-unit;
 }
 
+.features {
+
+}
+
+.features__content {
+  align-self: center;
+}
+
+.usage {
+  justify-content: space-around;
+}
+
+.usage__container {
+  display: flex;
+  flex-grow: 1;
+}
+
+.usage__markup,
+.usage__javascript {
+  // flex-grow: 1;
+}
+
+.usage__javascript {
+  align-self: flex-end;
+}
+
 @include media-query("lap") {
-  .heading {
-    height: $lap-start;
-  }
 }
 
 @include media-query("lap-and-up") {
-  .features {
-    display: flex;
-  }
-
-  .features {
-    position: relative;
-    justify-content: center;
-  }
-
-  .features__links {
-    position: absolute;
-    top: 0;
-    right: 0;
-    margin-right: $base-spacing-unit;
-  }
-
-  .usage {
-    margin: auto $base-spacing-unit;
-  }
 }
 
 @include media-query("desk") {
-  .heading {
-    height: 700px;
-  }
-
-  .usage {
-    max-width: $desk-wide-start;
-    .grid__item:not(:first-child) {
-      margin-top: ($base-spacing-unit + $h2-size);
-    }
+  .usage__container {
+    flex-grow: 0;
   }
 }
 
 @include media-query("desk-wide") {
   .usage {
-    margin: auto;
+    justify-content: center;
+  }
+
+  .usage__javascript {
+    margin-left: $base-spacing-unit
   }
 }
 
