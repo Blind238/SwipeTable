@@ -140,6 +140,15 @@ module.exports = function(grunt) {
         files: {
           '<%= config.dist %>/devlog/': ['<%= config.src %>/pages/devlogs/*.md']
         }
+      },
+      reports: {
+        options: {
+          plugins: ['assemble-contrib-anchors','assemble-contrib-toc'],
+          layout: 'report.hbs'
+        },
+        files: {
+          '<%= config.dist %>/report/': ['<%= config.src %>/pages/reports/*.md']
+        }
       }
 
     },

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>{{title}} | {{site.title}}</title>
+    <link rel="stylesheet" href="{{assets}}/report.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+
+    <!-- Title
+    ================================================== -->
+    <h1>{{title}}</h1>
+
+    <!-- Table of contents
+    ================================================== -->
+
+    <div id="toc"></div>
+
+    <!-- Page content
+    ================================================== -->
+    {{#markdown}}{{> body}}{{/markdown}}
+
+    {{> analytics }}
+  </body>
+</html>

@@ -1,0 +1,52 @@
+@charset "UTF-8";
+/*------------------------------------*\
+    MAIN.CSS
+\*------------------------------------*/
+/**
+ *
+ * sass --watch style.scss:style.min.css --style compressed
+ *
+ * Here we pull in some variables, include the inuit.css framework, then add our
+ * project-specific components afterwards.
+ */
+
+
+/**
+ * Setup
+ */
+@import "vars";
+// Override default vars
+$use-grids:         false;
+$use-nav:           false;
+
+$h1-size:           30px; // .alpha
+$h2-size:           24px; // .beta
+$h3-size:           20px; // .gamma
+$h4-size:           20px; // .delta
+$h5-size:           16px; // .epsilon
+$h6-size:           14px; // .zeta
+
+@import "inuit.css/inuit";
+
+
+
+
+
+/**
+ * She’s all yours, cap’n... Begin importing your stuff here.
+ */
+//@import "ui/example";
+@import "ui/code";
+
+
+@include media-query("lap") {
+}
+
+@include media-query("lap-and-up") {
+}
+
+@include media-query("desk") {
+}
+
+@include media-query("desk-wide") {
+}

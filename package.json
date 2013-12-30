@@ -19,6 +19,7 @@
     "load-grunt-tasks": "~0.2.0",
     "assemble-contrib-permalinks": "*",
     "assemble-contrib-sitemap": "*",
+    "assemble-contrib-anchors": "*",
     "assemble-contrib-toc": "*",
     "assemble-markdown-data": "*",
     "assemble-related-pages": "*",
