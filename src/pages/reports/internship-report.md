@@ -23,6 +23,13 @@ To make a light weight web front-end we need to know how to serve and render the
 
 There was a lot of freedom involved in the main project. This meant that I had to be very careful about the steps I took and the decisions I made.
 
+## 3.1. Preliminary Research
+The first few days I did as much research as I could so I could discuss things with my supervisor, Egor Kloos. He would be on vacation for 2 weeks after that.
+
+The preliminary research was not focused on requirements, instead I wanted to explore what was already out there and what could be possible. I also tried to deduce any issues I may encounter during the project.
+
+I also started a log of progress during the research, documenting observations.
+
 # 4. Specific Competencies
 
 ## 4.1. Usability Research
