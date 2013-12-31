@@ -6,6 +6,17 @@ title: "Internship Report"
 
 # 2. The Assignment
 `Insert`
+## 2.1 Use Case
+The use case was the starting point for the assignment. From the use case I was able to determine the requirements, personas and scenarios. What follows is the use case verbatim.
+
+**Use case data grid plugin**
+It's important for many automatisation applications to oversee large amounts of datasets.
+
+At Lunatech we create such applications for a number of our customers. However, the usage of such data grids tends to only run on the desktop. In fact, it is usually recommended to use a powerful desktop.
+
+One of our logistics customers uses shipping data from within the warehouse and therefore need a desktop setup on site. It would be preferable to use a tablet to be able to access this data as portability would be a huge asset. Memory and CPU constraints make this a non-viable option.
+
+To make a light weight web front-end we need to know how to serve and render the data in way that will work on Post-PC devices. How small can we go?
 
 # 3. Project
 `With short description, my part of it, my process and the choices I’ve made, and ‘verantwoording competenties’.`
