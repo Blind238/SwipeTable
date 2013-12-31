@@ -34,7 +34,10 @@ I also started a log of progress during the research, documenting observations.
 
 ## 4.1. Usability Research
 **Description**  
-`Short description here`
+The student can objectively describe the target audience based on a research(FIX). De student knows which methods and techniques to use to come to concrete user needs.  
+The student is capable of actively listening during interviews and has a neutral position in reports. The student is capable of defining user tasks,  can describe functionality with other developers with a focus on usability, and can categorize the functionalities in differing groups.  
+The student can fit the user needs within the interface possibilities of the media product.  
+The student is capable of testing interface proposals at the different stages of the development process and can select the right method to do so.
 
 **Progress**  
 `Relevant information for competence`
