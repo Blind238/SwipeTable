@@ -47,7 +47,8 @@ The student is capable of testing interface proposals at the different stages of
 
 ## 4.2. Usability Engineering
 **Description**  
-`Short description here`
+The student is capable of prioritizing the user of the finished product during the development process. This starts with the user, from which requirements are distilled and used as input for the design and production process. There's feedback during the whole process and the student tests whether the needs of the user are met.  
+The student is capable of thinking outside the actual product about usability aspects, in the form of installation, configuration and maintenance.
 
 **Progress**  
 `Relevant information for competence`
