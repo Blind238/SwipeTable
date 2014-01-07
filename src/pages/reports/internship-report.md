@@ -81,7 +81,8 @@ The student can give advice based on limited client meetings, where the student 
 
 ## 4.5. Interaction/Interface Design
 **Description**  
-`Short description here`
+The student is capable of setting up the design of a media and/or software product, based on the given specifications and in relation to an advisory and analysis report.  
+The interaction/interface design contains a complete description of the specifications from the analysis phase.
 
 **Progress**  
 `Relevant information for competence`
