@@ -92,7 +92,7 @@ The interaction/interface design contains a complete description of the specific
 
 ## 4.6. Technical Design
 **Description**  
-`Short description here`
+The student can apply multiple design methods and techniques in the design of a media and/or software product. The student is capable of describing interfaces between systems and be able to differentiate between functional, non-functional and technical requirements. The design and the accompanying principles that were established are documented in a Design Document.
 
 **Progress**  
 `Relevant information for competence`
