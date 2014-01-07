@@ -102,7 +102,7 @@ The student can apply multiple design methods and techniques in the design of a 
 
 ## 4.7. Production
 **Description**  
-`Short description here`
+The student can apply diverse development environments / frameworks / programming languages, particularly the syntax, library contents, applicable design patterns and best practices for the chosen environment.
 
 **Progress**  
 `Relevant information for competence`
