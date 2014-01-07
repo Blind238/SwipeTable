@@ -126,7 +126,7 @@ The student can judge a product at delivery whether it passes general quality st
 
 ## 5.1. Communication
 **Description**  
-`Short description here`
+The student can convey his/her ideas and message in an inspiring and formal way. In work discussions, the student supports his work / choices with clear arguments. The student practices active listening during talks with colleagues and / or clients.
 
 **Progress**  
 `Relevant information for competence`
