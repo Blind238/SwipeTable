@@ -112,7 +112,8 @@ The student can apply diverse development environments / frameworks / programmin
 
 ## 4.8. Delivery
 **Description**  
-`Short description here`
+The student can perform acceptance tests on a product and has knowledge of important factors that are involved. The test is performed against the following standards: correctness, completeness, usability, package of requirements, delivery according to an implementation plan.  
+The student can judge a product at delivery whether it passes general quality standards.
 
 **Progress**  
 `Relevant information for competence`
