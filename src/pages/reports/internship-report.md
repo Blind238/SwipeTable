@@ -71,7 +71,7 @@ The student is capable of putting together a requirements package based on a com
 
 ## 4.4. Advice
 **Description**  
-`Short description here`
+The student can give advice based on limited client meetings, where the student is capable of clarifying the necessary aspects for a clear advice. The advice is aimed towards technical problems(choosing between technical solutions and communicating this clearly from the target audience's experience). The student makes use of knowledge about the most common development environments / frameworks / programming languages, with the strengths and weaknesses of each.
 
 **Progress**  
 `Relevant information for competence`
