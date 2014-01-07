@@ -166,7 +166,7 @@ The student makes a personal plan and executes that plan. He/she will follow thr
 
 ## 5.5. Creative Problem Solving
 **Description**  
-`Short description here`
+The student is curious, dares to take risks, is open for new ideas and has an inquisitive attitude. The student comes up with fitting solutions and answers for problems and questions that appear during projects. The student utilizes different sources of information and inspiration, and makes new connections / relationships between the two.
 
 **Progress**  
 `Relevant information for competence`
