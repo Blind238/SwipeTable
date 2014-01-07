@@ -136,7 +136,7 @@ The student can judge a product at delivery whether it passes general quality st
 
 ## 5.2. Organization
 **Description**  
-`Short description here`
+The student makes a personal plan and executes that plan. He/she will follow through on agreements and be flexible in adjusting the plan due to unforeseen changes. The student ensures a productive work environment and asks for timely help should there be any problems in the execution of a project.
 
 **Progress**  
 `Relevant information for competence`
