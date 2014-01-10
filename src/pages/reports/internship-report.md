@@ -61,7 +61,7 @@ The student is capable of thinking outside the actual product about usability as
 The student knows how to apply professional tools to get to a high quality analysis. The student can analyze ict subsystems and can describe relationships between systems, while taking into account people, means and possibilities.  
 The student has insight of the context in which the product is effective.  
 The student is capable of putting together a requirements package based on a complex situation sketch. The student can perform a business process analysis and describe the workflow within a company. The student is capable of doing both qualitative and quantitative research of the process.  
-`De student kan een analyse modelleren in diagrammen en overzichten en houdt bij terugkoppeling rekening met de belevingswereld van het publiek (translate later).`
+The student can represent an analysis in diagrams and overviews, while keeping the experiential world of the audience in mind during feedback.
 
 **Progress**  
 `Relevant information for competence`
