@@ -146,7 +146,7 @@ The student makes a personal plan and executes that plan. He/she will follow thr
 
 ## 5.3. Teamwork
 **Description**  
-`Short description here`
+The student is a team player that functions well in a multi disciplinary team, and is a positive addition to the team spirit. The student is open for other ideas or angles from other team members, and handles feedback in a constructive manner, both in receiving feedback and giving it. The student also recognizes their own qualities and those of others, and knows how to utilize them.
 
 **Progress**  
 `Relevant information for competence`
