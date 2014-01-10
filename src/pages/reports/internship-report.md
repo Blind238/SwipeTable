@@ -156,7 +156,7 @@ The student is a team player that functions well in a multi disciplinary team, a
 
 ## 5.4. Enterprising
 **Description**  
-`Short description here`
+The student has an attitude that shows initiative and is proactive. The student can foresee and signal problems and if possible, solves them. The student also recognizes opportunities, creates challenging goals and translates ideas to deeds.
 
 **Progress**  
 `Relevant information for competence`
