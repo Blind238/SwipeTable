@@ -116,6 +116,7 @@ module.exports = function(grunt) {
       },
       livereload: {
         options: {
+          open: 'http://127.0.0.1:<%= connect.options.port %>',
           middleware: function (connect) {
             return [
               lrSnippet,
