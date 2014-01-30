@@ -3,25 +3,68 @@ title: "Internship Report"
 ---
 # 1. Introduction
 `Why I chose my goals and internship location.`
+This is a report on my internship at Lunatech. The internship began in early September and ran for 6 months. When looking for internship assignments, my search was not aimed at the competencies I had to prove to be proficient in. Instead I looked for interesting opportunities and developed my goals afterwards.
+
+## 1.1. Goals
+
+## 1.2. Location
+The company where I ran my internship was Lunatech. Lunatech started out as a research company and transitioned over the years to a consulting and services company. One of their primary clients is UPC, for whom they handle some of the information flow for shipments.
 
 # 2. The Assignment
-`Insert`
-## 2.1 Use Case
+
+
+># Intern assignment FRONT-END | LUNATECH
+
+>The intern will perform the tasks of a front-end developer and acquire the skills and knowledge needed for this and other related positions (i.e. web developer).
+
+>The intern will focus on:
+
+>1. Javascript (optionally with: coffeescript, dart, etc)
+2. Integrating UI and backend and dealing with UX issues.
+3. CMS and online tooling. (content and server related dashboards)
+4. Assisting on running (mobile) web projects.
+
+>Lunatech will provide assistance and support so that the intern can have a functional deliverable of a personal project to demonstrate.
+
+>## Assignment: A new type of data grid.
+
+>At the end of the assignment there should at least be a full first version of a open sourced script on Github.
+
+>### Unique selling points
+
+>1. **Small memory footprint**
+2. Prototypal inheritance (see point 1)
+3. Stand alone script. (No jQuery or Bootstrap, see point 1)
+4. Modern browsers. (including mobile webkit, see point 1)
+5. High performance (see point 1).
+
+>#### Tasks
+
+>* Research the type of construction required to get high performance and or easy maintenance.
+* Prototypes (Paper, Keynote/Powerpoint, HTML)
+* Set up integrated mockup on a web server / database.
+** [Twitter Bootstrap 3](http://getbootstrap.com)
+** [Foundation 4](http://foundation.zurb.com)
+** MAMP, Playframework / Tomcat
+** MySql, NoSql, Postgress, MongoDB etc.
+* Pick a licence (MIT, Apache, GPL ?)
+
+## 2.2 Use Case
 The use case was the starting point for the assignment. From the use case I was able to determine the requirements, personas and scenarios. What follows is the use case verbatim.
 
-**Use case data grid plugin**
+>**Use case data grid plugin**
 It's important for many automatisation applications to oversee large amounts of datasets.
 
-At Lunatech we create such applications for a number of our customers. However, the usage of such data grids tends to only run on the desktop. In fact, it is usually recommended to use a powerful desktop.
+>At Lunatech we create such applications for a number of our customers. However, the usage of such data grids tends to only run on the desktop. In fact, it is usually recommended to use a powerful desktop.
 
-One of our logistics customers uses shipping data from within the warehouse and therefore need a desktop setup on site. It would be preferable to use a tablet to be able to access this data as portability would be a huge asset. Memory and CPU constraints make this a non-viable option.
+>One of our logistics customers uses shipping data from within the warehouse and therefore need a desktop setup on site. It would be preferable to use a tablet to be able to access this data as portability would be a huge asset. Memory and CPU constraints make this a non-viable option.
 
-To make a light weight web front-end we need to know how to serve and render the data in way that will work on Post-PC devices. How small can we go?
+>To make a light weight web front-end we need to know how to serve and render the data in way that will work on Post-PC devices. How small can we go?
 
 # 3. Project
 `With short description, my part of it, my process and the choices I’ve made, and ‘verantwoording competenties’.`
 
-There was a lot of freedom involved in the main project. This meant that I had to be very careful about the steps I took and the decisions I made.
+There was a lot of freedom involved in the  project. This meant that I had to be very careful about the steps I took and the decisions I made. 
 
 ## 3.1. Preliminary Research
 The first few days I did as much research as I could so I could discuss things with my supervisor, Egor Kloos. He would be on vacation for 2 weeks after that.
@@ -34,7 +77,7 @@ I also started a log of progress during the research, documenting observations.
 
 ## 4.1. Usability Research
 **Description**  
-The student can objectively describe the target audience based on a research(FIX). De student knows which methods and techniques to use to come to concrete user needs.  
+The student can objectively describe the target audience based on research. The student knows which methods and techniques to use to come to concrete user needs.  
 The student is capable of actively listening during interviews and has a neutral position in reports. The student is capable of defining user tasks,  can describe functionality with other developers with a focus on usability, and can categorize the functionalities in differing groups.  
 The student can fit the user needs within the interface possibilities of the media product.  
 The student is capable of testing interface proposals at the different stages of the development process and can select the right method to do so.
@@ -42,8 +85,12 @@ The student is capable of testing interface proposals at the different stages of
 **Progress**  
 `Relevant information for competence`
 
+
+During the project I couldn't test on the intended users because they would be in France. Distance shouldn't be a problem but the language barrier and the fact that it was in a production environment make it difficult to test anything. So instead I opted to periodically discuss possible issues with my supervisor.  
+Figuring out what the possible issues could be required occasional research into usability issues with data grids(tables) and smaller interactable viewports. 
+
 **Room for improvement**  
-`Description`
+
 
 ## 4.2. Usability Engineering
 **Description**  
@@ -54,7 +101,7 @@ The student is capable of thinking outside the actual product about usability as
 `Relevant information for competence`
 
 **Room for improvement**  
-`Description`
+I really felt the need to test at every opportunity. For my next project I would like to test whenever possible. I believe that frequently testing the product on user and getting the feedback from them is one of the most important things you can do. In the end the product has to meet the user's needs from a usability standpoint. If a product is functional but confusing and unusable, it is worthless.
 
 ## 4.3. Analysis
 **Description**  
@@ -64,7 +111,22 @@ The student is capable of putting together a requirements package based on a com
 The student can represent an analysis in diagrams and overviews, while keeping the experiential world of the audience in mind during feedback.
 
 **Progress**  
-`Relevant information for competence`
+I made a couple of persona's and scenario's representing the case to help with understanding the user. The first persona made was a representation of a worker in a warehouse. This persona is who the product is made for. The second persona made was a representation of an average person. This persona was made to explore possible uses outside of the case.  
+Two scenario's were made based on the warehouse worker persona. Both take place in the warehouse. One was made to represent casual use of a previous system, while another for more frequent use.
+
+>**Personas**  
+>Primary Persona  
+>Thomas Anneijes  
+>Thomas is 34 years old. He works at a shipping company in the warehouse, managing the shipments. He is married and has 2 children. He is kind of a perfectionist. He does not like frog legs, even though it is considered one of his country's delicacies.
+
+>Secondary Persona  
+>Elise Van Laren  
+>Elise is 27 years old. She works at a cultural center, organizing events such as festivals, concerts and exhibitions. She is outgoing  She has a boyfriend, who she met at one of the concerts. She does like frog legs, but only deep fried.
+
+>**Scenarios**  
+>Thomas is at work, and he just finished his lunch. After helping some workers with a couple of shipment issues, he needs to go check the shipping logs. The shipping logs can only be viewed at the computer that's been set up near the entrance of the warehouse, right next to a small office. Right now Thomas is at the other side of the warehouse though, so he needs to walk all the way there to check the logs. He checks the logs and is done in some seconds, he only needed to see what's new and what is about to leave the system. After he's checked the logs he goes back to the opposite site of the warehouse, where he's been called to help again.
+
+>It's the start of the workday and Thomas needed to do some paperwork in the office real quick. Basically forms for hour registration and assigning his vacation days, which he's put off doing for too long. Once he's done at the office he goes to the computer just outside the office to check the shipping logs of the previous day and today. That computer is there only so the workers can easily see the logs, so the logging application is always open on it. After checking the logs for any inconsistencies, he goes to check the shipments that have come in the night before.
 
 **Room for improvement**  
 `Description`
@@ -74,10 +136,14 @@ The student can represent an analysis in diagrams and overviews, while keeping t
 The student can give advice based on limited client meetings, where the student is capable of clarifying the necessary aspects for a clear advice. The advice is aimed towards technical problems(choosing between technical solutions and communicating this clearly from the target audience's experience). The student makes use of knowledge about the most common development environments / frameworks / programming languages, with the strengths and weaknesses of each.
 
 **Progress**  
-`Relevant information for competence`
+I researched data grid(table) representation on mobile devices and existing solutions to the problem. This research was used to make an Advisory, which is attached to this document.
+
+Early in the development process I also had to choose which programming language or framework I was going to use to make the plugin. The thing is, I wasn't that good in JavaScript so I started with the simpler looking CoffeeScript, which compiles into JavaScript. I made a small program to figure out CoffeeScript and what the resulting JavaScript code looked like. There were too many abstractions being made in the translation from CoffeeScript to JavaScript. There were optimizations happening that I didn't understand due to my inexperience with JavaScript. I therefor decided to not use any framework or other language than pure JavaScript. Another language I did briefly look at was Dart, but it was not similar to JavaScript. One of my bigger goals was to learn JavaScript so Dart was not an option.
 
 **Room for improvement**  
-`Description`
+While working on the advisory, I did not take into account the financial aspects of the analysis. While there wasn't a financial analysis, I could have still made a rough estimation of time saved based on warehouse size, distance walked and time spent looking for information of the user(in particular the primary persona).
+
+Going forward I will look at CoffeeScript and Dart again, as I now have a good understanding of JavaScript.
 
 ## 4.5. Interaction/Interface Design
 **Description**  
@@ -95,7 +161,11 @@ The interaction/interface design contains a complete description of the specific
 The student can apply multiple design methods and techniques in the design of a media and/or software product. The student is capable of describing interfaces between systems and be able to differentiate between functional, non-functional and technical requirements. The design and the accompanying principles that were established are documented in a Design Document.
 
 **Progress**  
-`Relevant information for competence`
+In this project I did all of the programming. While I did have to relay some technical decisions to my supervisor, I didn't have to make a Design Document for this project. I did however have to document some aspects of the design for own use so I could have a good grasp on what I was doing.
+
+The flow of information in the program was sketched out because I needed to figure out a way to solve a problem. The problem had to do with the asynchronous nature of JavaScript and how to pass information between parts of the program. 
+
+I've made wireframes to help with 
 
 **Room for improvement**  
 `Description`
@@ -178,7 +248,7 @@ The student is curious, dares to take risks, is open for new ideas and has an in
 To build the project, I used several tools. They helped in building the base that the project was built on. They helped in development by checking for errors and reloading the browser on each save. They helped by combining the different parts into a few distributable files.
 
 ## 6.1 Yeoman
-The basis for the project was done with Yeoman and generator-lib, a JavaScript library generator built for Yeoman. Yeoman is a utility that helps with all the boilerplate that usually comes with projects. After trying out generator-lib, I decided to use it. It came with useful grunt tasks I could build upon and a sane project folder structure. It also built out a simple demo page and a readme.md.
+The basis for the project was generated with Yeoman and generator-lib, a JavaScript library generator built for Yeoman. Yeoman is a utility that helps with all the boilerplate that usually comes with projects. After trying out generator-lib, I decided to use it. It came with useful grunt tasks I could build upon and a sane project folder structure. It also built out a simple demo page and a readme file.
 
 ## 6.2. Grunt
 Grunt is a command line tool to execute tasks. It is built on top of node.js and uses JavaScript syntax for it's tasks. It is fully configurable and has a lot of plugins for a lot of tasks.
@@ -216,7 +286,66 @@ A list of the plugins I've used:
 # 10. Stageterugkomdagen
 `Reflection`
 
-## 10.1. Group thing that I forgot the name of
+## 10.1. Intervision
 
 
 # 11. Conclusion
+
+#Advisory  
+
+>**Use case data grid plugin**  
+>It's important for many automatisation applications to oversee large amounts of datasets.
+
+>At Lunatech we create such applications for a number of our customers. However, the usage of such data grids tends to only run on the desktop. In fact, it is usually recommended to use a powerful desktop.
+
+>One of our logistics customers uses shipping data from within the warehouse and therefore need a desktop setup on site. It would be preferable to use a tablet to be able to access this data as portability would be a huge asset. Memory and CPU constraints make this a non-viable option.
+
+>To make a light weight web front-end we need to know how to serve and render the data in way that will work on Post-PC devices. How small can we go?
+
+##Introduction
+To get a better picture of what the case requires, we are going to look at factors affecting performance and mobile user experience. Advice will then be given based on the more suitable options available. Since the case is focused on mobile performance, the factors that can affect performance must be researched. The representation of data is also important since we are dealing with a smaller screen and most tools cover desktop usage. Topics that are covered: Performance, Mobile User Experience.
+
+##Performance
+There are different aspects of performance that are applicable in this case. Aspects that we can't control are the browser’s rendering performance and the performance of the device’s network environment. We'll be focusing on the areas that can be under our control.
+
+A big part of the performance is what the plugin actually tries to do. The plugin can load all the data or only part of it. The plugin can sort the data or let the data source(back-end server) sort it. The plugin can keep the data it receives for further use or fetch data from the data source on each action. All of these actions and behaviors affect the performance of the plugin in a positive or negative way. Basically, the less the plugin has to do, the more performant it is.
+
+Options to increase the performance of the plugin:
+
+* Let the data source handle sorting
+* Retrieve the data in parts instead of a whole
+* 
+Options to increase the performance of the browser:
+
+* Do not use helper libraries such as jQuery
+* Keep as little data in memory as possible
+* Prevent DOM reflows and repaints where possible
+
+As far as available plugins go, none that have been found are mobile oriented. The provided plugin demos have been tested on a Nexus 4 using stable Chrome browser. Simple tables performed well but were hard to navigate. SlickGrid's scrolling table performed terribly on mobile, on desktop it had great performance. They typically have a (configurable) large feature set.
+
+Notable researched JavaScript table plugins:
+
+* DataTables
+* jTable
+* SlickGrid
+
+##Mobile User Experience
+Interfaces on mobile devices have different environments than on desktops, where tabular data is typically viewed. The available display size determines(to a point) how much data/information you can present to the user. The amount of columns that can be displayed is further limited by the orientation of the display.
+
+There are plugins which only deal with presenting a table for a portable device. Most of these plugins are built for jQuery. Those that don't tend to use a combination of CSS and JavaScript to present the table.
+
+The blog post Responsive Data Table Roundup(January 11 2012, Chris Coyier) consolidated different methods on adapting the layout of a table to smaller displays. I agree with arguments in the post so I won't be restating them here. A copy is provided in the appendix.
+
+##Advice
+For the sake of performance the plugin should be as lightweight as possible. The plugin should only handle part of the data in the form of pages. The representation can be via pagination or a continuous list, but testing with SlickGrid shows that a continuous list might not be the best choice. Consider that the data will have to be fetched, manipulated and displayed extremely fast for the list not to have gaps.
+
+The case does not mention editing the data so until clarified assume a read-only scenario.
+
+The case does not discuss the form that the data should be represented. It doesn't mention if columns or a subset of the data can be omitted. If all of the data needs to be accessible, Zurb's Responsive Tables seems the most viable. All of the data will be viewable and the user can still compare items. If touch is used, it also seems more intuitive to scroll by touching the scrollable element of the table.
+
+An alternative is David Bushell's method, although it is not that intuitive. It will need to be tested to see if it is actually viable.
+
+##Remaining Considerations
+As the case doesn't mention accessibility, it wasn't explicitly researched. Do keep in mind that some manner of accessibility is inherent in any interface, we are dealing with humans after all.
+
+Security also wasn't mentioned by the case. Because the product is a plugin, we can assume that the plugin's environment will be secure enough for the use of the plugin. I don't think it's the plugin's responsiblity to be secure, only to display the data.
