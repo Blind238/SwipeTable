@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title> | SwipeTable</title>
+    <link rel="stylesheet" href="../assets/report.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+
+    <!-- Title
+    ================================================== -->
+    <h1></h1>
+
+    <!-- Table of contents
+    ================================================== -->
+
+    <div id="toc"><ul id="toc-list" class=""><li><a href="#research-into-other-javascript-data-grid-display-plugins-libraries-">Research into other javascript data grid display plugins/libraries.</a></li><li><a href="#thought-about-pagination-vs-endless-scrolling-">Thought about pagination vs endless scrolling.</a></li><li><a href="#thought-about-sorting-and-filtering-">Thought about sorting and filtering.</a></li><li><a href="#thought-briefly-about-javascript-not-being-available-but-the-assignment-was-about-a-javascript-plugin-library-so-that-shouldn-t-matter-">Thought briefly about Javascript not being available, but the assignment was about a Javascript plugin/library so that shouldn't matter.</a></li><li><a href="#thought-about-the-scope-of-the-plugin-">Thought about the scope of the plugin.</a></li><li><a href="#checked-out-some-lightweight-alternatives-to-jquery-">Checked out some lightweight alternatives to jQuery:</a></li><li><a href="#performance">Performance</a></li><li><a href="#interface">Interface</a></li><li><a href="#programming">Programming</a></li><li><a href="#api">API</a></li><li><a href="#workflow">Workflow</a></li></ul></div>
+
+    <!-- Page content
+    ================================================== -->
+    <h1 class="docs-heading">Research into other javascript data grid display plugins/libraries.<a href="#research-into-other-javascript-data-grid-display-plugins-libraries-" name="research-into-other-javascript-data-grid-display-plugins-libraries-" class="anchor">
+  <span class="anchor-target" id="research-into-other-javascript-data-grid-display-plugins-libraries-"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<p>I tried out SlickGrid which seemed like the better option, on browser it was smooth as silk. On mobile it stuttered like crazy. I need to research and find out why that is, maybe make several prototypes with different ways of displaying/scrolling/propagating data. Going on the hint given by co-worker(Eric) it could be down to DOM manipulation. It could also be down to the way it is animated. JS vs CSS animation. </p>
+<h1 class="docs-heading">Thought about pagination vs endless scrolling.<a href="#thought-about-pagination-vs-endless-scrolling-" name="thought-about-pagination-vs-endless-scrolling-" class="anchor">
+  <span class="anchor-target" id="thought-about-pagination-vs-endless-scrolling-"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<p>Case for pagination:</p>
+<ul>
+<li>Harder to have a smooth experience when scrolling fast while endless.</li>
+<li>Easier to see and feel your place in the data.</li>
+<li></li>
+</ul>
+<p>Case for endless scrolling:</p>
+<ul>
+<li>If user doesn&#39;t know what they&#39;re looking for and want to skim.</li>
+<li>Hitting onscreen buttons doesn&#39;t seem like fun if browsing a large dataset.</li>
+<li></li>
+</ul>
+<h1 class="docs-heading">Thought about sorting and filtering.<a href="#thought-about-sorting-and-filtering-" name="thought-about-sorting-and-filtering-" class="anchor">
+  <span class="anchor-target" id="thought-about-sorting-and-filtering-"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<p>Filtering should be available on mobile due to the smaller screen space. Sorting should be available to all.</p>
+<p>Due to the focus on performance, the decision was made to let the server handle filtering and sorting.</p>
+<p>When you have received a dataset from the server, then you sort it by another column, it does not sort ALL of the relevant data. It sorts whatever data it has received.
+Their are a couple of ways to solve this:</p>
+<ul>
+<li>When there&#39;s a sorting action, request another dataset with the relevant sorting, and when the data is received it should be displayed and the sorting noted and displayed.</li>
+<li>Let the client receive all of the data and do the sorting there. The problem with this is that the amount of data the client has to handle might be enough to cause noticeable performance degradation.</li>
+</ul>
+<p>The solution that should be used can depend on the device used. The safest way is to let the server do the sorting and resend the data.</p>
+<p>Another thing that just occurred to me is that a log is a living set of data, changing constantly. How do you make sure that the next page of data is not moved because of new data? Imagine a new item comes on the list and you request the next page. Since services should be stateless the server will not know what you have previously requested and may send duplicate data.</p>
+<p>At first I thought I&#39;d have sorting by value on the server side. However, sorting by X would be better. I don&#39;t know if I even need to worry about how sorting is handled on the server side. </p>
+<p>On the issue of keeping place in the document, each request beyond the first should also send the last ID received of that same type of request. It&#39;s a simple way to avoid duplicates, but what if a newer item appears in the middle of that because of the sorting?</p>
+<p>Perhaps also send a timestamp of last request. it would make it possible for the server to have one query before the timestamp and one after to count and to present it as new data. Perhaps only the former, and the plugin could poll for new items every second? It would depend on the amount of new items and UX.</p>
+<p>Filtering seems to be another issue entirely. Filter on search results? Filter on available values (dynamic)?</p>
+<p>The more I think about it, the more I feel like having a dumb client is the best option. I don&#39;t know the specifics of the device yet but if the client is dumb it doesn&#39;t matter.</p>
+<p>Only performance hit is on waiting for new data, no waiting for the client to sort or doing anything with it. Should I start thinking about server infrastucture? I can&#39;t know or ask about that until Egor is back, might as well keep going with the Javascript.</p>
+<p>Sorting: <a href="http://stackoverflow.com/a/979325">http://stackoverflow.com/a/979325</a></p>
+<p>I implemented sorting on both the client and server. filtering can wait. Now that i have that going on I have to start with navigating, then multiple pages (got 2 static tables now), then sorting. Then deploy and test on the phone.</p>
+<h1 class="docs-heading">Thought briefly about Javascript not being available, but the assignment was about a Javascript plugin/library so that shouldn&#39;t matter.<a href="#thought-briefly-about-javascript-not-being-available-but-the-assignment-was-about-a-javascript-plugin-library-so-that-shouldn-t-matter-" name="thought-briefly-about-javascript-not-being-available-but-the-assignment-was-about-a-javascript-plugin-library-so-that-shouldn-t-matter-" class="anchor">
+  <span class="anchor-target" id="thought-briefly-about-javascript-not-being-available-but-the-assignment-was-about-a-javascript-plugin-library-so-that-shouldn-t-matter-"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<h1 class="docs-heading">Thought about the scope of the plugin.<a href="#thought-about-the-scope-of-the-plugin-" name="thought-about-the-scope-of-the-plugin-" class="anchor">
+  <span class="anchor-target" id="thought-about-the-scope-of-the-plugin-"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<p>Fire and forget or loads of options and configurables.</p>
+<h1 class="docs-heading">Checked out some lightweight alternatives to jQuery:<a href="#checked-out-some-lightweight-alternatives-to-jquery-" name="checked-out-some-lightweight-alternatives-to-jquery-" class="anchor">
+  <span class="anchor-target" id="checked-out-some-lightweight-alternatives-to-jquery-"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<ul>
+<li><a href="http://www.sitepoint.com/jquery-vs-raw-javascript-3-events-ajax/">http://www.sitepoint.com/jquery-vs-raw-javascript-3-events-ajax/</a></li>
+<li><a href="https://github.com/remy/min.js">https://github.com/remy/min.js</a></li>
+<li><a href="http://evanhahn.com/doing-without-jquery/">http://evanhahn.com/doing-without-jquery/</a></li>
+</ul>
+<h1 class="docs-heading">Performance<a href="#performance" name="performance" class="anchor">
+  <span class="anchor-target" id="performance"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<p>In regards to DOM manipulation, to lower the memory footprint I have to reuse exisiting DOM elements. With pagination this means replacing the contents. With infinite scrolling this means finding a way to store a reference to all DOM elements and reuse those outside of the view.</p>
+<h1 class="docs-heading">Interface<a href="#interface" name="interface" class="anchor">
+  <span class="anchor-target" id="interface"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<p>I&#39;m thinking that tapping on a column can sort by that column, with feedback as arrows. To go to next page you can swipe. I feel that this allows for easier Javascript DOM manipulation and reuse, while making it easy to implement rapid paging. If the paging is fast enough (because of CSS) there&#39;s no need to have infinite scrolling. Need methods for actions such as refreshing and removing(completing?) a log. Pull down to get to first page with fresh data. Also, by placing a constraint like a page, the user shouldn&#39;t see a blank page while data is being fetched, which is more likely with infinite scrolling.</p>
+<p>I think for portrait vs landscape:</p>
+<ul>
+<li>Page navigation via the shortest route. So in landscape it would be from bottom to top, in portrait it would be right to left. Swiping right to left while in landscape I feel is too slow. It&#39;s a lot of energy to expend for just the next set of data.</li>
+<li>Portrait view and landscape view should both implement a set of important columns to be displayed. The problem with portrait view and important columns is that navigating the columns might trigger a page swipe. Detection areas should probably be iterated on. Perhaps moving on the columns navigates between the columns. This calls for paper prototyping to see user expectation. It should be a loose test to explore how users expect the system to behave.</li>
+<li>If the test data does not show a winning way to navigate, all the options that were present will be considered as configurable options for the plugin.</li>
+</ul>
+<p>On any page, the next page should be fetched and populated as soon as possible.</p>
+<p>While writing the flow for switching pages, I started thinking about the swiping behavior. It might pose problems if it&#39;s an android system. Swiping from the bottom could trigger the navigation bar, if it&#39;s a buttonless system. It could also trigger Google Now if it is running Jellybean. I still think it&#39;s the better way (pending user testing). I believe I need to have the preferred behavior as default, and give options to the implementer of the plugin.</p>
+<p>Thought about ways to display that the columns can be moved/scrolled while in portrait. Kinda hard to do, made a couple of sketches.</p>
+<h1 class="docs-heading">Programming<a href="#programming" name="programming" class="anchor">
+  <span class="anchor-target" id="programming"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<p>Reviewed the concept of closures and also decided to code pure javascript, no coffeescript in between. The whole point was to learn Javascript and this decision enforces that. I&#39;m not comfortable enough with the ideas around javascript that I don&#39;t need coffeescript to correct my mistakes. Once I feel I grok javascript, coffeescript will be used to help.</p>
+<h1 class="docs-heading">API<a href="#api" name="api" class="anchor">
+  <span class="anchor-target" id="api"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<p>Sketched out the use of timestamps within the flow. That got me thinking about how and when to implement notifications. I don&#39;t think I should use the websockets approach because their server might not support it. The obvious solution is to have an extra property in the JSON response with a number. No property means no new items. If the property is present, reading it will give the amount of new items since the given timestamp.</p>
+<p>So let&#39;s say i&#39;m on page 3 and there&#39;s a notification of new items. Do I want to refresh and stay on the same page or refresh and go to the first page?</p>
+<p>And then I just noticed that I didn&#39;t think about the sorting. It should be a query instead of a resource, because it is the same resource. What about filtering though? I feel like filter should also be a query but it might get really complicated very fast if everything is a query, as it is now. Wouldn&#39;t really be restful if it was just /api?10queries .. Technically yes but it would be too bunched up. I need to figure out an abstraction of the items I want to call.</p>
+<p>Queries so far:</p>
+<ul>
+<li>Sort by column/key</li>
+<li>Filter by keyword?/value range?</li>
+<li>Timestamp</li>
+<li>Pagenumber</li>
+</ul>
+<p>I don&#39;t need to post or update any items yet, so no CRUD needed, just Read.</p>
+<h1 class="docs-heading">Workflow<a href="#workflow" name="workflow" class="anchor">
+  <span class="anchor-target" id="workflow"></span>
+  <span class="glyphicon glyphicon-link"></span>
+</a>
+</h1>
+<p>Up to 13</p>
+
+
+    <!-- Analytics component
+================================================== -->
+
+  </body>
+</html>
