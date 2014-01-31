@@ -425,6 +425,9 @@ As the case doesn't mention accessibility, it wasn't explicitly researched. Do k
 
 ## 4.6
 
+![]({{assets}}/46A.jpg)
+![]({{assets}}/46B.jpg)
+
 ## 10.1
 
 ![]({{assets}}/101A.jpg)
