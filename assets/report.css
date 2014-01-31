@@ -3409,4 +3409,5 @@ blockquote q:after {
 
 blockquote {
   background-color: #f8f8ff;
+  text-indent: 0;
 }
