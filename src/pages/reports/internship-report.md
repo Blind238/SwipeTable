@@ -407,4 +407,11 @@ As the case doesn't mention accessibility, it wasn't explicitly researched. Do k
 
 ## 4.5
 
+![]({{assets}}/45A.jpg)
+![]({{assets}}/45B.jpg)
+![]({{assets}}/45C.jpg)
+![]({{assets}}/45D.jpg)
+![]({{assets}}/45E.jpg)
+![]({{assets}}/45F.jpg)
+
 ## 4.6
