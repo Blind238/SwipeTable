@@ -3377,3 +3377,36 @@ code {
   width: auto;
   margin-bottom: 0;
 }
+
+blockquote {
+  quotes: none;
+}
+
+blockquote p:before {
+  content: "";
+  content: no-open-quote;
+}
+
+blockquote p:after {
+  content: "";
+  content: no-close-quote;
+}
+
+blockquote p:last-of-type:after {
+  content: "";
+  content: no-close-quote;
+}
+
+blockquote q:before {
+  content: "";
+  content: no-open-quote;
+}
+
+blockquote q:after {
+  content: "";
+  content: no-close-quote;
+}
+
+blockquote {
+  background-color: #f8f8ff;
+}
