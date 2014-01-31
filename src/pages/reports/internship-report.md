@@ -2,7 +2,9 @@
 title: "Internship Report"
 ---
 # 1. Introduction
-This is a report on my internship at Lunatech. The internship began in early September and ran for 6 months. When looking for internship assignments, my search was not aimed at the competencies I had to prove to be proficient in. Instead I looked for interesting opportunities and developed my goals afterwards.
+This is a report on my internship at Lunatech. The internship began in early September and ran for 6 months. The product of the internship was SwipeTable, a JavaScript library focused on mobile table viewing and navigation.
+
+When looking for internship assignments, my search was not aimed at the competencies I had to prove to be proficient in. Instead I looked for interesting opportunities and developed my goals afterwards.
 
 When I applied for information from Lunatech, I also asked at 4 other companies for information and possible positions. Some responded with information, some didn't have an open spot anymore, but Lunatech were interested and wanted to meet.
 
@@ -19,7 +21,7 @@ These are the goals I started out with:
 ## 1.2. Location
 The company where I ran my internship was Lunatech. Lunatech started out as a research company and transitioned over the years to a consulting and services company. One of their primary clients is UPC, for whom they handle some of the information flow for shipments.
 
-At Lunatech my supervisor was the only front end developer. The rest were mostly just developers, either back end or working on features to implement. It was like working in a bubble that I could get out of to ask questions. Really weird to explain. Developers that were on the floor I was on, did know about some front end stuff because they worked more on implementing interfaces. However, they were still more on the technical side, from my experience.
+At Lunatech my supervisor was the only front end developer. The rest were mostly developers, either back end or working on features to implement. Developers that were on the floor I was on, did know about some front end stuff because they worked more on implementing interfaces. However, they were still more on the technical side, from my observations.
 
 # 2. The Assignment
 
@@ -85,14 +87,19 @@ The first few days I did as much research as I could so I could discuss things w
 
 The preliminary research was not focused on requirements, instead I wanted to explore what was already out there and what could be possible. I also tried to deduce any issues I may encounter during the project.
 
-I also started a log of progress during the research, documenting observations.
+I also started a log of progress during the research, documenting observations. I found that the log was useful within a week of each entry, sometimes 2 weeks.
 
 ## 3.2 Development
-Once the research was done I started studying JavaScript. I didn't know enough so I went and looked for resources. I spent a lot of time reading articles by Douglas Crockford and saw about 5 hours of him talking about JavaScript. I think he's a great source of information but a bit too opinionated. I would consider it a great start to JavaScript knowledge but I'd advise to look at other sources after that. I didn't keep track of other authors I've read after that because I was too busy prototyping.
+Once the research was done I started studying JavaScript. I didn't know enough so I went and looked for resources. I spent a lot of time reading articles by Douglas Crockford and watched about 5 hours of him talking about JavaScript. I think he's a great source of information but a bit too opinionated. I would consider it a great start to JavaScript knowledge but I'd advise to look at other sources after that. I didn't keep track of other authors I've read after that because I was too busy prototyping.
 
 When making my first prototype I started with CoffeeScript as it looked simpler to understand. However, I find that it did too much under the hood and I couldn't understand why it did some of the things it did. When compiling back to JavaScript it would abstract functions and variables and it becomes hard to debug. So because I didn't have enough knowledge then, I decided to just stick to plain JavaScript.
 
 During actual development it was mostly me researching for the next feature, discuss with my supervisor, program feature, and testing for performance and usability real quick. That's oversimplifying it of course, different features require differing approaches. This went on until the end of the project.
+
+## 3.3 Infrastructure
+SwipeTable required an API server so it could be tested and demonstrated. Initially I tried hosting the server at my home computer but I couldn't get remote development working properly. I then did some looking around and tried out Amazon EC2 virtual servers. I could run a tiny virtual server for free while being able to work remotely.
+
+The way the server gets updated is pretty simple, although it takes a little bit of setup. The server is a node.js server, running on nodemon. Nodemon is a node.js program that restarts a server based on file changes. The way I made the files change was to use Dropbox on the server. All of the server files are in a Dropbox folder, so when I make a change while at Lunatech and save it, the file gets changed on the Amazon server via Dropbox. This allowed for a very quick development workflow. 
 
 # 4. Specific Competencies
 
@@ -104,14 +111,14 @@ The student can fit the user needs within the interface possibilities of the med
 The student is capable of testing interface proposals at the different stages of the development process and can select the right method to do so.
 
 **Progress**  
-I decided early on that the project should have a focus on Usability and User Experience. I would discuss my ideas on the usability of the project with my supervisor on an almost weekly basis. Topics discussed included: getting the attention of the user, showing the user what could be done, different ways to present functionality.
+I decided early on that the project should have a focus on Usability and User Experience. I would discuss my ideas on the Usability of the project with my supervisor on an almost weekly basis. Topics discussed included: getting the attention of the user, showing the user what could be done, different ways to present functionality.
 
 During the project I couldn't test on the intended users because they would be in France (the case was based on a client of Lunatech). Distance shouldn't be a problem but the language barrier and the fact that it was in a production environment made it difficult to test anything. So instead I opted to periodically discuss possible issues with my supervisor.
 
-Figuring out what the possible issues could be required occasional research into usability problems with data grids(tables) and smaller interactable viewports. Example: How do you show many columns to the user in a readable way?
+Figuring out what the possible issues could be, required occasional research into usability problems with data grids(tables) and smaller interactable viewports. Example: How do you show many columns to the user in a readable way?
 
 **Room for improvement**  
-`Description`
+While doing the research I didn't cite any sources. I would read the article, blog or paper and then make notes on what is applicable to the project. Now that I'm writing this report I miss the sources of information. Another drawback is that I can't review the sources again. My perspective now is different than when I wrote the notes, I would like to verify if the source data is still applicable.
 
 ## 4.2. Usability Engineering
 **Description**  
