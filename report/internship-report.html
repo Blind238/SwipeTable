@@ -171,7 +171,9 @@ It&#39;s important for many automatisation applications to oversee large amounts
 </a>
 </h2>
 <p><strong>Description</strong><br>The student is capable of setting up the design of a media and/or software product, based on the given specifications and in relation to an advisory and analysis report.<br>The interaction/interface design contains a complete description of the specifications from the analysis phase.</p>
-<p><strong>Progress</strong><br><code>Relevant information for competence</code></p>
+<p><strong>Progress</strong><br>From the preliminary research I figured out how the interaction should feel like. The idea was to make it easy and if possible intuitive to use the plugin. I made some wireframes to show the intended interactions, which is attached.</p>
+<p>The design changed as development went on to account for user behavior and expectations. The basic navigation stayed the same while details on the buttons and header were added to encourage interaction.</p>
+<p>Interesting thing that I&#39;ve noticed is that people tend to want to scroll vertically instead of horizontally. To counteract this I gave horizontal feedback to vertical scrolling, thus encouraging desired behavior.</p>
 <p><strong>Room for improvement</strong><br><code>Description</code></p>
 <h2 class="docs-heading">4.6. Technical Design<a href="#4-6-technical-design" name="4-6-technical-design" class="anchor">
   <span class="anchor-target" id="4-6-technical-design"></span>
@@ -181,7 +183,6 @@ It&#39;s important for many automatisation applications to oversee large amounts
 <p><strong>Description</strong><br>The student can apply multiple design methods and techniques in the design of a media and/or software product. The student is capable of describing interfaces between systems and be able to differentiate between functional, non-functional and technical requirements. The design and the accompanying principles that were established are documented in a Design Document.</p>
 <p><strong>Progress</strong><br>In this project I did all of the programming. While I did have to relay some technical decisions to my supervisor, I didn&#39;t have to make a Design Document for this project. I did however have to document some aspects of the design for own use so I could have a good grasp on what I was doing.</p>
 <p>The flow of information in the program was sketched out because I needed to figure out a way to solve a problem. The problem had to do with the asynchronous nature of JavaScript and how to pass information between parts of the program. </p>
-<p>I&#39;ve made wireframes to help with </p>
 <p><strong>Room for improvement</strong><br><code>Description</code></p>
 <h2 class="docs-heading">4.7. Production<a href="#4-7-production" name="4-7-production" class="anchor">
   <span class="anchor-target" id="4-7-production"></span>
@@ -189,7 +190,9 @@ It&#39;s important for many automatisation applications to oversee large amounts
 </a>
 </h2>
 <p><strong>Description</strong><br>The student can apply diverse development environments / frameworks / programming languages, particularly the syntax, library contents, applicable design patterns and best practices for the chosen environment.</p>
-<p><strong>Progress</strong><br><code>Relevant information for competence</code></p>
+<p><strong>Progress</strong><br>When I started having problems with the asynchronous aspects of JavaScript and coordinating 3 different parts, I looked for a solution. I came upon the concept of promises. I researched different promise libraries focusing on size and performance. After doing a couple of experiments and studying recent benchmarks I decided to use the &#39;when&#39; library. After struggling a bit with implementing promises, I successfully replaced asynchronous calls with promises and fixed the issues I was having before. Promises also made the flow of information clearer and helped to keep SwipeTable understandable.</p>
+<p>At first I used the Swipe library for it&#39;s smoothly animating panels. Swipe&#39;s implementation had great performance and had a pretty small footprint. I could use it&#39;s callbacks for my needs and things were working alright. When I tried to optimize the whole package I noticed that I could get more out of Swipe by having it inside SwipeTable. Swipe was then internalized and some functionality was taken outside of it&#39;s scope to be used by other parts of SwipeTable. The translate function was used for moving the header area.</p>
+<p>Using Grunt and the bootstrapping done by Yeoman has really helped the production workflow. I could easily look at changes and get notified of possible JavaScript errors while developing.</p>
 <p><strong>Room for improvement</strong><br><code>Description</code></p>
 <h2 class="docs-heading">4.8. Delivery<a href="#4-8-delivery" name="4-8-delivery" class="anchor">
   <span class="anchor-target" id="4-8-delivery"></span>
@@ -197,8 +200,8 @@ It&#39;s important for many automatisation applications to oversee large amounts
 </a>
 </h2>
 <p><strong>Description</strong><br>The student can perform acceptance tests on a product and has knowledge of important factors that are involved. The test is performed against the following standards: correctness, completeness, usability, package of requirements, delivery according to an implementation plan.<br>The student can judge a product at delivery whether it passes general quality standards.</p>
-<p><strong>Progress</strong><br><code>Relevant information for competence</code></p>
-<p><strong>Room for improvement</strong><br><code>Description</code></p>
+<p><strong>Progress</strong><br>As was planned, I delivered a working product with clear instructions on how to contribute, according to current Github best practices. </p>
+<p><strong>Room for improvement</strong><br>There were no formal acceptance tests done on SwipeTable.</p>
 <h1 class="docs-heading">5. General Competencies<a href="#5-general-competencies" name="5-general-competencies" class="anchor">
   <span class="anchor-target" id="5-general-competencies"></span>
   <span class="glyphicon glyphicon-link"></span>
