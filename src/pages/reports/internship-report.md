@@ -6,9 +6,15 @@ This is a report on my internship at Lunatech. The internship began in early Sep
 
 When I applied for information from Lunatech, I also asked at 4 other companies for information and possible positions. Some responded with information, some didn't have an open spot anymore, but Lunatech were interested and wanted to meet.
 
-At Lunatech i was interviewed by Egor Kloos, who would also be my supervisor for the internship. 
+At Lunatech i was interviewed by Egor Kloos, who would also be my supervisor for the internship. The interview went well and next thing you know we're planning the assignment, getting contracts signed, etc.
 
 ## 1.1. Goals
+These are the goals I started out with:
+
+* Learn other ways to structure a program, such as Prototypal Inheritance, functional programming and various design patterns.
+* To understand and be able to properly use JavaScript. I think it’s a very important element in our field for the next couple of years.
+* To be able to judge how far I can go with the plugin after a few weeks of the internship. Also to be able to assess if I can go further, either by expanding the assignment or adding other smaller assignments.
+* I want the internship to be kind of a second test, to see if I can still apply the skills and techniques I’ve learned. These can be technical skills like applying design patterns and also non-technical, like writing an advisory and a test plan.
 
 ## 1.2. Location
 The company where I ran my internship was Lunatech. Lunatech started out as a research company and transitioned over the years to a consulting and services company. One of their primary clients is UPC, for whom they handle some of the information flow for shipments.
@@ -254,17 +260,17 @@ In this project there wasn't really a team to work with. While I could approach 
 The student has an attitude that shows initiative and is proactive. The student can foresee and signal problems and if possible, solves them. The student also recognizes opportunities, creates challenging goals and translates ideas to deeds.
 
 **Progress**  
-`Relevant information for competence`
+For this project, I was responsible for pretty much everything. I was the one doing research, making informed decisions and programming it. I'd like to say I was proactive and made challenging goals. However it also felt like I took ownership of it and it felt like my responsibility to do that.
 
 **Room for improvement**  
-`Description`
+Be enterprising when I'm not in charge of a project.
 
 ## 5.5. Creative Problem Solving
 **Description**  
 The student is curious, dares to take risks, is open for new ideas and has an inquisitive attitude. The student comes up with fitting solutions and answers for problems and questions that appear during projects. The student utilizes different sources of information and inspiration, and makes new connections / relationships between the two.
 
 **Progress**  
-`Relevant information for competence`
+I always like to solve problems and in this project I tried a few different things which worked out well. If I was stuck on a problem, I would go to the whiteboard or grab a piece of paper and sketch out the different parts of it. It helps to look at a problem from a different angle. 
 
 **Room for improvement**  
 `Description`
@@ -318,7 +324,8 @@ There wasn't much done outside of the project. I did look at the code of another
 
 # 11. Conclusion
 
-#Advisory  
+# 12. Appendices  
+# 12.1 Advisory  
 
 >**Use case data grid plugin**  
 >It's important for many automatisation applications to oversee large amounts of datasets.
