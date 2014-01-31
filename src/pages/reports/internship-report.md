@@ -177,7 +177,11 @@ The flow of information in the program was sketched out because I needed to figu
 The student can apply diverse development environments / frameworks / programming languages, particularly the syntax, library contents, applicable design patterns and best practices for the chosen environment.
 
 **Progress**  
-`Relevant information for competence`
+When I started having problems with the asynchronous aspects of JavaScript and coordinating 3 different parts, I looked for a solution. I came upon the concept of promises. I researched different promise libraries focusing on size and performance. After doing a couple of experiments and studying recent benchmarks I decided to use the 'when' library. After struggling a bit with implementing promises, I successfully replaced asynchronous calls with promises and fixed the issues I was having before. Promises also made the flow of information clearer and helped to keep SwipeTable understandable.
+
+At first I used the Swipe library for it's smoothly animating panels. Swipe's implementation had great performance and had a pretty small footprint. I could use it's callbacks for my needs and things were working alright. When I tried to optimize the whole package I noticed that I could get more out of Swipe by having it inside SwipeTable. Swipe was then internalized and some functionality was taken outside of it's scope to be used by other parts of SwipeTable. The translate function was used for moving the header area.
+
+Using Grunt and the bootstrapping done by Yeoman has really helped the production workflow. I could easily look at changes and get notified of possible JavaScript errors while developing.
 
 **Room for improvement**  
 `Description`
@@ -188,11 +192,10 @@ The student can perform acceptance tests on a product and has knowledge of impor
 The student can judge a product at delivery whether it passes general quality standards.
 
 **Progress**  
-`Relevant information for competence`
+As was planned, I delivered a working product with clear instructions on how to contribute, according to current Github best practices. 
 
 **Room for improvement**  
-`Description`
-
+There were no formal acceptance tests done on SwipeTable.
 
 # 5. General Competencies
 
