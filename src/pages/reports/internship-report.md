@@ -151,7 +151,11 @@ The student is capable of setting up the design of a media and/or software produ
 The interaction/interface design contains a complete description of the specifications from the analysis phase.
 
 **Progress**  
-`Relevant information for competence`
+From the preliminary research I figured out how the interaction should feel like. The idea was to make it easy and if possible intuitive to use the plugin. I made some wireframes to show the intended interactions, which is attached.
+
+The design changed as development went on to account for user behavior and expectations. The basic navigation stayed the same while details on the buttons and header were added to encourage interaction.
+
+Interesting thing that I've noticed is that people tend to want to scroll vertically instead of horizontally. To counteract this I gave horizontal feedback to vertical scrolling, thus encouraging desired behavior.
 
 **Room for improvement**  
 `Description`
@@ -164,8 +168,6 @@ The student can apply multiple design methods and techniques in the design of a 
 In this project I did all of the programming. While I did have to relay some technical decisions to my supervisor, I didn't have to make a Design Document for this project. I did however have to document some aspects of the design for own use so I could have a good grasp on what I was doing.
 
 The flow of information in the program was sketched out because I needed to figure out a way to solve a problem. The problem had to do with the asynchronous nature of JavaScript and how to pass information between parts of the program. 
-
-I've made wireframes to help with 
 
 **Room for improvement**  
 `Description`
