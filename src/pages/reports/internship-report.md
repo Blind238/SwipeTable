@@ -161,15 +161,19 @@ Two scenario's were made based on the warehouse worker persona. Both take place 
 
 >It's the start of the workday and Thomas needed to do some paperwork in the office real quick. Basically forms for hour registration and assigning his vacation days, which he's put off doing for too long. Once he's done at the office he goes to the computer just outside the office to check the shipping logs of the previous day and today. That computer is there only so the workers can easily see the logs, so the logging application is always open on it. After checking the logs for any inconsistencies, he goes to check the shipments that have come in the night before.
 
+I've also looked at the flow of information during different phases of development. See Appendix 4.3 for diagrams.
+
 **Room for improvement**  
-`Description`
+While doing the research I didn't cite any sources. I would read the article, blog or paper and then make notes on what is applicable to the project. Now that I'm writing this report I miss the sources of information. Another drawback is that I can't review the sources again. My perspective now is different than when I wrote the notes, I would like to verify if the source data is still applicable.
+
+I also didn't make an analysis of the system beforehand. I would mostly do it while I'm already busy with the thing I want to do. If I had analyzed it and not just researched it, I feel that I could have prevented some problems with the flow of information in the library.
 
 ## 4.4. Advice
 **Description**  
 The student can give advice based on limited client meetings, where the student is capable of clarifying the necessary aspects for a clear advice. The advice is aimed towards technical problems(choosing between technical solutions and communicating this clearly from the target audience's experience). The student makes use of knowledge about the most common development environments / frameworks / programming languages, with the strengths and weaknesses of each.
 
 **Progress**  
-I researched data grid(table) representation on mobile devices and existing solutions to the problem. This research was used to make an Advisory, which is attached to this document.
+I researched data grid(table) representation on mobile devices and existing solutions to the problem. This research was used to make an Advisory, which is attached to this document. See Appendix 4.4 for the Advisory
 
 Early in the development process I also had to choose which programming language or framework I was going to use to make the plugin. The thing is, I wasn't that good in JavaScript so I started with the simpler looking CoffeeScript, which compiles into JavaScript. I made a small program to figure out CoffeeScript and what the resulting JavaScript code looked like. There were too many abstractions being made in the translation from CoffeeScript to JavaScript. There were optimizations happening that I didn't understand due to my inexperience with JavaScript. I therefor decided to not use any framework or other language than pure JavaScript. Another language I did briefly look at was Dart, but it was not similar to JavaScript. One of my bigger goals was to learn JavaScript so Dart was not an option.
 
@@ -332,61 +336,61 @@ There wasn't much done outside of the project. I did look at the code of another
 # 11. Conclusion
 
 # 12. Appendices  
-# 12.1 Advisory  
+## 4.4 Advisory  
 
->**Use case data grid plugin**  
->It's important for many automatisation applications to oversee large amounts of datasets.
+>>**Use case data grid plugin**  
+>>It's important for many automatisation applications to oversee large amounts of datasets.
 
->At Lunatech we create such applications for a number of our customers. However, the usage of such data grids tends to only run on the desktop. In fact, it is usually recommended to use a powerful desktop.
+>>At Lunatech we create such applications for a number of our customers. However, the usage of such data grids tends to only run on the desktop. In fact, it is usually recommended to use a powerful desktop.
 
->One of our logistics customers uses shipping data from within the warehouse and therefore need a desktop setup on site. It would be preferable to use a tablet to be able to access this data as portability would be a huge asset. Memory and CPU constraints make this a non-viable option.
+>>One of our logistics customers uses shipping data from within the warehouse and therefore need a desktop setup on site. It would be preferable to use a tablet to be able to access this data as portability would be a huge asset. Memory and CPU constraints make this a non-viable option.
 
->To make a light weight web front-end we need to know how to serve and render the data in way that will work on Post-PC devices. How small can we go?
+>>To make a light weight web front-end we need to know how to serve and render the data in way that will work on Post-PC devices. How small can we go?
 
-##Introduction
+>##Introduction
 To get a better picture of what the case requires, we are going to look at factors affecting performance and mobile user experience. Advice will then be given based on the more suitable options available. Since the case is focused on mobile performance, the factors that can affect performance must be researched. The representation of data is also important since we are dealing with a smaller screen and most tools cover desktop usage. Topics that are covered: Performance, Mobile User Experience.
 
-##Performance
+>##Performance
 There are different aspects of performance that are applicable in this case. Aspects that we can't control are the browser’s rendering performance and the performance of the device’s network environment. We'll be focusing on the areas that can be under our control.
 
-A big part of the performance is what the plugin actually tries to do. The plugin can load all the data or only part of it. The plugin can sort the data or let the data source(back-end server) sort it. The plugin can keep the data it receives for further use or fetch data from the data source on each action. All of these actions and behaviors affect the performance of the plugin in a positive or negative way. Basically, the less the plugin has to do, the more performant it is.
+>A big part of the performance is what the plugin actually tries to do. The plugin can load all the data or only part of it. The plugin can sort the data or let the data source(back-end server) sort it. The plugin can keep the data it receives for further use or fetch data from the data source on each action. All of these actions and behaviors affect the performance of the plugin in a positive or negative way. Basically, the less the plugin has to do, the more performant it is.
 
-Options to increase the performance of the plugin:
+>Options to increase the performance of the plugin:
 
-* Let the data source handle sorting
+>* Let the data source handle sorting
 * Retrieve the data in parts instead of a whole
-* 
-Options to increase the performance of the browser:
 
-* Do not use helper libraries such as jQuery
+>Options to increase the performance of the browser:
+
+>* Do not use helper libraries such as jQuery
 * Keep as little data in memory as possible
 * Prevent DOM reflows and repaints where possible
 
-As far as available plugins go, none that have been found are mobile oriented. The provided plugin demos have been tested on a Nexus 4 using stable Chrome browser. Simple tables performed well but were hard to navigate. SlickGrid's scrolling table performed terribly on mobile, on desktop it had great performance. They typically have a (configurable) large feature set.
+>As far as available plugins go, none that have been found are mobile oriented. The provided plugin demos have been tested on a Nexus 4 using stable Chrome browser. Simple tables performed well but were hard to navigate. SlickGrid's scrolling table performed terribly on mobile, on desktop it had great performance. They typically have a (configurable) large feature set.
 
-Notable researched JavaScript table plugins:
+>Notable researched JavaScript table plugins:
 
-* DataTables
+>* DataTables
 * jTable
 * SlickGrid
 
-##Mobile User Experience
+>##Mobile User Experience
 Interfaces on mobile devices have different environments than on desktops, where tabular data is typically viewed. The available display size determines(to a point) how much data/information you can present to the user. The amount of columns that can be displayed is further limited by the orientation of the display.
 
-There are plugins which only deal with presenting a table for a portable device. Most of these plugins are built for jQuery. Those that don't tend to use a combination of CSS and JavaScript to present the table.
+>There are plugins which only deal with presenting a table for a portable device. Most of these plugins are built for jQuery. Those that don't tend to use a combination of CSS and JavaScript to present the table.
 
-The blog post Responsive Data Table Roundup(January 11 2012, Chris Coyier) consolidated different methods on adapting the layout of a table to smaller displays. I agree with arguments in the post so I won't be restating them here. A copy is provided in the appendix.
+>The blog post Responsive Data Table Roundup(January 11 2012, Chris Coyier) consolidated different methods on adapting the layout of a table to smaller displays. I agree with arguments in the post so I won't be restating them here. A copy is provided in the appendix.
 
-##Advice
+>##Advice
 For the sake of performance the plugin should be as lightweight as possible. The plugin should only handle part of the data in the form of pages. The representation can be via pagination or a continuous list, but testing with SlickGrid shows that a continuous list might not be the best choice. Consider that the data will have to be fetched, manipulated and displayed extremely fast for the list not to have gaps.
 
-The case does not mention editing the data so until clarified assume a read-only scenario.
+>The case does not mention editing the data so until clarified assume a read-only scenario.
 
-The case does not discuss the form that the data should be represented. It doesn't mention if columns or a subset of the data can be omitted. If all of the data needs to be accessible, Zurb's Responsive Tables seems the most viable. All of the data will be viewable and the user can still compare items. If touch is used, it also seems more intuitive to scroll by touching the scrollable element of the table.
+>The case does not discuss the form that the data should be represented. It doesn't mention if columns or a subset of the data can be omitted. If all of the data needs to be accessible, Zurb's Responsive Tables seems the most viable. All of the data will be viewable and the user can still compare items. If touch is used, it also seems more intuitive to scroll by touching the scrollable element of the table.
 
-An alternative is David Bushell's method, although it is not that intuitive. It will need to be tested to see if it is actually viable.
+>An alternative is David Bushell's method, although it is not that intuitive. It will need to be tested to see if it is actually viable.
 
-##Remaining Considerations
+>##Remaining Considerations
 As the case doesn't mention accessibility, it wasn't explicitly researched. Do keep in mind that some manner of accessibility is inherent in any interface, we are dealing with humans after all.
 
-Security also wasn't mentioned by the case. Because the product is a plugin, we can assume that the plugin's environment will be secure enough for the use of the plugin. I don't think it's the plugin's responsiblity to be secure, only to display the data.
+>Security also wasn't mentioned by the case. Because the product is a plugin, we can assume that the plugin's environment will be secure enough for the use of the plugin. I don't think it's the plugin's responsiblity to be secure, only to display the data.
