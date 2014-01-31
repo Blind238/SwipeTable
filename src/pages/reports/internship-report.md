@@ -326,20 +326,29 @@ A list of the plugins I've used:
 
 
 # 8. License
-Lunatech gave me a lot of freedom to choose which open source license I wanted to use. 
+Lunatech gave me a lot of freedom to choose which open source license I wanted to use. After looking at the GPL, Creative Commons, Apache and some other licenses, I settled on using the MIT license. I just wanted people to use it and not be restrictive in expanding it.
 
 # 9. Outside the Project
 There wasn't much done outside of the project. I did look at the code of another project that was built with Bootstrap 2, to see if converting to Bootstrap 3 could solve an issue. The issue was solved by the person who asked me about it.
 
 # 10. Stageterugkomdagen
-`Reflection`
+Some of the lessons I feel I couldn't apply to my project. It was more about managing people and I could understand the situations that the lessons could be useful.
+
+Advice given from the school supervisor, Arthur Jedeloo, was helpful and his feedback on the deliverables were also helpful.
 
 ## 10.1. Intervision
+At the intervision we had an exercise to think of a problem we had at work. My problem ended up being chosen and I basically got drilled. I was asked 20-30 questions by my peers about the situation and I learned a lot about how I view things. The resulting advice given to me can be found in Appendix 10.1.
 
+# 11. Supervisor
+Egor Kloos was a cool dude. This is the best way I can describe my supervisor for this internship. He was laid-back, had insight into UX and Usability, and was supportive of the decisions I made. We would have nice discussions about any issues I'd be having or current events in the front-end world.
 
-# 11. Conclusion
+I feel like he could've been a bit more strict with the planning though, but I think that was partly my fault as well.
 
-# 12. Appendices  
+# 12. Conclusion
+In the end I feel that this was a unique experience. I got a lot of freedom to explore ideas, implement them and I actually get to keep the results.
+
+# 13. Appendices
+
 ## 4.3
 
 ![]({{assets}}/43A.jpg)
@@ -415,3 +424,9 @@ As the case doesn't mention accessibility, it wasn't explicitly researched. Do k
 ![]({{assets}}/45F.jpg)
 
 ## 4.6
+
+## 10.1
+
+![]({{assets}}/101A.jpg)
+![]({{assets}}/101B.jpg)
+![]({{assets}}/101C.jpg)
