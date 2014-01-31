@@ -175,7 +175,7 @@ The student can give advice based on limited client meetings, where the student 
 **Progress**  
 I researched data grid(table) representation on mobile devices and existing solutions to the problem. This research was used to make an Advisory, which is attached to this document. See Appendix 4.4 for the Advisory
 
-Early in the development process I also had to choose which programming language or framework I was going to use to make the plugin. The thing is, I wasn't that good in JavaScript so I started with the simpler looking CoffeeScript, which compiles into JavaScript. I made a small program to figure out CoffeeScript and what the resulting JavaScript code looked like. There were too many abstractions being made in the translation from CoffeeScript to JavaScript. There were optimizations happening that I didn't understand due to my inexperience with JavaScript. I therefor decided to not use any framework or other language than pure JavaScript. Another language I did briefly look at was Dart, but it was not similar to JavaScript. One of my bigger goals was to learn JavaScript so Dart was not an option.
+Early in the development process I also had to choose which programming language or framework I was going to use to make the library. The thing is, I wasn't that good in JavaScript so I started with the simpler looking CoffeeScript, which compiles into JavaScript. I made a small program to figure out CoffeeScript and what the resulting JavaScript code looked like. There were too many abstractions being made in the translation from CoffeeScript to JavaScript. There were optimizations happening that I didn't understand due to my inexperience with JavaScript. I therefor decided to not use any framework or other language than pure JavaScript. Another language I did briefly look at was Dart, but it was not similar to JavaScript. One of my bigger goals was to learn JavaScript so Dart was not an option.
 
 **Room for improvement**  
 While working on the advisory, I did not take into account the financial aspects of the analysis. While there wasn't a financial analysis, I could have still made a rough estimation of time saved based on warehouse size, distance walked and time spent looking for information of the user(in particular the primary persona).
@@ -188,14 +188,16 @@ The student is capable of setting up the design of a media and/or software produ
 The interaction/interface design contains a complete description of the specifications from the analysis phase.
 
 **Progress**  
-From the preliminary research I figured out how the interaction should feel like. The idea was to make it easy and if possible intuitive to use the plugin. I made some wireframes to show the intended interactions, which is attached.
+From the preliminary research I figured out how the interaction should feel like. The idea was to make it easy and if possible intuitive to use the library. I made some wireframes to show the intended interactions. The presentation showing the wireframes can be downloaded [here](https://www.dropbox.com/s/bcdeb0zhg0udpvq/Wireframes-rev1.pptx). Other things such as positioning of the buttons and suggested interactions can be found in Appendix 4.5.
 
 The design changed as development went on to account for user behavior and expectations. The basic navigation stayed the same while details on the buttons and header were added to encourage interaction.
 
 Interesting thing that I've noticed is that people tend to want to scroll vertically instead of horizontally. To counteract this I gave horizontal feedback to vertical scrolling, thus encouraging desired behavior.
 
+At one point Egor Kloos suggested onboarding as a way to get the user to understand the library. After some sketching and thinking about it I decided not to do it, the library would be going into app territory. The resulting process is the last image in Appendix 4.5.
+
 **Room for improvement**  
-`Description`
+I'd like to explore more UX ideas in a different type of project. I'm pretty satisfied with what I've done in this project though.
 
 ## 4.6. Technical Design
 **Description**  
@@ -204,10 +206,10 @@ The student can apply multiple design methods and techniques in the design of a 
 **Progress**  
 In this project I did all of the programming. While I did have to relay some technical decisions to my supervisor, I didn't have to make a Design Document for this project. I did however have to document some aspects of the design for own use so I could have a good grasp on what I was doing.
 
-The flow of information in the program was sketched out because I needed to figure out a way to solve a problem. The problem had to do with the asynchronous nature of JavaScript and how to pass information between parts of the program. 
+The flow of information in the program was sketched out because I needed to figure out a way to solve a problem. The problem had to do with the asynchronous nature of JavaScript and how to pass information between parts of the program. A example can be found in Appendix 4.6.
 
 **Room for improvement**  
-`Description`
+I didn't document the technical aspects enough. I didn't have Design Document and I didn't map out parts of the program in a UML diagram.
 
 ## 4.7. Production
 **Description**  
@@ -221,7 +223,7 @@ At first I used the Swipe library for it's smoothly animating panels. Swipe's im
 Using Grunt and the bootstrapping done by Yeoman has really helped the production workflow. I could easily look at changes and get notified of possible JavaScript errors while developing.
 
 **Room for improvement**  
-`Description`
+I could have focused a bit more on software testing. The foundation was there to make JavaScript tests but I didn't take advantage of it.
 
 ## 4.8. Delivery
 **Description**  
@@ -229,10 +231,12 @@ The student can perform acceptance tests on a product and has knowledge of impor
 The student can judge a product at delivery whether it passes general quality standards.
 
 **Progress**  
-As was planned, I delivered a working product with clear instructions on how to contribute, according to current Github best practices. 
+As was planned, I delivered a working product with clear instructions on how to contribute, according to current Github best practices. There were instructions on how to use it and also on how to contribute to the project.
+
+SwipeTable itself was delivered according to the case. The case didn't mention editing data grids so it was not implemented.
 
 **Room for improvement**  
-There were no formal acceptance tests done on SwipeTable.
+There were no formal acceptance tests done on SwipeTable. Also, I didn't check if compilation worked on Linux or MacOS because I was using a Windows laptop.
 
 # 5. General Competencies
 
