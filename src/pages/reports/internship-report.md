@@ -2,16 +2,22 @@
 title: "Internship Report"
 ---
 # 1. Introduction
-`Why I chose my goals and internship location.`
 This is a report on my internship at Lunatech. The internship began in early September and ran for 6 months. When looking for internship assignments, my search was not aimed at the competencies I had to prove to be proficient in. Instead I looked for interesting opportunities and developed my goals afterwards.
+
+When I applied for information from Lunatech, I also asked at 4 other companies for information and possible positions. Some responded with information, some didn't have an open spot anymore, but Lunatech were interested and wanted to meet.
+
+At Lunatech i was interviewed by Egor Kloos, who would also be my supervisor for the internship. 
 
 ## 1.1. Goals
 
 ## 1.2. Location
 The company where I ran my internship was Lunatech. Lunatech started out as a research company and transitioned over the years to a consulting and services company. One of their primary clients is UPC, for whom they handle some of the information flow for shipments.
 
+At Lunatech my supervisor was the only front end developer. The rest were mostly just developers, either back end or working on features to implement. It was like working in a bubble that I could get out of to ask questions. Really weird to explain. Developers that were on the floor I was on, did know about some front end stuff because they worked more on implementing interfaces. However, they were still more on the technical side, from my experience.
+
 # 2. The Assignment
 
+Below is the original assignment:
 
 ># Intern assignment FRONT-END | LUNATECH
 
@@ -49,6 +55,8 @@ The company where I ran my internship was Lunatech. Lunatech started out as a re
 ** MySql, NoSql, Postgress, MongoDB etc.
 * Pick a licence (MIT, Apache, GPL ?)
 
+While this was originally the plan, things have changed during the course of the project. Due to the amount of time spent on the JavaScript Data Grid Plugin, some tasks didn't get any attention. This wasn't an issue though because from early on the focus was on the JavaScript side. The other tasks were possible things I could be working on because I was worried the main assignment wouldn't be enough. I was wrong.
+
 ## 2.2 Use Case
 The use case was the starting point for the assignment. From the use case I was able to determine the requirements, personas and scenarios. What follows is the use case verbatim.
 
@@ -73,6 +81,13 @@ The preliminary research was not focused on requirements, instead I wanted to ex
 
 I also started a log of progress during the research, documenting observations.
 
+## 3.2 Development
+Once the research was done I started studying JavaScript. I didn't know enough so I went and looked for resources. I spent a lot of time reading articles by Douglas Crockford and saw about 5 hours of him talking about JavaScript. I think he's a great source of information but a bit too opinionated. I would consider it a great start to JavaScript knowledge but I'd advise to look at other sources after that. I didn't keep track of other authors I've read after that because I was too busy prototyping.
+
+When making my first prototype I started with CoffeeScript as it looked simpler to understand. However, I find that it did too much under the hood and I couldn't understand why it did some of the things it did. When compiling back to JavaScript it would abstract functions and variables and it becomes hard to debug. So because I didn't have enough knowledge then, I decided to just stick to plain JavaScript.
+
+During actual development it was mostly me researching for the next feature, discuss with my supervisor, program feature, and testing for performance and usability real quick. That's oversimplifying it of course, different features require differing approaches. This went on until the end of the project.
+
 # 4. Specific Competencies
 
 ## 4.1. Usability Research
@@ -83,14 +98,14 @@ The student can fit the user needs within the interface possibilities of the med
 The student is capable of testing interface proposals at the different stages of the development process and can select the right method to do so.
 
 **Progress**  
-`Relevant information for competence`
+I decided early on that the project should have a focus on Usability and User Experience. I would discuss my ideas on the usability of the project with my supervisor on an almost weekly basis. Topics discussed included: getting the attention of the user, showing the user what could be done, different ways to present functionality.
 
+During the project I couldn't test on the intended users because they would be in France (the case was based on a client of Lunatech). Distance shouldn't be a problem but the language barrier and the fact that it was in a production environment made it difficult to test anything. So instead I opted to periodically discuss possible issues with my supervisor.
 
-During the project I couldn't test on the intended users because they would be in France. Distance shouldn't be a problem but the language barrier and the fact that it was in a production environment make it difficult to test anything. So instead I opted to periodically discuss possible issues with my supervisor.  
-Figuring out what the possible issues could be required occasional research into usability issues with data grids(tables) and smaller interactable viewports. 
+Figuring out what the possible issues could be required occasional research into usability problems with data grids(tables) and smaller interactable viewports. Example: How do you show many columns to the user in a readable way?
 
 **Room for improvement**  
-
+`Description`
 
 ## 4.2. Usability Engineering
 **Description**  
@@ -98,7 +113,11 @@ The student is capable of prioritizing the user of the finished product during t
 The student is capable of thinking outside the actual product about usability aspects, in the form of installation, configuration and maintenance.
 
 **Progress**  
-`Relevant information for competence`
+Usability Engineering is a bit difficult to quantify. There is some overlap between Usability Engineering, Usability Research and Analysis. I'll just focus on what doesn't overlap: the testing.
+
+SwipeTable was tested mostly on a 1 on 1 basis and in an informal way. I would show a colleague or a friend the table and observe their interaction and reaction to the product. I just let them go at it without any explanation and if they asked about anything, I clarified a bit.
+
+Afterwards I would ask them about things that I noticed. From the feedback I would then try to deduce why the behavior wasn't as expected and adjusted accordingly, or discuss with my supervisor.
 
 **Room for improvement**  
 I really felt the need to test at every opportunity. For my next project I would like to test whenever possible. I believe that frequently testing the product on user and getting the feedback from them is one of the most important things you can do. In the end the product has to meet the user's needs from a usability standpoint. If a product is functional but confusing and unusable, it is worthless.
@@ -111,7 +130,8 @@ The student is capable of putting together a requirements package based on a com
 The student can represent an analysis in diagrams and overviews, while keeping the experiential world of the audience in mind during feedback.
 
 **Progress**  
-I made a couple of persona's and scenario's representing the case to help with understanding the user. The first persona made was a representation of a worker in a warehouse. This persona is who the product is made for. The second persona made was a representation of an average person. This persona was made to explore possible uses outside of the case.  
+I made a couple of persona's and scenario's representing the case to help with understanding the user. The first persona made was a representation of a worker in a warehouse. This persona is who the product is made for. The second persona made was a representation of an average person. This persona was made to explore possible uses outside of the case.
+
 Two scenario's were made based on the warehouse worker persona. Both take place in the warehouse. One was made to represent casual use of a previous system, while another for more frequent use.
 
 >**Personas**  
@@ -217,17 +237,17 @@ The student makes a personal plan and executes that plan. He/she will follow thr
 `Relevant information for competence`
 
 **Room for improvement**  
-`Description`
+Lots of work can be done on the planning of future projects. This project was not too rigid on deliverable deadlines, but I could have made it so and I think it would have been better for the project. 
 
 ## 5.3. Teamwork
 **Description**  
 The student is a team player that functions well in a multi disciplinary team, and is a positive addition to the team spirit. The student is open for other ideas or angles from other team members, and handles feedback in a constructive manner, both in receiving feedback and giving it. The student also recognizes their own qualities and those of others, and knows how to utilize them.
 
 **Progress**  
-`Relevant information for competence`
+I'm usually not that great with criticism and take it too harshly. For this project I feel that I take critique much better than before. I think it has to do with the way I approached the feedback. I would try not to take it personally and would note it in my log when possible.
 
 **Room for improvement**  
-`Description`
+In this project there wasn't really a team to work with. While I could approach my supervisor and other colleagues with questions, I was still the one doing all the work. 
 
 ## 5.4. Enterprising
 **Description**  
@@ -283,10 +303,12 @@ A list of the plugins I've used:
 
 # 7. Code Structure
 
+
 # 8. License
+Lunatech gave me a lot of freedom to choose which open source license I wanted to use. 
 
 # 9. Outside the Project
-`Same`
+There wasn't much done outside of the project. I did look at the code of another project that was built with Bootstrap 2, to see if converting to Bootstrap 3 could solve an issue. The issue was solved by the person who asked me about it.
 
 # 10. Stageterugkomdagen
 `Reflection`
