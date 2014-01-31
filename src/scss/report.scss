@@ -39,6 +39,38 @@ $h6-size:           14px; // .zeta
 @import "ui/code";
 
 
+blockquote{
+    quotes:none;
+
+    p:before{
+        content:"";
+        content:no-open-quote;
+    }
+    p:after{
+        content:"";
+        content:no-close-quote;
+    }
+    p:last-of-type:after{
+        content:"";
+        content:no-close-quote;
+    }
+
+    q:before{
+        content:"";
+        content:no-open-quote;
+    }
+    q:after{
+        content:"";
+        content:no-close-quote;
+    }
+}
+
+
+blockquote {
+  background-color: #f8f8ff;
+  text-indent: 0;
+}
+
 @include media-query("lap") {
 }
 
