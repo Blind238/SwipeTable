@@ -245,17 +245,17 @@ There were no formal acceptance tests done on SwipeTable. Also, I didn't check i
 The student can convey his/her ideas and message in an inspiring and formal way. In work discussions, the student supports his work / choices with clear arguments. The student practices active listening during talks with colleagues and / or clients.
 
 **Progress**  
-`Relevant information for competence`
+Active listening was actively practiced. I would listen and interact whenever someone talked to me. I engaged in talks about the library and other topics that I knew things about.
 
 **Room for improvement**  
-`Description`
+I could have documented a bit more in the later parts of the internship. I also could have held a presentation for the company on progress of the library, probable uses.
 
 ## 5.2. Organization
 **Description**  
 The student makes a personal plan and executes that plan. He/she will follow through on agreements and be flexible in adjusting the plan due to unforeseen changes. The student ensures a productive work environment and asks for timely help should there be any problems in the execution of a project.
 
 **Progress**  
-`Relevant information for competence`
+I did ask for help but it wasn't really timely. I'm the type that doesn't like to ask for help and rather do it on my own. The fact that I asked for help is progress for me.
 
 **Room for improvement**  
 Lots of work can be done on the planning of future projects. This project was not too rigid on deliverable deadlines, but I could have made it so and I think it would have been better for the project. 
@@ -278,17 +278,17 @@ The student has an attitude that shows initiative and is proactive. The student 
 For this project, I was responsible for pretty much everything. I was the one doing research, making informed decisions and programming it. I'd like to say I was proactive and made challenging goals. However it also felt like I took ownership of it and it felt like my responsibility to do that.
 
 **Room for improvement**  
-Be enterprising when I'm not in charge of a project.
+Be enterprising when I'm not in charge of a project. I usually go with the flow.
 
 ## 5.5. Creative Problem Solving
 **Description**  
 The student is curious, dares to take risks, is open for new ideas and has an inquisitive attitude. The student comes up with fitting solutions and answers for problems and questions that appear during projects. The student utilizes different sources of information and inspiration, and makes new connections / relationships between the two.
 
 **Progress**  
-I always like to solve problems and in this project I tried a few different things which worked out well. If I was stuck on a problem, I would go to the whiteboard or grab a piece of paper and sketch out the different parts of it. It helps to look at a problem from a different angle. 
+I always like to solve problems and in this project I tried a few different things which worked out well. If I was stuck on a problem, I would go to the white board or grab a piece of paper and sketch out the different parts of it. It helps to look at a problem from a different angle. 
 
 **Room for improvement**  
-`Description`
+It still takes a while to get to interesting ideas and solutions, so I plan to actively come up with ideas based on different constraints. Example: How would you build a website with just one button?
 
 # 6. Tools
 To build the project, I used several tools. They helped in building the base that the project was built on. They helped in development by checking for errors and reloading the browser on each save. They helped by combining the different parts into a few distributable files.
@@ -340,6 +340,12 @@ There wasn't much done outside of the project. I did look at the code of another
 # 11. Conclusion
 
 # 12. Appendices  
+## 4.3
+
+![]({{assets}}/43A.jpg)
+![]({{assets}}/43B.jpg)
+![]({{assets}}/43C.jpg)
+
 ## 4.4 Advisory  
 
 >>**Use case data grid plugin**  
@@ -398,3 +404,7 @@ For the sake of performance the plugin should be as lightweight as possible. The
 As the case doesn't mention accessibility, it wasn't explicitly researched. Do keep in mind that some manner of accessibility is inherent in any interface, we are dealing with humans after all.
 
 >Security also wasn't mentioned by the case. Because the product is a plugin, we can assume that the plugin's environment will be secure enough for the use of the plugin. I don't think it's the plugin's responsiblity to be secure, only to display the data.
+
+## 4.5
+
+## 4.6
