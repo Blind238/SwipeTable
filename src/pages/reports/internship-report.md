@@ -87,8 +87,6 @@ It's important for many automatisation applications to oversee large amounts of 
 >To make a light weight web front-end we need to know how to serve and render the data in way that will work on Post-PC devices. How small can we go?
 
 # 3. Project
-`With short description, my part of it, my process and the choices I’ve made, and ‘verantwoording competenties’.`
-
 There was a lot of freedom involved in the  project. This meant that I had to be very careful about the steps I took and the decisions I made. 
 
 ## 3.1. Preliminary Research
