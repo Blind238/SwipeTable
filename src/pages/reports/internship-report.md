@@ -8,7 +8,7 @@ When looking for internship assignments, my search was not aimed at the competen
 
 When I applied for information from Lunatech, I also asked at 4 other companies for information and possible positions. Some responded with information, some didn't have an open spot anymore, but Lunatech were interested and wanted to meet.
 
-At Lunatech i was interviewed by Egor Kloos, who would also be my supervisor for the internship. The interview went well and next thing you know we're planning the assignment, getting contracts signed, etc.
+At Lunatech I was interviewed by Egor Kloos, who would also be my supervisor for the internship. The interview went well and next thing you know we're planning the assignment, getting contracts signed, etc.
 
 ## 1.1. Goals
 These are the goals I started out with:
@@ -16,7 +16,11 @@ These are the goals I started out with:
 * Learn other ways to structure a program, such as Prototypal Inheritance, functional programming and various design patterns.
 * To understand and be able to properly use JavaScript. I think it’s a very important element in our field for the next couple of years.
 * To be able to judge how far I can go with the plugin after a few weeks of the internship. Also to be able to assess if I can go further, either by expanding the assignment or adding other smaller assignments.
-* I want the internship to be kind of a second test, to see if I can still apply the skills and techniques I’ve learned. These can be technical skills like applying design patterns and also non-technical, like writing an advisory and a test plan.
+* I want the internship to be kind of a second test, to see if I can still apply the skills and techniques I have learned. These can be technical and non-technical skills. The reason is that I have done these tasks in a structured assignment in the classroom, but not as a part of the bigger picture.
+  - Applying Design Patterns
+  - Writing an Advisory
+  - Making and executing a Test Plan
+  - Write and use code tests
 
 ## 1.2. Location
 The company where I ran my internship was Lunatech. Lunatech started out as a research company and transitioned over the years to a consulting and services company. One of their primary clients is UPC, for whom they handle some of the information flow for shipments.
@@ -63,7 +67,12 @@ Below is the original assignment:
 ** MySql, NoSql, Postgress, MongoDB etc.
 * Pick a licence (MIT, Apache, GPL ?)
 
-While this was originally the plan, things have changed during the course of the project. Due to the amount of time spent on the JavaScript Data Grid Plugin, some tasks didn't get any attention. This wasn't an issue though because from early on the focus was on the JavaScript side. The other tasks were possible things I could be working on because I was worried the main assignment wouldn't be enough. I was wrong.
+While this was originally the plan, things have changed during the course of the project. Due to the amount of time spent on the JavaScript Data Grid Plugin, other tasks didn't get any attention. I did not work with Twitter Bootstrap or Foundation, nor did I use any database technologies. This wasn't an issue though because from early on the focus was on the JavaScript side. The other tasks were possible things I could be working on because I was worried the main assignment wouldn't be enough. The worry was unfounded. There were plenty of things to do on the library and there is still more that can be done after the internship is finished.
+
+Things that took more time than expected:
+
+* Researching and setting up the tools used. It seems counter-productive but I think I've saved a lot of time during development and I was able to experiment quickly with solutions because of the tools and workflow I used.
+* Learning JavaScript. Some ideas and methods took a while to understand. I had to understand what 'this' in JavaScript meant. I had to understand how closures worked and how I could use them. And also, while not yet part of the JavaScript language, I had to understand Promises and how to use them to solve a problem I had with asynchronous information flow. 
 
 ## 2.2 Use Case
 The use case was the starting point for the assignment. From the use case I was able to determine the requirements, personas and scenarios. What follows is the use case verbatim.
@@ -90,11 +99,11 @@ The preliminary research was not focused on requirements, instead I wanted to ex
 I also started a log of progress during the research, documenting observations. I found that the log was useful within a week of each entry, sometimes 2 weeks.
 
 ## 3.2 Development
-Once the research was done I started studying JavaScript. I didn't know enough so I went and looked for resources. I spent a lot of time reading articles by Douglas Crockford and watched about 5 hours of him talking about JavaScript. I think he's a great source of information but a bit too opinionated. I would consider it a great start to JavaScript knowledge but I'd advise to look at other sources after that. I didn't keep track of other authors I've read after that because I was too busy prototyping.
+Once the research was done I started studying JavaScript. I didn't know enough so I went and looked for resources. I spent a lot of time reading articles by Douglas Crockford and watched about 5 hours of him talking about JavaScript. I think he's a great source of information but a bit too opinionated. I would consider it a great start to JavaScript knowledge but I'd advise to look at other sources after that. Some of Crockford's methods can be very opinionated and his JavaScript error checking program JSLint shows this, showing errors where coding style is highlighted rather than programming errors.
 
 When making my first prototype I started with CoffeeScript as it looked simpler to understand. However, I find that it did too much under the hood and I couldn't understand why it did some of the things it did. When compiling back to JavaScript it would abstract functions and variables and it becomes hard to debug. So because I didn't have enough knowledge then, I decided to just stick to plain JavaScript.
 
-During actual development it was mostly me researching for the next feature, discuss with my supervisor, program feature, and testing for performance and usability real quick. That's oversimplifying it of course, different features require differing approaches. This went on until the end of the project.
+During actual development it was mostly me researching for the next feature, discuss with my supervisor, program feature, and testing for performance and usability real quick. That's oversimplifying it of course, different features require differing approaches. If I was working on an animation I would discuss the reason for the animation with my supervisor, research possible methods, then prototype them, test for performance issues, then consult with my supervisor on the animation. This went on until the end of the project.
 
 ## 3.3 Infrastructure
 SwipeTable required an API server so it could be tested and demonstrated. Initially I tried hosting the server at my home computer but I couldn't get remote development working properly. I then did some looking around and tried out Amazon EC2 virtual servers. I could run a tiny virtual server for free while being able to work remotely.
@@ -324,6 +333,25 @@ A list of the plugins I've used:
 
 # 7. Code Structure
 
+## 7.1. JavaScript
+The main script is contained in different files which are concatenated when built. I would then use Browserify to bundle the main script and any dependencies into one file.
+
+The main script was roughly divided based on parts of the program.
+
+* intro - Lists dependencies and has the opening part of the program, declaring the variables it can accept.
+* vars - Has the internal variables and sets some defaults based on parameters.
+* init - Initializes the program, executing tests for row heights and making the first request.
+* test - Contains the tests for the viewport height and row heights.
+* create - Contains the functions for creating the header, controls and scrollbars.
+* request - Contains the functions for request a table and passing the data on to other parts of the program.
+* tables - Contains the functions for creating tables based on data passed to it.
+* swipe - Contains the parts relevant to swipe navigation.
+* navigate - Contains functions for navigating to a specific page, called when swiping to another page and pressing buttons.
+* update - Updates all UI elements on user interaction.
+* outro - Contains the call to Init() and  closes the main script portion.
+
+## 7.2. CSS
+The CSS is written in SASS. There are 2 files that are compiled into 1 file. Most of the CSS is in the 'style.scss' file, containing behavior and styling for UI elements. The second file is '_responsive-tables.scss' and has parts for positioning tables. All of the CSS is namespaced where possible, using 'st-*' for elements.
 
 # 8. License
 Lunatech gave me a lot of freedom to choose which open source license I wanted to use. After looking at the GPL, Creative Commons, Apache and some other licenses, I settled on using the MIT license. I just wanted people to use it and not be restrictive in expanding it.
@@ -337,7 +365,7 @@ Some of the lessons I feel I couldn't apply to my project. It was more about man
 Advice given from the school supervisor, Arthur Jedeloo, was helpful and his feedback on the deliverables were also helpful.
 
 ## 10.1. Intervision
-At the intervision we had an exercise to think of a problem we had at work. My problem ended up being chosen and I basically got drilled. I was asked 20-30 questions by my peers about the situation and I learned a lot about how I view things. The resulting advice given to me can be found in Appendix 10.1.
+At the intervision we had an exercise to think of a problem we had at work. My problem ended up being chosen and I was asked 20-30 questions by my peers about the situation and I learned a lot about how I view things. As the questions got deeper into my environment and how I reacted to it, I was able to view the problem from a different perspective. The resulting advice given to me can be found in Appendix 10.1.
 
 # 11. Supervisor
 Egor Kloos was a cool dude. This is the best way I can describe my supervisor for this internship. He was laid-back, had insight into UX and Usability, and was supportive of the decisions I made. We would have nice discussions about any issues I'd be having or current events in the front-end world.
@@ -346,6 +374,12 @@ I feel like he could've been a bit more strict with the planning though, but I t
 
 # 12. Conclusion
 In the end I feel that this was a unique experience. I got a lot of freedom to explore ideas, implement them and I actually get to keep the results.
+
+I have learned a lot of JavaScript and aim to keep improving and adding to what I've learned. I have not learned as much on the CSS side because I've already used CSS a lot in the last couple of years.
+
+Not all of the goals that I've set in the beginning of the project were met. I did not get to properly do any user testing, so I did not write a Test Plan. I also didn't write any tests for the JavaScript that was written. If I was to do the same internship again, I would put more focus on testing.
+
+Looking forward I will try to incorporate both user and code testing wherever I can. I think it's an important part of Mediatechnology to do user testing. I will probably add code tests to SwipeTable as time allows.
 
 # 13. Appendices
 
