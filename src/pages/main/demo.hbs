@@ -1,0 +1,19 @@
+<div class="demo__container">
+  <h2>Demo</h2>
+
+  <div class="swipe-table st-20">
+  </div>
+  <p>Styled with Bootstrap</p>
+  <script>
+    window.SwipeTable = new SwipeTable(
+      "http://swipetable.blind238.com/api", // Your API's url
+      ["id", "some", "demo", "dummy", "data"], // Table keys/headers
+      document.querySelector('.swipe-table'),
+      { // Options object
+        fullscreen: false,
+        demo: true,
+        tableClass: 'table table-bordered table-condensed table-striped' // optional
+      }
+    );
+  </script>
+</div>

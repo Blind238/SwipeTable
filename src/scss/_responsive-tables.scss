@@ -1,0 +1,67 @@
+.st-pinned {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  overflow-x: auto;
+  &:before{
+    content: "";
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: black;
+  }
+
+  table {
+    border-right: none;
+    border-left: none;
+    width: 100%;
+    th, td {
+      white-space: nowrap;
+    }
+  }
+
+  td{
+    &:last-child{
+      border-bottom: 0;
+    }
+  }
+
+  td, th{
+    &:not(:first-child){
+      display: none;
+    }
+  }
+}
+
+.st-scrollable-wrap {
+  overflow: hidden;
+}
+
+.st-scrollable {
+  margin-bottom: 0;
+  overflow: visible;
+
+  td, th{
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    &:first-child{
+       display: none;
+    }
+  }
+}
+
+@for $i from 2 through 7
+{
+  .swipe-table.st-#{$i*5}{
+    .st-pinned{
+      width: 5% * $i;
+    }
+    .st-scrollable-wrap{
+      margin-left: 5% * $i;
+    }
+  }
+}

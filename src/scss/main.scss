@@ -81,6 +81,15 @@
   align-self: flex-end;
 }
 
+.demo {
+  display: flex;
+  justify-content: center;
+}
+
+.demo__container {
+
+}
+
 @include media-query("lap") {
 }
 
@@ -106,4 +115,9 @@
 
 pre{
   background-color: lightgray;
+}
+
+.swipe-table {
+  max-width:355px;
+  height: 372px;
 }

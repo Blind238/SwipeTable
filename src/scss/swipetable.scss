@@ -1,0 +1,168 @@
+@import "responsive-tables";
+// Change $color to match your theme
+$color: #D3D3D3;//LightGray
+
+// If the below derrivatives don't work for you,
+// just replace them.
+$color-lighter: desaturate(lighten($color, 12%), 10%);
+$color-darker: desaturate(darken($color, 25%), 40%);
+
+.swipe-table {
+  overflow: hidden;
+  visibility: hidden;
+  position: relative;
+  table {
+    width: 100%;
+    margin-bottom: 0;
+    border: none;
+  }
+
+  &[data-new='0']{
+    .st-reload-text{
+      color: #A9A9A9;//DarkGray
+      border: none;
+    }
+    .st-reload-path{
+      fill: #A9A9A9;//DarkGray
+    }
+  }
+
+  &:not([data-new='0']){
+    .st-reload-text{
+      color: #696969;//DimGray
+      border: 1px solid #696969;//DimGray
+    }
+    .st-reload-path{
+      fill: #000;//Black
+    }
+  }
+}
+.st-wrap {
+  overflow: hidden;
+  position: relative;
+}
+.st-wrap > div {
+  float:left;
+  width:100%;
+  position: relative;
+}
+
+.st-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-width: 100%;
+  width: 100%;
+  height: 50px;
+  background-color: $color;
+  overflow: hidden;
+  visibility: visible;
+  .st-pinned, .st-scrollable{
+    height: 50px;
+    table{
+      table-layout: fixed;
+      th {
+        line-height: 50px;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-bottom: 0; //Remove divider
+      }
+    }
+  }
+
+  .st-pinned{
+    th{
+      color: #696969;//DimGray
+    }
+  }
+
+  .st-scrollable {
+    cursor: ew-resize;;
+    position: relative;
+
+    .st-scrollbar{
+      position:absolute;
+      display: block;
+      height: 5px;
+      bottom: 0;
+    }
+  }
+}
+
+.st-shadow{
+  box-shadow: inset 0 0 9px;
+}
+
+.st-scrollbar {
+  box-shadow: inset 0 0 1px;
+  height: 5px;
+  width: 100%;
+  background-color: $color-lighter;
+  position: absolute;
+  bottom: 50px;
+  div {
+    background-color: $color-darker;
+    height: 5px;
+  }
+}
+
+.st-controls {
+  line-height: 50px;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  display:         flex;
+  justify-content: flex-end;
+  height: 50px;
+  text-align: center;
+
+  > div {
+    font-size: 2em;
+    font-weight: bold;
+    border-radius: 0 0 6px 6px;
+    border: 1px solid $color-darker;
+    background-color: $color;
+    &:nth-child(3){
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+    .st-page-number{
+      font-size: 0.6em;
+    }
+    .st-reload-text{
+      font-size: 0.5em;
+
+      width:2em;
+      height:2em;
+      border-radius:1em;
+      line-height:2em;
+      text-align:center;
+    }
+    .st-reload-svg{
+      height: 0.8em;
+      width: 0.8em;
+    }
+  }
+}
+
+.st-fullscreen {
+  .st-controls {
+    div {
+      flex-grow: 1;
+    }
+  }
+}
+
+.st-not-fullscreen {
+  .st-controls {
+    div {
+      flex-basis: 50px;
+    }
+
+    div:nth-child(3){
+      order: -1;
+      flex-grow: 1;
+    }
+  }
+}
