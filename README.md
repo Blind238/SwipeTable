@@ -15,7 +15,7 @@ See the [project homepage](http://blind238.github.io/SwipeTable).
     bower install SwipeTable
 
 Or -->
-Grab the [source](https://github.com/blind238/SwipeTable/dist/SwipeTable.js) ([minified](https://github.com/blind238/SwipeTable/dist/SwipeTable.min.js)).
+Grab the [Javascript file](https://raw.githubusercontent.com/Blind238/SwipeTable/master/dist/SwipeTable.js) ([minified](https://raw.githubusercontent.com/Blind238/SwipeTable/master/dist/SwipeTable.min.js)) and the [CSS file](https://raw.githubusercontent.com/Blind238/SwipeTable/master/dist/swipetable.css)([minified](https://raw.githubusercontent.com/Blind238/SwipeTable/master/dist/swipetable.min.css)).
 
 ## Usage
 
