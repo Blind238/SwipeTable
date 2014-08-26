@@ -1243,7 +1243,7 @@ hgroup .hN {
  */
 
 q {
-  quotes: "\2018" "\2019" "\201C" "\201D";
+  quotes: "‘" "’" "\\201C" "\\201D";
 }
 
 q:before {
@@ -1267,11 +1267,11 @@ q q:after {
 }
 
 blockquote {
-  quotes: "\201C" "\201D";
+  quotes: "\\201C" "\\201D";
 }
 
 blockquote p:before {
-  content: "\201C";
+  content: "\\201C";
   content: open-quote;
 }
 
@@ -1281,7 +1281,7 @@ blockquote p:after {
 }
 
 blockquote p:last-of-type:after {
-  content: "\201D";
+  content: "\\201D";
   content: close-quote;
 }
 
@@ -1735,7 +1735,7 @@ td {
 
 .table--bordered th,
 .table--bordered td {
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
 }
 
 .table--bordered th:empty,
@@ -3141,12 +3141,12 @@ label,
  */
 
 .brand {
-  font-family: "Helvetica Neue", sans-serif!important;
+  font-family: Helvetica Neue, sans-serif!important;
   color: #4a8ec2!important;
 }
 
 .brand-face {
-  font-family: "Helvetica Neue", sans-serif!important;
+  font-family: Helvetica Neue, sans-serif!important;
 }
 
 .brand-color,
@@ -3455,7 +3455,7 @@ label,
  */
 
 .go:after {
-  content: "\00A0" "\00BB" !important;
+  content: " " "»" !important;
 }
 
 /**
@@ -3641,6 +3641,13 @@ code {
   align-self: flex-end;
 }
 
+.demo {
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+  justify-content: center;
+}
+
 @media only screen and (min-width: 1024px) {
   .usage__container {
     -webkit-flex-grow: 0;
@@ -3662,3 +3669,10 @@ code {
 pre {
   background-color: lightgray;
 }
+
+.swipe-table {
+  max-width: 355px;
+  height: 372px;
+}
+
+/*# sourceMappingURL=main.css.map */

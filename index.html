@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8">
     <title>SwipeTable</title>
+    <link rel="stylesheet" href="assets/bootstrap-table.min.css">
+    <link rel="stylesheet" href="assets/swipetable.min.css">
     <link rel="stylesheet" href="assets/main.min.css">
+    <script type="text/javascript" src="assets/swipetable.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
   </head>
   <body>
@@ -62,8 +65,25 @@ then use the following to config and start the table:</p>
   </div>
 </div>
 </div>
-<div class="examples"><h2>Examples</h2>
-</div>
+<div class="demo"><div class="demo__container">
+  <h2>Demo</h2>
+
+  <div class="swipe-table st-20">
+  </div>
+  <p>Styled with Bootstrap</p>
+  <script>
+    window.SwipeTable = new SwipeTable(
+      "http://swipetable.blind238.com/api", // Your API's url
+      ["id", "some", "demo", "dummy", "data"], // Table keys/headers
+      document.querySelector('.swipe-table'),
+      { // Options object
+        fullscreen: false,
+        demo: true,
+        tableClass: 'table table-bordered table-condensed table-striped' // optional
+      }
+    );
+  </script>
+</div></div>
 
     </div>
 
